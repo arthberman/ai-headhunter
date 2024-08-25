@@ -51,9 +51,9 @@ def log_process(logger: logging.Logger) -> Callable:
         async def wrapper(*args, **kwargs):
             process_name = func.__name__
             job = args[0] if args else None
-            job_id = f"job id {job.id}" if hasattr(job, "id") else ""
+            analysisId = f"analysis id {job.data["analysisId"]}" if hasattr(job, "id") else ""
 
-            logger.info(f"Starting process: {process_name} {job_id}")
+            logger.info(f"Starting process: {process_name} {analysisId}")
             start_time = time.time()
             result = await func(*args, **kwargs)
             end_time = time.time()
@@ -68,7 +68,7 @@ def log_process(logger: logging.Logger) -> Callable:
                 duration_formatted = f"{seconds}s"
 
             logger.info(
-                f"Finished process: {process_name} {job_id} +{duration_formatted}"
+                f"Finished process: {process_name} {analysisId} +{duration_formatted}"
             )
             return result
 

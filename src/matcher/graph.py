@@ -37,7 +37,6 @@ from utils.score_compute import calculate_final_score
 
 def synthesis(state: MainGraphState) -> MainGraphState:
     score = calculate_final_score(state)
-    print(score)
     return score
 
 
@@ -74,7 +73,7 @@ def compile_graph() -> CompiledGraph:
     )
     workflow.add_conditional_edges(
         "node_career_path_analysis",
-        lambda state: state.career_path_analysis.logical_move,
+        lambda state: state.career_path_analysis.logicalMove,
         {
             True: "analysis",
             False: "analysis",

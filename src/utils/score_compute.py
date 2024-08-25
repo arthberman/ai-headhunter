@@ -86,11 +86,3 @@ def calculate_final_score(state: MainGraphState) -> Dict[str, float]:
         "nice_to_have_multiplier": nice_to_have_multiplier,
         "final_score": final_score,
     }
-
-
-# Example usage:
-# scores = calculate_final_score(state)
-# print(f"Must Have Score: {scores['must_have']:.2f}")
-# print(f"Important Score: {scores['important']:.2f}")
-# print(f"Nice to Have Multiplier: {scores['nice_to_have']:.2f}")
-# print(f"Final Score: {scores['final_score']:.2f}")

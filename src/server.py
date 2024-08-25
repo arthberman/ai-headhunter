@@ -1,8 +1,13 @@
 import asyncio
 import signal
+import warnings
+from parser.joboffer import parseJobOffer
+from parser.profile import parseProfile
+from parser.scorecard import parseScorecard
 from typing import Any, Dict
 
 from bullmq import Job, Queue, Worker
+from langchain_core._api.beta_decorator import LangChainBetaWarning
 from langchain_core.runnables import RunnableLambda
 
 from matcher.graph import compile_graph
@@ -11,13 +16,13 @@ from matcher.models.job_offer import JobOffer
 from matcher.models.profile import Profile
 from matcher.models.scorecard import ListScoredCriterion, Scorecard
 from matcher.state import MainGraphState
-from parser.joboffer import parseJobOffer
-from parser.profile import parseProfile
-from parser.scorecard import parseScorecard
-from utils.logger import setup_logger, log_process
+from utils.logger import log_process, setup_logger
+
+# Ignore LangChainBetaWarning
+warnings.filterwarnings("ignore", category=LangChainBetaWarning)
 
 logger = setup_logger()
-matcherResultQueue = Queue("matcher-results")
+matcherResultQueue = None
 
 
 @log_process(logger)
@@ -72,10 +77,18 @@ async def process_matcher(job: Job, job_token: str) -> Dict[str, Any]:
                 "job_offer": job_offer,
                 "scorecard": scorecard,
                 "analysisId": analysisId,
-            }
+            },
+            config={
+                "run_id": analysisId,
+                "run_name": f"matcher-{job_offer.company.lower().replace(' ', '-')}-{job_offer.title.lower().replace(' ', '-')}",
+            },
         )
         final_res = {
             "analysisId": analysisId,
+            "finalScore": res["final_score"],
+            "mustHaveScore": res["must_have_score"],
+            "importantScore": res["important_score"],
+            "niceToHaveMultiplier": res["nice_to_have_multiplier"],
             "careerPathAnalysis": CareerPathAnalysis.json(res["career_path_analysis"]),
             "educationAnalysis": ListScoredCriterion.json(res["education_analysis"]),
             "experienceAnalysis": ListScoredCriterion.json(res["experience_analysis"]),
@@ -90,8 +103,6 @@ async def process_matcher(job: Job, job_token: str) -> Dict[str, Any]:
 
 
 async def main():
-    logger.info("up and running")
-
     # Create an event that will be triggered for shutdown
     shutdown_event = asyncio.Event()
 
@@ -103,25 +114,25 @@ async def main():
     signal.signal(signal.SIGTERM, signal_handler)
     signal.signal(signal.SIGINT, signal_handler)
 
-    parserWorker = Worker("parser", process_parser)
-    parserMatcher = Worker("matcher", process_matcher)
-
+    # Feel free to remove the connection parameter, if your redis runs on localhost
     try:
-        # Wait until the shutdown event is set
-        await shutdown_event.wait()
-    finally:
-        # close the workers
-        logger.warning("Cleaning up workers...")
-        await asyncio.gather(parserWorker.close(), parserMatcher.close())
-        logger.warning("Workers shut down successfully.")
+        parserWorker = Worker("parser", process_parser)
+        parserMatcher = Worker("matcher", process_matcher)
+        matcherResultQueue = Queue("matcher-results")
+        logger.info("up and running")
+    except Exception as e:
+        logger.error(f"Error creating workers: {str(e)}", exc_info=True)
+        raise ValueError(f"Failed to create workers: {str(e)}") from e
 
-        # Close any remaining connections
-        tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
-        [task.cancel() for task in tasks]
-        await asyncio.gather(*tasks, return_exceptions=True)
+    # Wait until the shutdown event is set
+    await shutdown_event.wait()
 
-        # Optionally, you can add a small delay to allow for cleanup
-        await asyncio.sleep(1)
+    # close the worker
+    logger.warning("Cleaning up workers...")
+    await parserWorker.close()
+    await parserMatcher.close()
+    await matcherResultQueue.close()
+    logger.warning("Workers shut down successfully.")
 
 
 if __name__ == "__main__":
