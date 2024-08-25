@@ -23,8 +23,8 @@ def calculate_final_score(state: MainGraphState) -> Dict[str, float]:
             state.soft_skill_analysis,
             state.hard_skill_analysis,
         ]:
-            if analysis and analysis.scored_criteria:
-                for criterion in analysis.scored_criteria:
+            if analysis and analysis.scoredCriteria:
+                for criterion in analysis.scoredCriteria:
                     if criterion.id == criterion_id:
                         return criterion.score
         return 0.0
@@ -46,12 +46,12 @@ def calculate_final_score(state: MainGraphState) -> Dict[str, float]:
         total_bonus = sum(
             min(
                 get_score_by_id(criterion.id),
-                criterion.max_bonus_point,
+                criterion.maxBonusPoint,
             )
             for criterion in section.criteria
         )
         max_possible_bonus = sum(
-            criterion.max_bonus_point for criterion in section.criteria
+            criterion.maxBonusPoint for criterion in section.criteria
         )
         return 1 + (total_bonus / max_possible_bonus) * 0.2  # 20% maximum increase
 
@@ -60,16 +60,16 @@ def calculate_final_score(state: MainGraphState) -> Dict[str, float]:
     nice_to_have_multiplier = 1.0
 
     for section in scorecard.sections:
-        if section.importance_level == ImportanceLevel.MUST_HAVE:
+        if section.importanceLevel == ImportanceLevel.MUST_HAVE:
             must_have_score = calculate_must_have_score(section)
-        elif section.importance_level == ImportanceLevel.IMPORTANT:
+        elif section.importanceLevel == ImportanceLevel.IMPORTANT:
             important_score = calculate_important_score(section)
-        elif section.importance_level == ImportanceLevel.NICE_TO_HAVE:
+        elif section.importanceLevel == ImportanceLevel.NICE_TO_HAVE:
             nice_to_have_multiplier = calculate_nice_to_have_multiplier(section)
 
     base_score = (
-        scorecard.must_have_weight * must_have_score
-        + scorecard.important_weight * important_score
+        scorecard.mustHaveWeight * must_have_score
+        + scorecard.importantWeight * important_score
     )
 
     # Adjust the nice_to_have_multiplier to ensure final score doesn't exceed 1

@@ -16,7 +16,6 @@ dependencies = [
     "langchain-postgres>=0.0.9",
     "langchain-openai>=0.1.22",
     "bullmq>=2.9.2",
-    "colorlog>=6.8.2",
     "pydantic>=2.8.2",
 ]
 

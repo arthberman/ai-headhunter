@@ -14,12 +14,13 @@ from matcher.state import MainGraphState
 from parser.joboffer import parseJobOffer
 from parser.profile import parseProfile
 from parser.scorecard import parseScorecard
-from utils.logger import setup_logger
+from utils.logger import setup_logger, log_process
 
 logger = setup_logger()
 matcherResultQueue = Queue("matcher-results")
 
 
+@log_process(logger)
 async def process_parser(job: Job, job_token: str) -> Dict[str, Any]:
     match job.name:
         case "joboffer":
@@ -31,9 +32,9 @@ async def process_parser(job: Job, job_token: str) -> Dict[str, Any]:
             raise ValueError(f"Unknown job type: {job.name}")
 
 
+@log_process(logger)
 async def process_parser_joboffer(job: Job) -> Dict[str, Any]:
     """Process a job offer."""
-    logger.info(f"Processing job offer {job.id}")
     try:
         chain = RunnableLambda(parseJobOffer)
         res: JobOffer = await chain.ainvoke(job.data)
@@ -43,9 +44,9 @@ async def process_parser_joboffer(job: Job) -> Dict[str, Any]:
         raise ValueError(f"Failed to process job offer: {str(e)}") from e
 
 
+@log_process(logger)
 async def process_parser_scorecard(job: Job) -> Dict[str, Any]:
     """Parse a scorecard from a job offer"""
-    logger.info(f"Parse a scorecard from a job offer, job id: {job.id}")
     try:
         chain = RunnableLambda(parseScorecard)
         res: Scorecard = await chain.ainvoke(job.data)
@@ -55,30 +56,34 @@ async def process_parser_scorecard(job: Job) -> Dict[str, Any]:
         raise ValueError(f"Failed to process job offer: {str(e)}") from e
 
 
+@log_process(logger)
 async def process_matcher(job: Job, job_token: str) -> Dict[str, Any]:
     """Process a matcher job"""
-    logger.info(f"Processing matcher job {job.id}")
     try:
         profile: Profile = parseProfile(job.data["profile"])
         job_offer: JobOffer = JobOffer(**job.data["jobOffer"])
         scorecard: Scorecard = Scorecard(**job.data["scorecard"])
+        analysisId: str = job.data["analysisId"]
         chain = compile_graph()
 
         res: MainGraphState = await chain.ainvoke(
-            {"profile": profile, "job_offer": job_offer, "scorecard": scorecard}
+            {
+                "profile": profile,
+                "job_offer": job_offer,
+                "scorecard": scorecard,
+                "analysisId": analysisId,
+            }
         )
         final_res = {
-            "career_path_analysis": CareerPathAnalysis.json(
-                res["career_path_analysis"]
-            ),
-            "education_analysis": ListScoredCriterion.json(res["education_analysis"]),
-            "experience_analysis": ListScoredCriterion.json(res["experience_analysis"]),
-            "soft_skill_analysis": ListScoredCriterion.json(res["soft_skill_analysis"]),
-            "hard_skill_analysis": ListScoredCriterion.json(res["hard_skill_analysis"]),
-            "language_analysis": ListScoredCriterion.json(res["language_analysis"]),
+            "analysisId": analysisId,
+            "careerPathAnalysis": CareerPathAnalysis.json(res["career_path_analysis"]),
+            "educationAnalysis": ListScoredCriterion.json(res["education_analysis"]),
+            "experienceAnalysis": ListScoredCriterion.json(res["experience_analysis"]),
+            "softSkillAnalysis": ListScoredCriterion.json(res["soft_skill_analysis"]),
+            "hardSkillAnalysis": ListScoredCriterion.json(res["hard_skill_analysis"]),
+            "languageAnalysis": ListScoredCriterion.json(res["language_analysis"]),
         }
         await matcherResultQueue.add("result", final_res)
-        logger.info(f"Finished processing matcher job {job.id}")
     except Exception as e:
         logger.error(f"Error processing job offer {job.id}: {str(e)}", exc_info=True)
         raise ValueError(f"Failed to process job offer: {str(e)}") from e
@@ -101,14 +106,22 @@ async def main():
     parserWorker = Worker("parser", process_parser)
     parserMatcher = Worker("matcher", process_matcher)
 
-    # Wait until the shutdown event is set
-    await shutdown_event.wait()
+    try:
+        # Wait until the shutdown event is set
+        await shutdown_event.wait()
+    finally:
+        # close the workers
+        logger.warning("Cleaning up workers...")
+        await asyncio.gather(parserWorker.close(), parserMatcher.close())
+        logger.warning("Workers shut down successfully.")
 
-    # close the worker
-    logger.warning("Cleaning up worker...")
-    await parserWorker.close()
-    await parserMatcher.close()
-    logger.warning("Worker shut down successfully.")
+        # Close any remaining connections
+        tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+        [task.cancel() for task in tasks]
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Optionally, you can add a small delay to allow for cleanup
+        await asyncio.sleep(1)
 
 
 if __name__ == "__main__":
