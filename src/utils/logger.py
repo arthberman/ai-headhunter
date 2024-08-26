@@ -49,28 +49,32 @@ def log_process(logger: logging.Logger) -> Callable:
 
     def decorator(func):
         async def wrapper(*args, **kwargs):
-            process_name = func.__name__
-            job = args[0] if args else None
-            analysisId = f"analysis id {job.data["analysisId"]}" if hasattr(job, "id") else ""
+            try:
+                process_name = func.__name__
+                job = args[0] if args else None
+                trackId = f"analysis id {job.data['analysisId']}" if job.data.get("analysisId") else f"job id {job.id}"
 
-            logger.info(f"Starting process: {process_name} {analysisId}")
-            start_time = time.time()
-            result = await func(*args, **kwargs)
-            end_time = time.time()
+                logger.info(f"Starting process: {process_name} {trackId}")
+                start_time = time.time()
+                result = await func(*args, **kwargs)
+                end_time = time.time()
 
-            duration_seconds = end_time - start_time
-            minutes = math.floor(duration_seconds / 60)
-            seconds = math.floor(duration_seconds % 60)
+                duration_seconds = end_time - start_time
+                minutes = math.floor(duration_seconds / 60)
+                seconds = math.floor(duration_seconds % 60)
 
-            if minutes > 0:
-                duration_formatted = f"{minutes}m{seconds}s"
-            else:
-                duration_formatted = f"{seconds}s"
+                if minutes > 0:
+                    duration_formatted = f"{minutes}m{seconds}s"
+                else:
+                    duration_formatted = f"{seconds}s"
 
-            logger.info(
-                f"Finished process: {process_name} {analysisId} +{duration_formatted}"
-            )
-            return result
+                logger.info(
+                    f"Finished process: {process_name} {trackId} +{duration_formatted}"
+                )
+                return result
+            except Exception as e:
+                logger.error(f"Error with log_process: {str(e)}", exc_info=True)
+                raise ValueError(f"Error with log_process: {str(e)}") from e
 
         return wrapper
 
