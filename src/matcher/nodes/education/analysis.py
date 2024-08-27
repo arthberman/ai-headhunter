@@ -8,6 +8,10 @@ from utils.format import format_data
 
 
 def node_education_analysis(state: MainGraphState) -> MainGraphState:
+    criteria = filter_criteria_by_type(state.scorecard, ["EDUCATION"])
+    if len(criteria) == 0:
+        return {"education_analysis": None}
+
     prompt = hub.pull("education-analysis")
     db_res = get_knowledge_points(["EDUCATION"])
 
@@ -24,10 +28,7 @@ def node_education_analysis(state: MainGraphState) -> MainGraphState:
                 "certifications": state.profile.certifications,
                 "education_enrichment": state.education_enrichment,
                 "knowledge_points": db_res,
-                "scorecard": filter_criteria_by_type(
-                    state.scorecard,
-                    ["EDUCATION"],
-                ),
+                "scorecard": criteria,
             }
         )
     )

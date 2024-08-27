@@ -71,7 +71,6 @@ def parseProfile(profile: json) -> Profile:
         ProfileProject(
             title=proj["title"],
             description=proj["description"],
-            contributors=proj["contributors"],
             endsAt=datetime.fromisoformat(proj["endsAt"]),
             startsAt=datetime.fromisoformat(proj["startsAt"]),
         )

@@ -22,7 +22,7 @@ from utils.logger import log_process, setup_logger
 warnings.filterwarnings("ignore", category=LangChainBetaWarning)
 
 logger = setup_logger()
-matcherResultQueue = None
+matcherResultQueue = Queue("matcher-results")
 
 
 @log_process(logger)
@@ -89,12 +89,36 @@ async def process_matcher(job: Job, job_token: str) -> Dict[str, Any]:
             "mustHaveScore": res["must_have_score"],
             "importantScore": res["important_score"],
             "niceToHaveMultiplier": res["nice_to_have_multiplier"],
-            "careerPathAnalysis": CareerPathAnalysis.json(res["career_path_analysis"]),
-            "educationAnalysis": ListScoredCriterion.json(res["education_analysis"]),
-            "experienceAnalysis": ListScoredCriterion.json(res["experience_analysis"]),
-            "softSkillAnalysis": ListScoredCriterion.json(res["soft_skill_analysis"]),
-            "hardSkillAnalysis": ListScoredCriterion.json(res["hard_skill_analysis"]),
-            "languageAnalysis": ListScoredCriterion.json(res["language_analysis"]),
+            "careerPathAnalysis": (
+                CareerPathAnalysis.json(res["career_path_analysis"])
+                if res["career_path_analysis"] is not None
+                else None
+            ),
+            "educationAnalysis": (
+                ListScoredCriterion.json(res["education_analysis"])
+                if res["education_analysis"] is not None
+                else None
+            ),
+            "experienceAnalysis": (
+                ListScoredCriterion.json(res["experience_analysis"])
+                if res["experience_analysis"] is not None
+                else None
+            ),
+            "softSkillAnalysis": (
+                ListScoredCriterion.json(res["soft_skill_analysis"])
+                if res["soft_skill_analysis"] is not None
+                else None
+            ),
+            "hardSkillAnalysis": (
+                ListScoredCriterion.json(res["hard_skill_analysis"])
+                if res["hard_skill_analysis"] is not None
+                else None
+            ),
+            "languageAnalysis": (
+                ListScoredCriterion.json(res["language_analysis"])
+                if res["language_analysis"] is not None
+                else None
+            ),
         }
         await matcherResultQueue.add("result", final_res)
     except Exception as e:
@@ -118,7 +142,6 @@ async def main():
     try:
         parserWorker = Worker("parser", process_parser)
         parserMatcher = Worker("matcher", process_matcher)
-        matcherResultQueue = Queue("matcher-results")
         logger.info("up and running")
     except Exception as e:
         logger.error(f"Error creating workers: {str(e)}", exc_info=True)

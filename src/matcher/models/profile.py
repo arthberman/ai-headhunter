@@ -43,9 +43,6 @@ class ProfileHonor(BaseModel):
 class ProfileProject(BaseModel):
     title: Annotated[Optional[str], Field(description="Project title")]
     description: Annotated[Optional[str], Field(description="Project description")]
-    contributors: Annotated[
-        Optional[Dict[str, Any]], Field(description="Project contributors")
-    ]
     endsAt: Annotated[Optional[datetime], Field(description="Project end date")]
     startsAt: Annotated[Optional[datetime], Field(description="Project start date")]
 

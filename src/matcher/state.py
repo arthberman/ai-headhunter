@@ -16,7 +16,7 @@ class MainGraphState(BaseModel):
     profile: Profile = Field(...)
     job_offer: JobOffer = Field(...)
     scorecard: Scorecard = Field(...)
-    analysisId: str = Field(...)
+    analysisId: Optional[str] = Field(default=None)
 
     education_enrichment: Annotated[List[SchoolInfo], operator.add]
     experience_enrichment: Annotated[List[CompanyInfo], operator.add]

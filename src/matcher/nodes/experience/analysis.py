@@ -8,6 +8,11 @@ from utils.format import format_data
 
 
 def node_experience_analysis(state: MainGraphState) -> MainGraphState:
+    criteria = filter_criteria_by_type(state.scorecard, ["EXPERIENCE"])
+    if len(criteria) == 0:
+        return {"experience_analysis": None}
+    
+
     prompt = hub.pull("experience-analysis")
     db_res = get_knowledge_points(["EXPERIENCE"])
 
@@ -25,10 +30,7 @@ def node_experience_analysis(state: MainGraphState) -> MainGraphState:
                 "volunteerings": state.profile.volunteerings,
                 "experience_enrichment": state.experience_enrichment,
                 "knowledge_points": db_res,
-                "scorecard": filter_criteria_by_type(
-                    state.scorecard,
-                    ["EXPERIENCE"],
-                ),
+                "scorecard": criteria,
             }
         )
     )

@@ -20,58 +20,77 @@ class CriteriaType(str, Enum):
     ADDITIONAL_QUALIFICATION = "ADDITIONAL_QUALIFICATION"
 
 
-class Criterion(BaseModel):
+class BaseCriterion(BaseModel):
     id: Optional[str] = Field(description="Unique identifier for the criterion")
     description: str = Field(..., description="Detailed description of the criterion")
-    type: CriteriaType = Field(..., description="Type of the criterion")
-    weight: Optional[float] = Field(
-        gt=0,
-        le=1,
-        description="Weight of the criterion (required for MUST_HAVE and IMPORTANT)",
-    )
-    compensationDescription: Optional[str] = Field(
-        description="Description of how compensation is applied (required for MUST_HAVE)",
-    )
-    compensationScore: Optional[float] = Field(
-        ge=0,
-        le=1,
-        description="Score applied for compensation (required for MUST_HAVE)",
-    )
-    maxBonusPoint: Optional[float] = Field(
-        ge=0,
-        description="Maximum bonus points for this criterion (required for NICE_TO_HAVE)",
+    type: CriteriaType = Field(
+        ...,
+        description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION)",
     )
 
 
-class ScorecardSection(BaseModel):
-    importanceLevel: ImportanceLevel = Field(
-        ..., description="Importance level of the section"
+class MustHaveCriterion(BaseCriterion):
+    weight: float = Field(
+        ...,
+        description="Weight of the criterion. Must be greater than 0 and less than or equal to 1.",
     )
-    criteria: List[Criterion] = Field(
-        ..., description="List of criteria in this section"
+    compensationDescription: str = Field(
+        ..., description="Description of how compensation is applied"
+    )
+    compensationScore: float = Field(
+        ...,
+        description="Score applied for compensation. Must be greater than or equal to 0 and less than or equal to 1.",
+    )
+
+
+class ImportantCriterion(BaseCriterion):
+    weight: float = Field(
+        ...,
+        description="Weight of the criterion. Must be greater than 0 and less than or equal to 1.",
+    )
+
+
+class NiceToHaveCriterion(BaseCriterion):
+    maxBonusPoint: float = Field(
+        ...,
+        description="Maximum bonus points for this criterion. Must be greater than or equal to 0.",
+    )
+
+
+class MustHaveCriteria(BaseModel):
+    criteria: List[MustHaveCriterion] = Field(
+        ..., description="List of MUST_HAVE criteria"
     )
 
     @validator("criteria")
-    def validate_criteria(cls, v, values):
-        importanceLevel = values.get("importanceLevel")
-        if importanceLevel in [ImportanceLevel.MUST_HAVE, ImportanceLevel.IMPORTANT]:
-            for criterion in v:
-                if criterion.weight is None:
-                    raise ValueError(
-                        f"Weight is required for criteria in {importanceLevel} section"
-                    )
-            totalWeight = sum(criterion.weight for criterion in v)
-            if not 0.99 <= totalWeight <= 1.01:
-                raise ValueError(
-                    f"Sum of criteria weights within {importanceLevel} section must be 1, got {totalWeight}"
-                )
-        elif importanceLevel == ImportanceLevel.NICE_TO_HAVE:
-            for criterion in v:
-                if criterion.maxBonusPoint is None:
-                    raise ValueError(
-                        "maxBonusPoint is required for criteria in NICE_TO_HAVE section"
-                    )
+    def validate_criteria(cls, v):
+        totalWeight = sum(criterion.weight for criterion in v)
+        if not 0.99 <= totalWeight <= 1.01:
+            raise ValueError(
+                f"Sum of MUST_HAVE criteria weights must be 1, got {totalWeight}"
+            )
         return v
+
+
+class ImportantCriteria(BaseModel):
+    criteria: List[ImportantCriterion] = Field(
+        ..., description="List of IMPORTANT criteria"
+    )
+
+    @validator("criteria")
+    def validate_criteria(cls, v):
+        totalWeight = sum(criterion.weight for criterion in v)
+        if not 0.99 <= totalWeight <= 1.01:
+            raise ValueError(
+                f"Sum of IMPORTANT criteria weights must be 1, got {totalWeight}"
+            )
+        return v
+
+
+class NiceToHaveCriteria(BaseModel):
+    criteria: List[NiceToHaveCriterion] = Field(
+        ..., description="List of NICE_TO_HAVE criteria"
+    )
 
 
 class Scorecard(BaseModel):
@@ -79,26 +98,17 @@ class Scorecard(BaseModel):
     jobOfferId: Optional[str] = Field(..., description="ID of the associated job offer")
 
     importantWeight: float = Field(
-        0.3, ge=0, le=1, description="Weight for the IMPORTANT section"
+        description="Weight for the IMPORTANT section. Must be between 0 and 1 inclusive."
     )
     mustHaveWeight: float = Field(
-        0.7, ge=0, le=1, description="Weight for the MUST_HAVE section"
+        description="Weight for the MUST_HAVE section. Must be between 0 and 1 inclusive."
     )
 
-    sections: List[ScorecardSection] = Field(
-        ..., description="List of sections in the scorecard"
+    mustHaveCriteria: MustHaveCriteria = Field(..., description="MUST_HAVE criteria")
+    importantCriteria: ImportantCriteria = Field(..., description="IMPORTANT criteria")
+    niceToHaveCriteria: NiceToHaveCriteria = Field(
+        ..., description="NICE_TO_HAVE criteria"
     )
-
-    @validator("sections")
-    def validate_sections(cls, v):
-        importanceLevels = [section.importanceLevel for section in v]
-        requiredLevels = set(ImportanceLevel)
-        if not requiredLevels.issubset(set(importanceLevels)):
-            missingLevels = requiredLevels - set(importanceLevels)
-            raise ValueError(
-                f"Scorecard is missing sections: {', '.join(missingLevels)}"
-            )
-        return v
 
 
 class ScoredCriterion(BaseModel):
@@ -121,12 +131,15 @@ def load_scorecard_from_json(filePath: str) -> Scorecard:
 
 def filter_criteria_by_type(
     scorecard: Scorecard, criteriaTypes: List[CriteriaType]
-) -> List[Criterion]:
+) -> List[Union[MustHaveCriterion, ImportantCriterion, NiceToHaveCriterion]]:
     filteredCriteria = []
 
-    for section in scorecard.sections:
-        for criterion in section.criteria:
-            if criterion.type in criteriaTypes:
-                filteredCriteria.append(criterion)
+    for criterion in (
+        scorecard.mustHaveCriteria.criteria
+        + scorecard.importantCriteria.criteria
+        + scorecard.niceToHaveCriteria.criteria
+    ):
+        if criterion.type in criteriaTypes:
+            filteredCriteria.append(criterion)
 
     return filteredCriteria
