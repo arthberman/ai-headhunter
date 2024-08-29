@@ -1,15 +1,15 @@
 import asyncio
-import signal
 import warnings
-from parser.joboffer import parseJobOffer
-from parser.profile import parseProfile
-from parser.scorecard import parseScorecard
 from typing import Any, Dict
 
-from bullmq import Job, Queue, Worker
+from temporalio import activity, worker
+from temporalio.client import Client
 from langchain_core._api.beta_decorator import LangChainBetaWarning
 from langchain_core.runnables import RunnableLambda
 
+from parser.joboffer import parseJobOffer
+from parser.scorecard import parseScorecard
+from parser.profile import parseProfile
 from matcher.graph import compile_graph
 from matcher.models.career_path import CareerPathAnalysis
 from matcher.models.job_offer import JobOffer
@@ -22,53 +22,54 @@ from utils.logger import log_process, setup_logger
 warnings.filterwarnings("ignore", category=LangChainBetaWarning)
 
 logger = setup_logger()
-matcherResultQueue = Queue("matcher-results")
 
 
+@activity.defn(name="hello_world")
+async def hello_world(name: str) -> str:
+    """A simple activity for testing purposes."""
+    message = f"Hello, {name}!"
+    print(message)
+    return message
+
+
+# ... (keep the existing activity definitions) ...
+
+
+@activity.defn(name="process_parser_joboffer")
 @log_process(logger)
-async def process_parser(job: Job, job_token: str) -> Dict[str, Any]:
-    match job.name:
-        case "joboffer":
-            return await process_parser_joboffer(job)
-        case "scorecard":
-            return await process_parser_scorecard(job)
-        case _:
-            logger.error(f"Unknown job type: {job.name}")
-            raise ValueError(f"Unknown job type: {job.name}")
-
-
-@log_process(logger)
-async def process_parser_joboffer(job: Job) -> Dict[str, Any]:
+async def process_parser_joboffer(job_data: Dict[str, Any]) -> Dict[str, Any]:
     """Process a job offer."""
     try:
         chain = RunnableLambda(parseJobOffer)
-        res: JobOffer = await chain.ainvoke(job.data)
+        res: JobOffer = await chain.ainvoke(job_data)
         return res.json()
     except Exception as e:
-        logger.error(f"Error processing job offer {job.id}: {str(e)}", exc_info=True)
+        logger.error(f"Error processing job offer: {str(e)}", exc_info=True)
         raise ValueError(f"Failed to process job offer: {str(e)}") from e
 
 
+@activity.defn(name="process_parser_scorecard")
 @log_process(logger)
-async def process_parser_scorecard(job: Job) -> Dict[str, Any]:
+async def process_parser_scorecard(job_data: Dict[str, Any]) -> Dict[str, Any]:
     """Parse a scorecard from a job offer"""
     try:
         chain = RunnableLambda(parseScorecard)
-        res: Scorecard = await chain.ainvoke(job.data)
+        res: Scorecard = await chain.ainvoke(job_data)
         return res.json()
     except Exception as e:
-        logger.error(f"Error processing job offer {job.id}: {str(e)}", exc_info=True)
-        raise ValueError(f"Failed to process job offer: {str(e)}") from e
+        logger.error(f"Error processing scorecard: {str(e)}", exc_info=True)
+        raise ValueError(f"Failed to process scorecard: {str(e)}") from e
 
 
+@activity.defn(name="process_matcher")
 @log_process(logger)
-async def process_matcher(job: Job, job_token: str) -> Dict[str, Any]:
+async def process_matcher(job_data: Dict[str, Any]) -> Dict[str, Any]:
     """Process a matcher job"""
     try:
-        profile: Profile = parseProfile(job.data["profile"])
-        job_offer: JobOffer = JobOffer(**job.data["jobOffer"])
-        scorecard: Scorecard = Scorecard(**job.data["scorecard"])
-        analysisId: str = job.data["analysisId"]
+        profile: Profile = parseProfile(job_data["profile"])
+        job_offer: JobOffer = JobOffer(**job_data["jobOffer"])
+        scorecard: Scorecard = Scorecard(**job_data["scorecard"])
+        analysisId: str = job_data["analysisId"]
         chain = compile_graph()
 
         res: MainGraphState = await chain.ainvoke(
@@ -83,7 +84,7 @@ async def process_matcher(job: Job, job_token: str) -> Dict[str, Any]:
                 "run_name": f"matcher-{job_offer.company.lower().replace(' ', '-')}-{job_offer.title.lower().replace(' ', '-')}",
             },
         )
-        final_res = {
+        return {
             "analysisId": analysisId,
             "finalScore": res["final_score"],
             "mustHaveScore": res["must_have_score"],
@@ -120,43 +121,28 @@ async def process_matcher(job: Job, job_token: str) -> Dict[str, Any]:
                 else None
             ),
         }
-        await matcherResultQueue.add("result", final_res)
     except Exception as e:
-        logger.error(f"Error processing job offer {job.id}: {str(e)}", exc_info=True)
-        raise ValueError(f"Failed to process job offer: {str(e)}") from e
+        logger.error(f"Error processing matcher job: {str(e)}", exc_info=True)
+        raise ValueError(f"Failed to process matcher job: {str(e)}") from e
 
 
-async def main():
-    # Create an event that will be triggered for shutdown
-    shutdown_event = asyncio.Event()
+async def run_worker():
+    client = await Client.connect("localhost:7233")
 
-    def signal_handler(signal, frame):
-        logger.warning("Signal received, shutting down.")
-        shutdown_event.set()
-
-    # Assign signal handlers to SIGTERM and SIGINT
-    signal.signal(signal.SIGTERM, signal_handler)
-    signal.signal(signal.SIGINT, signal_handler)
-
-    # Feel free to remove the connection parameter, if your redis runs on localhost
-    try:
-        parserWorker = Worker("parser", process_parser)
-        parserMatcher = Worker("matcher", process_matcher)
-        logger.info("up and running")
-    except Exception as e:
-        logger.error(f"Error creating workers: {str(e)}", exc_info=True)
-        raise ValueError(f"Failed to create workers: {str(e)}") from e
-
-    # Wait until the shutdown event is set
-    await shutdown_event.wait()
-
-    # close the worker
-    logger.warning("Cleaning up workers...")
-    await parserWorker.close()
-    await parserMatcher.close()
-    await matcherResultQueue.close()
-    logger.warning("Workers shut down successfully.")
+    # Run the worker
+    async with worker.Worker(
+        client,
+        task_queue="ai-processing",
+        activities=[
+            hello_world,
+            process_parser_joboffer,
+            process_parser_scorecard,
+            process_matcher,
+        ],
+    ):
+        logger.info("Worker started. Ctrl+C to exit.")
+        await asyncio.Future()  # Run forever
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(run_worker())
