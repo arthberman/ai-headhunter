@@ -9,7 +9,7 @@ from utils.format import format_data
 def node_career_path_analysis(state: MainGraphState) -> MainGraphState:
     prompt = hub.pull("career-path-analysis")
     model = init_chat_model(
-        model="gpt-4o-mini", model_provider="openai", temperature=0
+        model="claude-3-5-sonnet-20240620", model_provider="anthropic", temperature=0
     )
     chain = prompt | model.with_structured_output(CareerPathAnalysis)
 
@@ -26,5 +26,5 @@ def node_career_path_analysis(state: MainGraphState) -> MainGraphState:
             }
         )
     )
-    
+
     return {"career_path_analysis": res}
