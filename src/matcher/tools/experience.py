@@ -42,7 +42,9 @@ class CompanyDatabase:
 
     def get_company_info(self, name: str, linkedin_url: str):
         results = self.vector_store.similarity_search(
-            name, k=1, filter={"linkedin_url": {"$eq": linkedin_url}}
+            name,
+            k=1,
+            filter={"linkedin_url": {"$eq": linkedin_url}, "name": {"$eq": name}},
         )
 
         if results:
@@ -63,7 +65,10 @@ class CompanyDatabase:
 
     def update_company_info(self, company_info: CompanyInfo):
         self.vector_store.delete(
-            filter={"linkedin_url": {"$eq": company_info.linkedin_url}}
+            filter={
+                "linkedin_url": {"$eq": company_info.linkedin_url},
+                "name": {"$eq": company_info.name},
+            }
         )
         document = self._create_company_document(company_info)
         self.vector_store.add_documents([document])
@@ -71,6 +76,7 @@ class CompanyDatabase:
 
 # Initialize database
 db = CompanyDatabase()
+
 
 # Define functions
 def get_company(name: str, linkedin_url: str) -> CompanyInfo:
