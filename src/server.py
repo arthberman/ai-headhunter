@@ -1,4 +1,5 @@
 import asyncio
+import signal
 import warnings
 from typing import Any, Dict
 
@@ -16,7 +17,7 @@ from matcher.models.job_offer import JobOffer
 from matcher.models.profile import Profile
 from matcher.models.scorecard import ListScoredCriterion, Scorecard
 from matcher.state import MainGraphState
-from utils.logger import log_process, setup_logger
+from utils.logger import setup_logger
 
 # Ignore LangChainBetaWarning
 warnings.filterwarnings("ignore", category=LangChainBetaWarning)
@@ -32,29 +33,24 @@ async def hello_world(name: str) -> str:
     return message
 
 
-# ... (keep the existing activity definitions) ...
-
-
-@activity.defn(name="process_parser_joboffer")
-@log_process(logger)
-async def process_parser_joboffer(job_data: Dict[str, Any]) -> Dict[str, Any]:
+@activity.defn(name="parse_joboffer")
+async def parse_joboffer(raw_job_posting: str) -> Dict[str, Any]:
     """Process a job offer."""
     try:
         chain = RunnableLambda(parseJobOffer)
-        res: JobOffer = await chain.ainvoke(job_data)
+        res: JobOffer = await chain.ainvoke(raw_job_posting)
         return res.json()
     except Exception as e:
         logger.error(f"Error processing job offer: {str(e)}", exc_info=True)
         raise ValueError(f"Failed to process job offer: {str(e)}") from e
 
 
-@activity.defn(name="process_parser_scorecard")
-@log_process(logger)
-async def process_parser_scorecard(job_data: Dict[str, Any]) -> Dict[str, Any]:
+@activity.defn(name="parse_scorecard")
+async def parse_scorecard(raw_job_posting: str) -> Dict[str, Any]:
     """Parse a scorecard from a job offer"""
     try:
         chain = RunnableLambda(parseScorecard)
-        res: Scorecard = await chain.ainvoke(job_data)
+        res: Scorecard = await chain.ainvoke(raw_job_posting)
         return res.json()
     except Exception as e:
         logger.error(f"Error processing scorecard: {str(e)}", exc_info=True)
@@ -62,7 +58,6 @@ async def process_parser_scorecard(job_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 @activity.defn(name="process_matcher")
-@log_process(logger)
 async def process_matcher(job_data: Dict[str, Any]) -> Dict[str, Any]:
     """Process a matcher job"""
     try:
@@ -128,20 +123,34 @@ async def process_matcher(job_data: Dict[str, Any]) -> Dict[str, Any]:
 
 async def run_worker():
     client = await Client.connect("localhost:7233")
+    task_queue = "repio-intelligence"
+
+    # Create an event to signal shutdown
+    stop_event = asyncio.Event()
+
+    def shutdown():
+        logger.info("Shutting down worker...")
+        stop_event.set()
+
+    # Register signal handlers for graceful shutdown
+    loop = asyncio.get_running_loop()
+    loop.add_signal_handler(signal.SIGINT, shutdown)
+    loop.add_signal_handler(signal.SIGTERM, shutdown)
 
     # Run the worker
     async with worker.Worker(
         client,
-        task_queue="ai-processing",
+        task_queue=task_queue,
         activities=[
             hello_world,
-            process_parser_joboffer,
-            process_parser_scorecard,
+            parse_joboffer,
+            parse_scorecard,
             process_matcher,
         ],
     ):
-        logger.info("Worker started. Ctrl+C to exit.")
-        await asyncio.Future()  # Run forever
+        logger.info(f"Worker started on {task_queue} task queue. Ctrl+C to exit.")
+        await stop_event.wait()  # Wait until the stop event is set
+        logger.info("Worker stopped.")
 
 
 if __name__ == "__main__":
