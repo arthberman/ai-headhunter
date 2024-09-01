@@ -72,6 +72,7 @@ class CompanyDatabase:
 # Initialize database
 db = CompanyDatabase()
 
+
 # Define functions
 def get_company(name: str, linkedin_url: str) -> CompanyInfo:
     """Query the company database for information about a specific company."""

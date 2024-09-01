@@ -11,13 +11,12 @@ def node_experience_analysis(state: MainGraphState) -> MainGraphState:
     criteria = filter_criteria_by_type(state.scorecard, ["EXPERIENCE"])
     if len(criteria) == 0:
         return {"experience_analysis": None}
-    
 
     prompt = hub.pull("experience-analysis")
     db_res = get_knowledge_points(["EXPERIENCE"])
 
     model = init_chat_model(
-        model="gpt-4o-mini", model_provider="openai", temperature=0
+        model="claude-3-5-sonnet-20240620", model_provider="anthropic", temperature=0
     ).with_structured_output(ListScoredCriterion)
 
     chain = prompt | model

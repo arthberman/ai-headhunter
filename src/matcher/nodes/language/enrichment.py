@@ -17,7 +17,7 @@ class StructuredOutput(BaseModel):
 def node_language_enrichment(state: MainGraphState) -> MainGraphState:
     prompt = hub.pull("language-enrichment")
     model = init_chat_model(
-        model="gpt-4o-mini", model_provider="openai", temperature=0
+        model="claude-3-5-sonnet-20240620", model_provider="anthropic", temperature=0
     )
     chain = prompt | model.with_structured_output(StructuredOutput)
     res = chain.invoke({"profile": state.profile})
