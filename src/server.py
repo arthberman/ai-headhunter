@@ -8,12 +8,12 @@ from temporalio.client import Client
 from langchain_core._api.beta_decorator import LangChainBetaWarning
 from langchain_core.runnables import RunnableLambda
 
-from parser.joboffer import parseJobOffer
-from parser.scorecard import parseScorecard
-from parser.profile import parseProfile
+from parser.job_posting import parse_job_posting
+from parser.scorecard import parse_scorecard
+from parser.profile import parse_profile
 from matcher.graph import compile_graph
 from matcher.models.career_path import CareerPathAnalysis
-from matcher.models.job_offer import JobOffer
+from matcher.models.job_posting import JobPosting
 from matcher.models.profile import Profile
 from matcher.models.scorecard import ListScoredCriterion, Scorecard
 from matcher.state import MainGraphState
@@ -25,31 +25,23 @@ warnings.filterwarnings("ignore", category=LangChainBetaWarning)
 logger = setup_logger()
 
 
-@activity.defn(name="hello_world")
-async def hello_world(name: str) -> str:
-    """A simple activity for testing purposes."""
-    message = f"Hello, {name}!"
-    print(message)
-    return message
-
-
-@activity.defn(name="parse_joboffer")
-async def parse_joboffer(raw_job_posting: str) -> Dict[str, Any]:
-    """Process a job offer."""
+@activity.defn(name="parse_job_posting")
+async def activity_parse_job_posting(raw_job_posting: str) -> Dict[str, Any]:
+    """Process a job posting."""
     try:
-        chain = RunnableLambda(parseJobOffer)
-        res: JobOffer = await chain.ainvoke(raw_job_posting)
+        chain = RunnableLambda(parse_job_posting)
+        res: JobPosting = await chain.ainvoke(raw_job_posting)
         return res.json()
     except Exception as e:
-        logger.error(f"Error processing job offer: {str(e)}", exc_info=True)
-        raise ValueError(f"Failed to process job offer: {str(e)}") from e
+        logger.error(f"Error processing job posting: {str(e)}", exc_info=True)
+        raise ValueError(f"Failed to process job posting: {str(e)}") from e
 
 
 @activity.defn(name="parse_scorecard")
-async def parse_scorecard(raw_job_posting: str) -> Dict[str, Any]:
-    """Parse a scorecard from a job offer"""
+async def activity_parse_scorecard(raw_job_posting: str) -> Dict[str, Any]:
+    """Parse a scorecard from a job posting"""
     try:
-        chain = RunnableLambda(parseScorecard)
+        chain = RunnableLambda(parse_scorecard)
         res: Scorecard = await chain.ainvoke(raw_job_posting)
         return res.json()
     except Exception as e:
@@ -58,11 +50,11 @@ async def parse_scorecard(raw_job_posting: str) -> Dict[str, Any]:
 
 
 @activity.defn(name="process_matcher")
-async def process_matcher(job_data: Dict[str, Any]) -> Dict[str, Any]:
+async def activity_process_matcher(job_data: Dict[str, Any]) -> Dict[str, Any]:
     """Process a matcher job"""
     try:
-        profile: Profile = parseProfile(job_data["profile"])
-        job_offer: JobOffer = JobOffer(**job_data["jobOffer"])
+        profile: Profile = parse_profile(job_data["profile"])
+        jobPosting: JobPosting = JobPosting(**job_data["jobPosting"])
         scorecard: Scorecard = Scorecard(**job_data["scorecard"])
         analysisId: str = job_data["analysisId"]
         chain = compile_graph()
@@ -70,13 +62,13 @@ async def process_matcher(job_data: Dict[str, Any]) -> Dict[str, Any]:
         res: MainGraphState = await chain.ainvoke(
             {
                 "profile": profile,
-                "job_offer": job_offer,
+                "jobPosting": jobPosting,
                 "scorecard": scorecard,
                 "analysisId": analysisId,
             },
             config={
                 "run_id": analysisId,
-                "run_name": f"matcher-{job_offer.company.lower().replace(' ', '-')}-{job_offer.title.lower().replace(' ', '-')}",
+                "run_name": f"matcher-{jobPosting.company.lower().replace(' ', '-')}-{profile.linkedin_id.lower().replace(' ', '-')}",
             },
         )
         return {
@@ -123,7 +115,8 @@ async def process_matcher(job_data: Dict[str, Any]) -> Dict[str, Any]:
 
 async def run_worker():
     client = await Client.connect("localhost:7233")
-    task_queue = "repio-intelligence"
+    task_queue_matcher = "repio-intelligence-matcher"
+    task_queue_parser = "repio-intelligence-parser"
 
     # Create an event to signal shutdown
     stop_event = asyncio.Event()
@@ -137,20 +130,34 @@ async def run_worker():
     loop.add_signal_handler(signal.SIGINT, shutdown)
     loop.add_signal_handler(signal.SIGTERM, shutdown)
 
-    # Run the worker
-    async with worker.Worker(
-        client,
-        task_queue=task_queue,
-        activities=[
-            hello_world,
-            parse_joboffer,
-            parse_scorecard,
-            process_matcher,
-        ],
+    # Run workers
+    async with (
+        worker.Worker(
+            client,
+            task_queue=task_queue_matcher,
+            activities=[
+                activity_process_matcher,
+            ],
+            max_task_queue_activities_per_second=5 / 60,
+        ) as worker_1,
+        worker.Worker(
+            client,
+            task_queue=task_queue_parser,
+            activities=[
+                activity_parse_job_posting,
+                activity_parse_scorecard,  # You can add different activities for the second worker if needed
+            ],
+            max_task_queue_activities_per_second=10 / 60,
+        ) as worker_2,
     ):
-        logger.info(f"Worker started on {task_queue} task queue. Ctrl+C to exit.")
+        logger.info(
+            f"Worker 1 started on {task_queue_matcher} task queue. Ctrl+C to exit."
+        )
+        logger.info(
+            f"Worker 2 started on {task_queue_parser} task queue. Ctrl+C to exit."
+        )
         await stop_event.wait()  # Wait until the stop event is set
-        logger.info("Worker stopped.")
+        logger.info("Workers stopped.")
 
 
 if __name__ == "__main__":

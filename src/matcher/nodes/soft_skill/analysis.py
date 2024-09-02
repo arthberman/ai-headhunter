@@ -11,7 +11,7 @@ def node_soft_skill_analysis(state: MainGraphState) -> MainGraphState:
     criteria = filter_criteria_by_type(state.scorecard, ["SOFT_SKILL"])
     if len(criteria) == 0:
         return {"soft_skill_analysis": None}
-    
+
     prompt = hub.pull("soft-skill-analysis")
     db_res = get_knowledge_points(["SOFT_SKILL"])
 

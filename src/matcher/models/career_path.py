@@ -18,7 +18,7 @@ class CareerPathAnalysis(BaseModel):
     explanation: str = Field(
         ...,
         description="A detailed explanation of the relevance score and overall analysis, including reasoning behind the logical_move determination."
-        "Detail how the job offer aligns with or deviates from the expected career progression for this profile.",
+        "Detail how the job posting aligns with or deviates from the expected career progression for this profile.",
     )
 
     careerImpact: str = Field(

@@ -27,19 +27,27 @@ class BaseCriterion(BaseModel):
         ...,
         description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION)",
     )
+    guidelines: Optional[List[str]] = Field(
+        description=f"List of specific, actionable instructions for evaluating the criterion based on a candidate's resume or LinkedIn profile."
+        "Each guideline should provide clear direction on what to look for in these documents, such as specific experiences, skills, achievements, prestige that indicate the candidate meets this criterion."
+        # "Guidelines should be designed to be easily applicable when reviewing written professional summaries, without requiring additional information beyond what's typically found in a resume or LinkedIn profile."
+    )
+    examples_positive: Optional[List[str]] = Field(
+        description="List of examples that clearly meet or exceed the criterion, illustrating ideal candidate profiles",
+    )
+
+    examples_negative: Optional[List[str]] = Field(
+        description="List of examples that do not meet the criterion, illustrating profiles that fall short of the requirement",
+    )
+    examples_borderline: Optional[List[str]] = Field(
+        description="List of examples that partially meet the criterion, illustrating profiles that are on the edge of acceptability",
+    )
 
 
 class MustHaveCriterion(BaseCriterion):
     weight: float = Field(
         ...,
         description="Weight of the criterion. Must be greater than 0 and less than or equal to 1.",
-    )
-    compensationDescription: str = Field(
-        ..., description="Description of how compensation is applied"
-    )
-    compensationScore: float = Field(
-        ...,
-        description="Score applied for compensation. Must be greater than or equal to 0 and less than or equal to 1.",
     )
 
 
@@ -95,7 +103,9 @@ class NiceToHaveCriteria(BaseModel):
 
 class Scorecard(BaseModel):
     id: Optional[str] = Field(description="Unique identifier for the scorecard")
-    jobOfferId: Optional[str] = Field(..., description="ID of the associated job offer")
+    jobPostingId: Optional[str] = Field(
+        ..., description="ID of the associated job posting"
+    )
 
     importantWeight: float = Field(
         description="Weight for the IMPORTANT section. Must be between 0 and 1 inclusive."
