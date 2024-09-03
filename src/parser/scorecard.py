@@ -22,13 +22,9 @@ class CriterionEnrichment(BaseModel):
         ...,
         description="List of examples that do not meet the criterion, illustrating profiles that fall short of the requirement",
     )
-    examples_borderline: List[str] = Field(
-        ...,
-        description="List of examples that partially meet the criterion, illustrating profiles that are on the edge of acceptability",
-    )
 
 
-def parse_scorecard(job_posting: JobPosting) -> Scorecard:
+def parse_scorecard(raw_job_posting: str) -> Scorecard:
     model = init_chat_model(
         model="gpt-4o-2024-08-06",
         model_provider="openai",
@@ -38,22 +34,23 @@ def parse_scorecard(job_posting: JobPosting) -> Scorecard:
     prompt = hub.pull("parser-scorecard")
 
     chain = prompt | structured_model
-    output: Scorecard = chain.invoke(job_posting)
+    output: Scorecard = chain.invoke(raw_job_posting)
 
     for criterion in output.mustHaveCriteria.criteria:
-        enriched_criterion = enrich_criterion(criterion.description)
+        enriched_criterion = enrich_criterion(raw_job_posting, criterion.description)
         criterion.guidelines = enriched_criterion.guidelines
         criterion.examples_positive = enriched_criterion.examples_positive
         criterion.examples_negative = enriched_criterion.examples_negative
-        criterion.examples_borderline = enriched_criterion.examples_borderline
 
     return output
 
 
-def enrich_criterion(description: str) -> CriterionEnrichment:
+def enrich_criterion(
+    raw_job_posting: str, criterion_description: str
+) -> CriterionEnrichment:
     model = init_chat_model(
-        model="gpt-4o-mini",
-        model_provider="openai",
+        model="claude-3-5-sonnet-20240620",
+        model_provider="anthropic",
         temperature=0,
     )
 
@@ -61,6 +58,11 @@ def enrich_criterion(description: str) -> CriterionEnrichment:
     structured_model = model.with_structured_output(CriterionEnrichment)
 
     chain = prompt | structured_model
-    output = chain.invoke(description)
+    output = chain.invoke(
+        {
+            "criterion_description": criterion_description,
+            "job_posting": raw_job_posting,
+        }
+    )
 
     return output

@@ -16,7 +16,7 @@ def node_soft_skill_analysis(state: MainGraphState) -> MainGraphState:
     db_res = get_knowledge_points(["SOFT_SKILL"])
 
     model = init_chat_model(
-        model="gpt-4o-mini", model_provider="openai", temperature=0
+        model="claude-3-5-sonnet-20240620", model_provider="anthropic", temperature=0
     ).with_structured_output(ListScoredCriterion)
 
     chain = prompt | model

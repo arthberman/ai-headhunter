@@ -73,7 +73,8 @@ def compile_graph() -> CompiledGraph:
     )
     workflow.add_conditional_edges(
         "node_career_path_analysis",
-        lambda state: state.career_path_analysis.logicalMove,
+        # lambda state: state.career_path_analysis.logicalMove,
+        lambda state: True,
         {
             True: "analysis",
             False: "analysis",

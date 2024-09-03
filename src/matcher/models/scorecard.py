@@ -30,17 +30,14 @@ class BaseCriterion(BaseModel):
     guidelines: Optional[List[str]] = Field(
         description=f"List of specific, actionable instructions for evaluating the criterion based on a candidate's resume or LinkedIn profile."
         "Each guideline should provide clear direction on what to look for in these documents, such as specific experiences, skills, achievements, prestige that indicate the candidate meets this criterion."
-        # "Guidelines should be designed to be easily applicable when reviewing written professional summaries, without requiring additional information beyond what's typically found in a resume or LinkedIn profile."
+        "Guidelines should be designed to be easily applicable when reviewing written professional summaries, without requiring additional information beyond what's typically found in a resume or LinkedIn profile."
     )
     examples_positive: Optional[List[str]] = Field(
-        description="List of examples that clearly meet or exceed the criterion, illustrating ideal candidate profiles",
+        description="List of examples that meet, illustrating ideal candidate profiles",
     )
 
     examples_negative: Optional[List[str]] = Field(
         description="List of examples that do not meet the criterion, illustrating profiles that fall short of the requirement",
-    )
-    examples_borderline: Optional[List[str]] = Field(
-        description="List of examples that partially meet the criterion, illustrating profiles that are on the edge of acceptability",
     )
 
 
