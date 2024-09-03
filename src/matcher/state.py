@@ -30,6 +30,8 @@ class MainGraphState(BaseModel):
     soft_skill_analysis: Optional[ListScoredCriterion]
     hard_skill_analysis: Optional[ListScoredCriterion]
     language_analysis: Optional[ListScoredCriterion]
+    industry_knowledge_analysis: Optional[ListScoredCriterion]
+    additional_qualification_analysis: Optional[ListScoredCriterion]
 
     must_have_score: Optional[float] = Field(default=None, ge=0, le=1)
     important_score: Optional[float] = Field(default=None, ge=0, le=1)

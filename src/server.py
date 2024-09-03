@@ -107,6 +107,16 @@ async def activity_process_matcher(job_data: Dict[str, Any]) -> Dict[str, Any]:
                 if res["language_analysis"] is not None
                 else None
             ),
+            "industryKnowledgeAnalysis": (
+                ListScoredCriterion.json(res["industry_knowledge_analysis"])
+                if res["industry_knowledge_analysis"] is not None
+                else None
+            ),
+            "additionalQualificationAnalysis": (
+                ListScoredCriterion.json(res["additional_qualification_analysis"])
+                if res["additional_qualification_analysis"] is not None
+                else None
+            ),
         }
     except Exception as e:
         logger.error(f"Error processing matcher job: {str(e)}", exc_info=True)

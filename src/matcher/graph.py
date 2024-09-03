@@ -11,6 +11,10 @@ from matcher.nodes.hard_skill.analysis import node_hard_skill_analysis
 from matcher.nodes.language.analysis import node_language_analysis
 from matcher.nodes.language.enrichment import node_language_enrichment
 from matcher.nodes.soft_skill.analysis import node_soft_skill_analysis
+from matcher.nodes.industry_knowledge.analysis import node_industry_knowledge_analysis
+from matcher.nodes.additional_qualification.analysis import (
+    node_additional_qualification_analysis,
+)
 from matcher.state import MainGraphState
 
 
@@ -52,6 +56,12 @@ def compile_graph() -> CompiledGraph:
     workflow.add_node("node_soft_skill_analysis", node_soft_skill_analysis)
     workflow.add_node("node_hard_skill_analysis", node_hard_skill_analysis)
     workflow.add_node("node_language_analysis", node_language_analysis)
+    workflow.add_node(
+        "node_industry_knowledge_analysis", node_industry_knowledge_analysis
+    )
+    workflow.add_node(
+        "node_additional_qualification_analysis", node_additional_qualification_analysis
+    )
 
     workflow.add_node("analysis", test)
     workflow.add_node("synthesis", synthesis)
@@ -86,12 +96,16 @@ def compile_graph() -> CompiledGraph:
     workflow.add_edge("analysis", "node_hard_skill_analysis")
     workflow.add_edge("analysis", "node_soft_skill_analysis")
     workflow.add_edge("analysis", "node_language_analysis")
+    workflow.add_edge("analysis", "node_industry_knowledge_analysis")
+    workflow.add_edge("analysis", "node_additional_qualification_analysis")
 
     workflow.add_edge("node_education_analysis", "synthesis")
     workflow.add_edge("node_experience_analysis", "synthesis")
     workflow.add_edge("node_hard_skill_analysis", "synthesis")
     workflow.add_edge("node_soft_skill_analysis", "synthesis")
     workflow.add_edge("node_language_analysis", "synthesis")
+    workflow.add_edge("node_industry_knowledge_analysis", "synthesis")
+    workflow.add_edge("node_additional_qualification_analysis", "synthesis")
 
     workflow.add_edge("synthesis", END)
 

@@ -22,6 +22,8 @@ def calculate_final_score(state: MainGraphState) -> Dict[str, float]:
             state.language_analysis,
             state.soft_skill_analysis,
             state.hard_skill_analysis,
+            state.industry_knowledge_analysis,
+            state.additional_qualification_analysis,
         ]:
             if analysis and analysis.scoredCriteria:
                 for criterion in analysis.scoredCriteria:
@@ -51,7 +53,8 @@ def calculate_final_score(state: MainGraphState) -> Dict[str, float]:
             for criterion in scorecard.niceToHaveCriteria.criteria
         )
         max_possible_bonus = sum(
-            criterion.maxBonusPoint for criterion in scorecard.niceToHaveCriteria.criteria
+            criterion.maxBonusPoint
+            for criterion in scorecard.niceToHaveCriteria.criteria
         )
         return 1 + (total_bonus / max_possible_bonus) * 0.2  # 20% maximum increase
 
