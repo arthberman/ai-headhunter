@@ -16,7 +16,7 @@ def node_additional_qualification_analysis(state: MainGraphState) -> MainGraphSt
     db_res = get_knowledge_points(["ADDITIONAL_QUALIFICATION"])
 
     model = init_chat_model(
-        model="gpt-4o-mini", model_provider="openai", temperature=0
+        model="claude-3-5-sonnet-20240620", model_provider="anthropic", temperature=0
     ).with_structured_output(ListScoredCriterion)
 
     chain = prompt | model

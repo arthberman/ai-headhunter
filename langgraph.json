@@ -1,0 +1,11 @@
+{
+  "dockerfile_lines": [],
+  "graphs": {
+    "judge": "./src/test/test_judge.py:app"
+  },
+  "env": ".env.studio",
+  "python_version": "3.12",
+  "dependencies": [
+    "."
+  ]
+}

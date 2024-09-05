@@ -27,6 +27,9 @@ class BaseCriterion(BaseModel):
         ...,
         description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION)",
     )
+    importance: Optional[ImportanceLevel] = Field(
+        description="Importance level of the criterion (MUST_HAVE, IMPORTANT, NICE_TO_HAVE)"
+    )
     guidelines: Optional[List[str]] = Field(
         description=f"List of specific, actionable instructions for evaluating the criterion based on a candidate's resume or LinkedIn profile."
         "Each guideline should provide clear direction on what to look for in these documents, such as specific experiences, skills, achievements, prestige that indicate the candidate meets this criterion."
@@ -141,12 +144,19 @@ def filter_criteria_by_type(
 ) -> List[Union[MustHaveCriterion, ImportantCriterion, NiceToHaveCriterion]]:
     filteredCriteria = []
 
-    for criterion in (
-        scorecard.mustHaveCriteria.criteria
-        + scorecard.importantCriteria.criteria
-        + scorecard.niceToHaveCriteria.criteria
-    ):
+    for criterion in scorecard.mustHaveCriteria.criteria:
         if criterion.type in criteriaTypes:
+            criterion.importance = ImportanceLevel.MUST_HAVE
+            filteredCriteria.append(criterion)
+
+    for criterion in scorecard.importantCriteria.criteria:
+        if criterion.type in criteriaTypes:
+            criterion.importance = ImportanceLevel.IMPORTANT
+            filteredCriteria.append(criterion)
+
+    for criterion in scorecard.niceToHaveCriteria.criteria:
+        if criterion.type in criteriaTypes:
+            criterion.importance = ImportanceLevel.NICE_TO_HAVE
             filteredCriteria.append(criterion)
 
     return filteredCriteria

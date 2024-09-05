@@ -71,6 +71,7 @@ async def activity_process_matcher(job_data: Dict[str, Any]) -> Dict[str, Any]:
                 "run_name": f"matcher-{jobPosting.company.lower().replace(' ', '-')}-{profile.linkedin_id.lower().replace(' ', '-')}",
             },
         )
+
         return {
             "analysisId": analysisId,
             "finalScore": res["final_score"],
@@ -148,7 +149,7 @@ async def run_worker():
             activities=[
                 activity_process_matcher,
             ],
-            max_task_queue_activities_per_second=5 / 60,
+            max_activities_per_second=3 / 60,
         ) as worker_1,
         worker.Worker(
             client,
@@ -157,7 +158,7 @@ async def run_worker():
                 activity_parse_job_posting,
                 activity_parse_scorecard,  # You can add different activities for the second worker if needed
             ],
-            max_task_queue_activities_per_second=10 / 60,
+            max_task_queue_activities_per_second=5 / 60,
         ) as worker_2,
     ):
         logger.info(
