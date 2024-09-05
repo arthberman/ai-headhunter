@@ -16,7 +16,7 @@ def node_language_analysis(state: MainGraphState) -> MainGraphState:
     db_res = get_knowledge_points(["LANGUAGE"])
 
     model = init_chat_model(
-        model="gpt-4o-mini", model_provider="openai", temperature=0
+        model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
     ).with_structured_output(ListScoredCriterion)
 
     chain = prompt | model

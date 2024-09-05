@@ -16,7 +16,7 @@ def node_industry_knowledge_analysis(state: MainGraphState) -> MainGraphState:
     db_res = get_knowledge_points(["INDUSTRY_KNOWLEDGE"])
 
     model = init_chat_model(
-        model="gpt-4o-mini", model_provider="openai", temperature=0
+        model="claude-3-5-sonnet-20240620", model_provider="anthropic", temperature=0
     ).with_structured_output(ListScoredCriterion)
 
     chain = prompt | model

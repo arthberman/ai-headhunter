@@ -6,6 +6,7 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 
 from matcher.models.language import LanguageProficiency
 from matcher.state import MainGraphState
+from matcher.tools.knowledge_point import get_knowledge_points
 
 
 class StructuredOutput(BaseModel):
@@ -19,7 +20,9 @@ def node_language_enrichment(state: MainGraphState) -> MainGraphState:
     model = init_chat_model(
         model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
     )
+
+    db_res = get_knowledge_points(["LANGUAGE"])
     chain = prompt | model.with_structured_output(StructuredOutput)
-    res = chain.invoke({"profile": state.profile})
+    res = chain.invoke({"profile": state.profile, "knowledge_points": db_res})
 
     return {"language_enrichment": res.language_proficiency}

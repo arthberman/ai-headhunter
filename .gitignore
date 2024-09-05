@@ -169,6 +169,3 @@ cython_debug/
 !.vscode/extensions.json
 
 **/.DS_Store
-
-# Testing
-src/test

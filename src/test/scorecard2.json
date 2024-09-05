@@ -1,0 +1,177 @@
+{
+  "id": "sse-001",
+  "job_offer_id": "jo-sse-2024-001",
+  "sections": [
+    {
+      "id": "must-have",
+      "importance_level": "must_have",
+      "weight": 0.6,
+      "criteria_groups": [
+        {
+          "id": "technical-skills",
+          "type": "technical_skills",
+          "criteria": [
+            {
+              "id": "java-proficiency",
+              "description": "Proficient in Java, including Java 8+ features",
+              "weight": 0.15
+            },
+            {
+              "id": "python-proficiency",
+              "description": "Strong knowledge of Python",
+              "weight": 0.1
+            },
+            {
+              "id": "spring-framework",
+              "description": "Experience with Spring Framework",
+              "weight": 0.1
+            },
+            {
+              "id": "database-skills",
+              "description": "Proficient in SQL and experience with NoSQL databases",
+              "weight": 0.1
+            },
+            {
+              "id": "api-design",
+              "description": "Strong skills in RESTful API design and implementation",
+              "weight": 0.05
+            }
+          ]
+        },
+        {
+          "id": "experience",
+          "type": "experience",
+          "criteria": [
+            {
+              "id": "total-experience",
+              "description": "5+ years of professional software development experience",
+              "weight": 0.2
+            },
+            {
+              "id": "large-scale-systems",
+              "description": "Experience working on large-scale distributed systems",
+              "weight": 0.15
+            },
+            {
+              "id": "agile-methodology",
+              "description": "Strong experience with Agile development methodologies",
+              "weight": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "important",
+      "importance_level": "important",
+      "weight": 0.3,
+      "criteria_groups": [
+        {
+          "id": "additional-technical-skills",
+          "type": "technical_skills",
+          "criteria": [
+            {
+              "id": "javascript-proficiency",
+              "description": "Solid understanding of JavaScript and modern frameworks (e.g., React, Angular)",
+              "weight": 0.15
+            },
+            {
+              "id": "ci-cd",
+              "description": "Experience with CI/CD pipelines",
+              "weight": 0.1
+            },
+            {
+              "id": "cloud-platforms",
+              "description": "Familiarity with cloud platforms (AWS, Azure, or GCP)",
+              "weight": 0.1
+            }
+          ]
+        },
+        {
+          "id": "soft-skills",
+          "type": "soft_skills",
+          "criteria": [
+            {
+              "id": "communication",
+              "description": "Excellent verbal and written communication skills",
+              "weight": 0.25
+            },
+            {
+              "id": "teamwork",
+              "description": "Proven ability to work collaboratively in a team environment",
+              "weight": 0.25
+            },
+            {
+              "id": "mentoring",
+              "description": "Experience mentoring junior developers",
+              "weight": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nice-to-have",
+      "importance_level": "nice_to_have",
+      "weight": 0.1,
+      "criteria_groups": [
+        {
+          "id": "education",
+          "type": "education",
+          "criteria": [
+            {
+              "id": "bachelors-degree",
+              "description": "Bachelor's degree in Computer Science, Software Engineering, or related field",
+              "weight": 0.6
+            },
+            {
+              "id": "masters-degree",
+              "description": "Master's degree in a relevant field",
+              "weight": 0.4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "red-flags",
+      "importance_level": "red_flag",
+      "criteria_groups": [
+        {
+          "id": "experience-red-flags",
+          "type": "experience",
+          "criteria": [
+            {
+              "id": "job-hopping",
+              "description": "More than 3 job changes in the last 2 years without clear progression or explanation"
+            },
+            {
+              "id": "lack-of-recent-coding",
+              "description": "No recent coding experience (within the last year) in relevant technologies"
+            }
+          ]
+        },
+        {
+          "id": "professional-conduct-red-flags",
+          "type": "soft_skills",
+          "criteria": [
+            {
+              "id": "ethical-concerns",
+              "description": "Any history of ethical violations or misconduct in previous roles"
+            }
+          ]
+        },
+        {
+          "id": "technical-skills-red-flags",
+          "type": "technical_skills",
+          "criteria": [
+            {
+              "id": "non-disclosure",
+              "description": "Unwillingness to provide or discuss code samples or previous project details (within NDA constraints)"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
