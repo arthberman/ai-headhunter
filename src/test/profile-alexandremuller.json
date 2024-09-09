@@ -1,0 +1,168 @@
+{
+  "id": "343d8649-3dcf-4f95-aaf8-0cdebe3634f0",
+  "firstName": "Alexandre",
+  "lastName": "M.",
+  "fullName": "Alexandre M.",
+  "country": "France",
+  "city": "Palaiseau",
+  "state": "Île-de-France",
+  "headline": "X | ISAE-SUPAERO | Space Engineer",
+  "summary": "",
+  "createdAt": "2024-08-14T20:45:11.726Z",
+  "updatedAt": "2024-08-14T20:45:11.992Z",
+  "scrapProvider": "RAPIDAPI",
+  "connectionCount": null,
+  "followersCount": null,
+  "isCreator": null,
+  "isHiring": null,
+  "isOpenToWork": null,
+  "linkedin_id": "alexandre-m-muller",
+  "linkedin_urn": "ACoAADpWXMgB_ey0OHgF_9d4DoH5zjlWYhy5eYo",
+  "skills": [
+    "Anglais",
+    "Microsoft Office",
+    "Gestion de projet",
+    "Italien"
+  ],
+  "avatarId": "d3a19b6a-ab2f-4698-beb9-32a443e42b71",
+  "experiences": [
+    {
+      "id": "02f442ce-f0e8-4408-8b28-777de62b3e6b",
+      "createdAt": "2024-08-14T20:45:11.726Z",
+      "updatedAt": "2024-08-14T20:45:11.726Z",
+      "ProfileId": "343d8649-3dcf-4f95-aaf8-0cdebe3634f0",
+      "startsAt": "2014-06-29T22:00:00.000Z",
+      "endsAt": "2014-07-30T22:00:00.000Z",
+      "companyId": "04f55181-8eb3-430c-80cc-561dbc094b5f",
+      "title": "International Economics",
+      "description": "",
+      "location": "Paris, France",
+      "company": {
+        "id": "04f55181-8eb3-430c-80cc-561dbc094b5f",
+        "name": "Le Figaro",
+        "linkedinUrl": "https://www.linkedin.com/company/le-figaro/",
+        "linkedinId": null,
+        "logoId": "de1874e1-4e14-4860-9bb3-5845ac453e66"
+      }
+    },
+    {
+      "id": "fa6c848a-8c30-457a-8a32-4aed82768e13",
+      "createdAt": "2024-08-14T20:45:11.726Z",
+      "updatedAt": "2024-08-14T20:45:11.726Z",
+      "ProfileId": "343d8649-3dcf-4f95-aaf8-0cdebe3634f0",
+      "startsAt": "2020-10-30T23:00:00.000Z",
+      "endsAt": "2021-04-29T22:00:00.000Z",
+      "companyId": "0c66495f-6ed1-4870-be95-77a4479b8ef9",
+      "title": "Deputy chief of platoon",
+      "description": "",
+      "location": "Sissonne, France",
+      "company": {
+        "id": "0c66495f-6ed1-4870-be95-77a4479b8ef9",
+        "name": "Armée de Terre",
+        "linkedinUrl": "https://www.linkedin.com/company/armee-de-terre/",
+        "linkedinId": null,
+        "logoId": "1315dc2e-68e4-4bc6-a7d2-11b27ca8fe01"
+      }
+    },
+    {
+      "id": "54cc3362-aefb-44bb-8120-4e346404acf5",
+      "createdAt": "2024-08-14T20:45:11.726Z",
+      "updatedAt": "2024-08-14T20:45:11.726Z",
+      "ProfileId": "343d8649-3dcf-4f95-aaf8-0cdebe3634f0",
+      "startsAt": "2022-05-30T22:00:00.000Z",
+      "endsAt": "2022-08-30T22:00:00.000Z",
+      "companyId": "74273e0d-a38c-444f-874a-3052ad18ab57",
+      "title": "Data Analyst ",
+      "description": "",
+      "location": "Milan, Lombardie, Italie",
+      "company": {
+        "id": "74273e0d-a38c-444f-874a-3052ad18ab57",
+        "name": "Siram Veolia",
+        "linkedinUrl": "https://www.linkedin.com/company/siram-veolia/",
+        "linkedinId": null,
+        "logoId": "0ba4a892-7c1b-4ec4-bf6f-2d4f884d22ae"
+      }
+    },
+    {
+      "id": "8b945745-9160-4836-bab0-f42086bafce4",
+      "createdAt": "2024-08-14T20:45:11.726Z",
+      "updatedAt": "2024-08-14T20:45:11.726Z",
+      "ProfileId": "343d8649-3dcf-4f95-aaf8-0cdebe3634f0",
+      "startsAt": "2023-03-30T22:00:00.000Z",
+      "endsAt": "2023-07-30T22:00:00.000Z",
+      "companyId": "66d8d22e-c692-4b3d-bbd8-b9dd275afeca",
+      "title": "Intern at Contamination Control Group",
+      "description": "",
+      "location": "Pasadena, Californie, États-Unis",
+      "company": {
+        "id": "66d8d22e-c692-4b3d-bbd8-b9dd275afeca",
+        "name": "NASA Jet Propulsion Laboratory",
+        "linkedinUrl": "https://www.linkedin.com/company/jet-propulsion-laboratory/",
+        "linkedinId": null,
+        "logoId": "06151870-c1b9-4141-81f3-b3eea338c33f"
+      }
+    }
+  ],
+  "educations": [
+    {
+      "id": "a96c312d-b269-426c-8b98-1fad8e343220",
+      "createdAt": "2024-08-14T20:45:11.726Z",
+      "updatedAt": "2024-08-14T20:45:11.726Z",
+      "ProfileId": "343d8649-3dcf-4f95-aaf8-0cdebe3634f0",
+      "startsAt": "2023-09-29T22:00:00.000Z",
+      "endsAt": "2024-08-30T22:00:00.000Z",
+      "schoolId": "eb911641-dd90-4dfd-a195-4c294bfa3444",
+      "description": "",
+      "fieldOfStudy": "Design and Operation of Space Systems",
+      "grade": "",
+      "degree": "Master 2",
+      "school": {
+        "id": "eb911641-dd90-4dfd-a195-4c294bfa3444",
+        "name": "ISAE-SUPAERO",
+        "linkedinUrl": "https://www.linkedin.com/school/isae/",
+        "linkedinId": "479301",
+        "logoId": null
+      }
+    },
+    {
+      "id": "9fbefc19-968b-4822-bd6f-5ae840113f6d",
+      "createdAt": "2024-08-14T20:45:11.726Z",
+      "updatedAt": "2024-08-14T20:45:11.726Z",
+      "ProfileId": "343d8649-3dcf-4f95-aaf8-0cdebe3634f0",
+      "startsAt": "2018-09-29T22:00:00.000Z",
+      "endsAt": "2020-07-30T22:00:00.000Z",
+      "schoolId": "d5261916-8b69-4419-acdd-2ce9f1306f55",
+      "description": "",
+      "fieldOfStudy": "Physics, Chemistry",
+      "grade": "",
+      "degree": "Selective scientific post secondary program to prepare for competitive nationwide exams",
+      "school": {
+        "id": "d5261916-8b69-4419-acdd-2ce9f1306f55",
+        "name": "Louis Pasteur, Neuilly-sur-Seine",
+        "linkedinUrl": "",
+        "linkedinId": "",
+        "logoId": null
+      }
+    },
+    {
+      "id": "d9ea5736-ec36-4ef0-bcc9-12cc3a35d91e",
+      "createdAt": "2024-08-14T20:45:11.726Z",
+      "updatedAt": "2024-08-14T20:45:11.726Z",
+      "ProfileId": "343d8649-3dcf-4f95-aaf8-0cdebe3634f0",
+      "startsAt": "2020-09-29T22:00:00.000Z",
+      "endsAt": "2024-07-30T22:00:00.000Z",
+      "schoolId": "89361bdb-df8a-483c-940e-447208ecdaec",
+      "description": "",
+      "fieldOfStudy": "Space Engineering",
+      "grade": "",
+      "degree": "MSc",
+      "school": {
+        "id": "89361bdb-df8a-483c-940e-447208ecdaec",
+        "name": "Ecole polytechnique",
+        "linkedinUrl": "https://www.linkedin.com/school/ecole-polytechnique/",
+        "linkedinId": "14034",
+        "logoId": null
+      }
+    }
+  ]
+}

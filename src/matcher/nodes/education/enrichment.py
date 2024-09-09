@@ -16,7 +16,7 @@ def node_education_enrichment(state: EducationState) -> MainGraphState:
     tavily_res = tavily_tool.invoke({"query": f"school {education.school}"})
     prompt = hub.pull("education-enrichment")
     model = init_chat_model(
-        model="gpt-4o-mini", model_provider="openai", temperature=0
+        model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
     ).with_structured_output(SchoolInfo)
     chain = prompt | model
     res = chain.invoke(

@@ -16,8 +16,8 @@ class LocationInfo(BaseModel):
     )
 
 
-class JobOffer(BaseModel):
-    """Structured output of the job offer"""
+class JobPosting(BaseModel):
+    """Structured output of the job posting"""
 
     title: str = Field(description="Title of the job")
     company: str = Field(description="Name of the company offering the job")

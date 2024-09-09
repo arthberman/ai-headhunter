@@ -1,27 +1,43 @@
-from typing import List
-
-from langchain.pydantic_v1 import BaseModel, Field
+from langchain_core.pydantic_v1 import BaseModel, Field
 
 
 class CareerPathAnalysis(BaseModel):
-
-    logicalMove: bool = Field(
+    explanationSeniority: str = Field(
         ...,
-        description="Boolean indicating whether this career move appears hierarchical logical based on the analysis.",
+        description="Detailed explanation of the seniority assessment, comparing the candidate's years of relevant experience with the job requirements. Limited to 250 characters.",
     )
 
-    keyFactors: List[str] = Field(
+    explanationHierarchy: str = Field(
         ...,
-        description="List of main factors considered in determining the relevance score, such as hierarchy level comparison, typical industry progression, etc.",
+        description="Detailed explanation of the hierarchy assessment, evaluating changes in organizational level or scope of responsibility. Limited to 250 characters.",
     )
 
-    explanation: str = Field(
+    explanationPrestige: str = Field(
         ...,
-        description="A detailed explanation of the relevance score and overall analysis, including reasoning behind the logical_move determination."
-        "Detail how the job offer aligns with or deviates from the expected career progression for this profile.",
+        description="Detailed explanation of the prestige assessment, comparing the reputation of the current and offered companies. Limited to 250 characters.",
     )
 
-    careerImpact: str = Field(
+    explanationIntent: str = Field(
         ...,
-        description="An assessment of how this move might impact the candidate's long-term career prospects.",
+        description="Detailed explanation of the intent to move assessment, evaluating the likelihood of the candidate changing jobs based on recent career history. Limited to 250 characters.",
+    )
+
+    scoreSeniority: int = Field(
+        ...,
+        description="Score (0 or 1) indicating whether the candidate's seniority level is suitable for the job offer. 1 if their experience meets or exceeds requirements, 0 if significantly under-qualified.",
+    )
+
+    scoreHierarchy: int = Field(
+        ...,
+        description="Score (0 or 1) indicating whether the hierarchical move is suitable. 1 for lateral moves or promotions, 0 for significant step-downs in organizational level.",
+    )
+
+    scorePrestige: int = Field(
+        ...,
+        description="Score (0 or 1) indicating whether the move in terms of company prestige is suitable. 1 if moving to an equally or more prestigious company, 0 if moving to a significantly less prestigious company.",
+    )
+
+    scoreIntent: int = Field(
+        ...,
+        description="Score (0 or 1) indicating the likelihood of the candidate's intent to move. 1 if the candidate is likely to consider a move, 0 if recent changes suggest they're unlikely to move.",
     )

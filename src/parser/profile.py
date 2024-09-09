@@ -13,7 +13,7 @@ from matcher.models.profile import (
 )
 
 
-def parseProfile(profile: json) -> Profile:
+def parse_profile(profile: json) -> Profile:
     """Convert a raw JSON object to a Profile object"""
 
     # Convert experiences

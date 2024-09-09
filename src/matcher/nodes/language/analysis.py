@@ -11,7 +11,7 @@ def node_language_analysis(state: MainGraphState) -> MainGraphState:
     criteria = filter_criteria_by_type(state.scorecard, ["LANGUAGE"])
     if len(criteria) == 0:
         return {"language_analysis": None}
-    
+
     prompt = hub.pull("language-analysis")
     db_res = get_knowledge_points(["LANGUAGE"])
 
