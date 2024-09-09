@@ -1,3 +1,4 @@
+import os
 import asyncio
 import signal
 import warnings
@@ -125,7 +126,13 @@ async def activity_process_matcher(job_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def run_worker():
-    client = await Client.connect("localhost:7233")
+    client = await Client.connect(
+        target_host=os.environ["TEMPORAL_HOST_URL"],
+        namespace=os.environ["TEMPORAL_NAMESPACE"],
+        rpc_metadata={"temporal-namespace": os.environ["TEMPORAL_NAMESPACE"]},
+        api_key=os.environ["TEMPORAL_API_KEY"],
+        tls=True,
+    )
     task_queue_matcher = "repio-intelligence-matcher"
     task_queue_parser = "repio-intelligence-parser"
 
@@ -149,7 +156,7 @@ async def run_worker():
             activities=[
                 activity_process_matcher,
             ],
-            max_activities_per_second=3 / 60,
+            max_activities_per_second=2 / 60,
         ) as worker_1,
         worker.Worker(
             client,
