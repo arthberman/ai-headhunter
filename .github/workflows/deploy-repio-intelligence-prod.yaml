@@ -46,7 +46,6 @@ jobs:
           envkey_LANGCHAIN_PROJECT: ${{ vars.LANGCHAIN_PROJECT }}
           envkey_TEMPORAL_HOST_URL: ${{ vars.TEMPORAL_HOST_URL }}
           envkey_TEMPORAL_NAMESPACE: ${{ vars.TEMPORAL_NAMESPACE }}
-          directory: ./intelligences/repio-intelligence
           file_name: .env
           fail_on_empty: true
 
