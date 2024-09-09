@@ -22,7 +22,7 @@ def node_career_path_analysis(state: MainGraphState) -> MainGraphState:
                 "experience_enrichment": state.experience_enrichment,
                 "education_enrichment": state.education_enrichment,
                 "education": state.profile.educations,
-                "job_offer": state.job_offer,
+                "job_posting": state.jobPosting,
             }
         )
     )

@@ -17,7 +17,7 @@ def node_experience_enrichment(state: ExperienceState) -> MainGraphState:
     tavily_res = tavily_tool.invoke({"query": f"company {experience.company}"})
     prompt = hub.pull("experience-enrichment")
     model = init_chat_model(
-        model="gpt-4o-mini", model_provider="openai", temperature=0
+        model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
     ).with_structured_output(CompanyInfo)
 
     chain = prompt | model

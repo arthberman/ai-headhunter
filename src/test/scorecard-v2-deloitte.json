@@ -1,0 +1,195 @@
+{
+  "id": "8f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d871",
+  "job_offer_id": "deloitte-junior-strategy-consultant-2023",
+  "title": "Junior Strategy Consultant - Monitor Deloitte",
+  "scoring_weights": {
+    "important": 0.8,
+    "nice_to_have": 0.2
+  },
+  "must_have_threshold": 0.9,
+  "sections": [
+    {
+      "id": "9f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d872",
+      "importance_level": "MUST_HAVE",
+      "criteria": [
+        {
+          "id": "af9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d873",
+          "type": "EDUCATION",
+          "description": "Graduate from a top business school or engineering school",
+          "compensation_score": 0.8,
+          "compensation_description": "Significant professional experience in strategy may compensate for the lack of a degree from a top school."
+        },
+        {
+          "id": "bf9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d874",
+          "type": "EXPERIENCE",
+          "description": "One or two significant internships in consulting (preferably in strategy), strategy department, investment banking / private equity, or financial analysis",
+          "compensation_score": 0.7,
+          "compensation_description": "Relevant professional experience in a related field may compensate for the lack of specific internships."
+        },
+        {
+          "id": "cf9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d875",
+          "type": "LANGUAGE",
+          "description": "Fluency in English and French (oral and written)",
+          "compensation_score": 0.9,
+          "compensation_description": "A very advanced level in one language with a good level in the other may be considered."
+        }
+      ]
+    },
+    {
+      "id": "df9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d876",
+      "importance_level": "IMPORTANT",
+      "criteria": [
+        {
+          "id": "ef9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d877",
+          "type": "SOFT_SKILL",
+          "description": "Excellent oral and written communication skills",
+          "weight": 0.2,
+          "instructions": [
+            {
+              "level": "Limited evidence of good communication skills",
+              "score": 0.0
+            },
+            {
+              "level": "Good communication skills demonstrated in some contexts",
+              "score": 0.5
+            },
+            {
+              "level": "Excellent communication skills demonstrated in various contexts",
+              "score": 1.0
+            }
+          ]
+        },
+        {
+          "id": "ff9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d878",
+          "type": "HARD_SKILL",
+          "description": "Strong analytical and synthesis capabilities",
+          "weight": 0.2,
+          "instructions": [
+            {
+              "level": "Limited analytical and synthesis skills",
+              "score": 0.0
+            },
+            {
+              "level": "Good analytical and synthesis skills",
+              "score": 0.5
+            },
+            {
+              "level": "Excellent analytical and synthesis skills with demonstrated examples",
+              "score": 1.0
+            }
+          ]
+        },
+        {
+          "id": "0f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d879",
+          "type": "SOFT_SKILL",
+          "description": "Ability to work with various levels of stakeholders and appreciate teamwork",
+          "weight": 0.15,
+          "instructions": [
+            {
+              "level": "Limited interpersonal skills or teamwork experience",
+              "score": 0.0
+            },
+            {
+              "level": "Good interpersonal skills and teamwork experience",
+              "score": 0.5
+            },
+            {
+              "level": "Excellent interpersonal skills and strong teamwork experience",
+              "score": 1.0
+            }
+          ]
+        },
+        {
+          "id": "1f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d880",
+          "type": "SOFT_SKILL",
+          "description": "Ability to work under pressure and prioritize tasks",
+          "weight": 0.15,
+          "instructions": [
+            {
+              "level": "Limited ability to handle pressure or prioritize",
+              "score": 0.0
+            },
+            {
+              "level": "Good ability to handle pressure and prioritize tasks",
+              "score": 0.5
+            },
+            {
+              "level": "Excellent ability to work under pressure with demonstrated prioritization skills",
+              "score": 1.0
+            }
+          ]
+        },
+        {
+          "id": "2f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d881",
+          "type": "HARD_SKILL",
+          "description": "Proficiency with numbers and data analysis",
+          "weight": 0.15,
+          "instructions": [
+            {
+              "level": "Basic proficiency with numbers and data",
+              "score": 0.0
+            },
+            {
+              "level": "Good proficiency with numbers and data analysis",
+              "score": 0.5
+            },
+            {
+              "level": "Excellent proficiency with numbers and advanced data analysis skills",
+              "score": 1.0
+            }
+          ]
+        },
+        {
+          "id": "3f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d882",
+          "type": "SOFT_SKILL",
+          "description": "Initiative-taking and ability to gain autonomy",
+          "weight": 0.15,
+          "instructions": [
+            {
+              "level": "Limited evidence of initiative-taking or autonomy",
+              "score": 0.0
+            },
+            {
+              "level": "Good evidence of initiative-taking and growing autonomy",
+              "score": 0.5
+            },
+            {
+              "level": "Strong evidence of initiative-taking and high level of autonomy",
+              "score": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d883",
+      "importance_level": "NICE_TO_HAVE",
+      "criteria": [
+        {
+          "id": "5f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d884",
+          "type": "LANGUAGE",
+          "description": "Proficiency in a third language",
+          "max_bonus": 5
+        },
+        {
+          "id": "6f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d885",
+          "type": "EXPERIENCE",
+          "description": "Experience with market analysis or industrial studies",
+          "max_bonus": 4
+        },
+        {
+          "id": "7f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d886",
+          "type": "HARD_SKILL",
+          "description": "Experience with decision-making tools or models",
+          "max_bonus": 3
+        },
+        {
+          "id": "8f9e1f3b-4d5c-4d1f-9d9d-37c7d3c3d887",
+          "type": "SOFT_SKILL",
+          "description": "Demonstrated leadership potential",
+          "max_bonus": 3
+        }
+      ]
+    }
+  ]
+}

@@ -11,12 +11,12 @@ def node_soft_skill_analysis(state: MainGraphState) -> MainGraphState:
     criteria = filter_criteria_by_type(state.scorecard, ["SOFT_SKILL"])
     if len(criteria) == 0:
         return {"soft_skill_analysis": None}
-    
+
     prompt = hub.pull("soft-skill-analysis")
     db_res = get_knowledge_points(["SOFT_SKILL"])
 
     model = init_chat_model(
-        model="gpt-4o-mini", model_provider="openai", temperature=0
+        model="claude-3-5-sonnet-20240620", model_provider="anthropic", temperature=0
     ).with_structured_output(ListScoredCriterion)
 
     chain = prompt | model

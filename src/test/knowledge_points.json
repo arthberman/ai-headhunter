@@ -1,0 +1,94 @@
+{
+  "caution_points": [
+    {
+      "id": 1,
+      "item": "If the school is public, then it is considered more prestigious than a private school",
+      "category": "EDUCATION"
+    },
+    {
+      "id": 2,
+      "item": "Short code bootcamps do not necessarily indicate great expertise in coding",
+      "category": "EDUCATION"
+    },
+    {
+      "id": 3,
+      "item": "Be careful not to confuse an online course with actually studying at the school",
+      "category": "EDUCATION"
+    },
+    {
+      "id": 4,
+      "item": "Having worked at a prestigious consulting firm indicates strong analytical skills",
+      "category": "EXPERIENCE"
+    },
+    {
+      "id": 5,
+      "item": "Participating in student associations indicates a good level of communication and soft skills",
+      "category": "EDUCATION"
+    },
+    {
+      "id": 6,
+      "item": "Having been promoted within one's company indicates a good overall level and strong work capacity",
+      "category": "EXPERIENCE"
+    },
+    {
+      "id": 7,
+      "item": "A salesperson who has been an SDR will be able to effectively manage SDRs in a managerial role",
+      "category": "EXPERIENCE"
+    },
+    {
+      "id": 8,
+      "item": "A tech person who mentions all technologies will likely have very little expertise in each of them",
+      "category": "SKILLS"
+    },
+    {
+      "id": 9,
+      "item": "A developer who mentions a technology with a spelling mistake is a sign that they may not have a good grasp of it",
+      "category": "SKILLS"
+    },
+    {
+      "id": 10,
+      "item": "If the candidate is a member of a professional club (HR lab, growth club...), then they are likely good at their job",
+      "category": "PROFESSIONAL_DEVELOPMENT"
+    },
+    {
+      "id": 11,
+      "item": "The larger the clients of the company, the longer and more complex the sales processes are",
+      "category": "EXPERIENCE"
+    },
+    {
+      "id": 12,
+      "item": "The presence of emojis on the profile is an indicator of good soft skills",
+      "category": "SOFT_SKILLS"
+    },
+    {
+      "id": 13,
+      "item": "Staying in a company for a long time is an indicator of seriousness and commitment, but staying too long can be an indicator of a lack of adventure and challenge",
+      "category": "EXPERIENCE"
+    },
+    {
+      "id": 14,
+      "item": "Having worked in a renowned company in the tech/sales/marketing field is highly valued",
+      "category": "EXPERIENCE"
+    },
+    {
+      "id": 15,
+      "item": "In companies operating in multiple countries and/or with their headquarters abroad, it is likely that English is the working language",
+      "category": "EXPERIENCE"
+    },
+    {
+      "id": 16,
+      "item": "In France, a BBA is less prestigious than a master's degree, even in a good school",
+      "category": "EDUCATION"
+    },
+    {
+      "id": 17,
+      "item": "In France, an enginner must be issued from a school recognized by the Comission sur les Titres d'Ingénieur (CTI) to be considered as such.",
+      "category": "EDUCATION"
+    },
+    {
+      "id": 18,
+      "item": "In France, an enginner is most of the time generalist, so it's similar to a master's degree in all fields related to engineering (mechanical, electrical, civil, computer science etc.)",
+      "category": "EDUCATION"
+    }
+  ]
+}

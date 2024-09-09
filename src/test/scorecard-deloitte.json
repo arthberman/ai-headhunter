@@ -1,0 +1,285 @@
+{
+  "id": "deloitte-junior-strategy-consultant-2024",
+  "job_offer_id": "deloitte-jsc-001",
+  "sections": [
+    {
+      "id": "must-have",
+      "importance_level": "MUST_HAVE",
+      "weight": 0.4,
+      "criteria": [
+        {
+          "id": "education",
+          "description": "Degree from a top business or engineering school",
+          "weight": 0.3,
+          "type": "EDUCATION",
+          "instructions": [
+            {
+              "level": "Top 3 Business/Engineering School",
+              "score": 1.0
+            },
+            {
+              "level": "Other Prestigious Business/Engineering School",
+              "score": 0.8
+            },
+            {
+              "level": "Other Accredited University",
+              "score": 0.6
+            },
+            {
+              "level": "No Relevant Degree",
+              "score": 0.0
+            }
+          ]
+        },
+        {
+          "id": "language-french",
+          "description": "Native or fluent proficiency in French",
+          "weight": 0.2,
+          "type": "LANGUAGE",
+          "instructions": [
+            {
+              "level": "Native",
+              "score": 1.0
+            },
+            {
+              "level": "Fluent",
+              "score": 0.9
+            },
+            {
+              "level": "Professional Working Proficiency",
+              "score": 0.7
+            },
+            {
+              "level": "Limited Working Proficiency",
+              "score": 0.4
+            },
+            {
+              "level": "Elementary Proficiency",
+              "score": 0.2
+            },
+            {
+              "level": "No Proficiency",
+              "score": 0.0
+            }
+          ]
+        },
+        {
+          "id": "language-english",
+          "description": "Native or fluent proficiency in English",
+          "weight": 0.2,
+          "type": "LANGUAGE",
+          "instructions": [
+            {
+              "level": "Native",
+              "score": 1.0
+            },
+            {
+              "level": "Fluent",
+              "score": 0.9
+            },
+            {
+              "level": "Professional Working Proficiency",
+              "score": 0.7
+            },
+            {
+              "level": "Limited Working Proficiency",
+              "score": 0.4
+            },
+            {
+              "level": "Elementary Proficiency",
+              "score": 0.2
+            },
+            {
+              "level": "No Proficiency",
+              "score": 0.0
+            }
+          ]
+        },
+        {
+          "id": "internship-experience",
+          "description": "One or two significant internships in consulting (preferably strategy), corporate strategy, investment banking / private equity, or financial analysis",
+          "weight": 0.3,
+          "type": "EXPERIENCE",
+          "instructions": [
+            {
+              "level": "Multiple Internships in Top-tier Strategy Consulting",
+              "score": 1.0
+            },
+            {
+              "level": "One Internship in Top-tier Strategy Consulting",
+              "score": 0.9
+            },
+            {
+              "level": "Internship(s) in Other Strategy Consulting or Investment Banking",
+              "score": 0.8
+            },
+            {
+              "level": "Internship(s) in Corporate Strategy or Financial Analysis",
+              "score": 0.7
+            },
+            {
+              "level": "Other Relevant Business Internship",
+              "score": 0.5
+            },
+            {
+              "level": "No Relevant Internship",
+              "score": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "important",
+      "importance_level": "IMPORTANT",
+      "weight": 0.35,
+      "criteria": [
+        {
+          "id": "data-modeling",
+          "description": "Proficiency in data modeling and market data analysis",
+          "weight": 0.2,
+          "type": "HARD_SKILL",
+          "instructions": [
+            {
+              "level": "Expert",
+              "score": 1.0
+            },
+            {
+              "level": "Advanced",
+              "score": 0.8
+            },
+            {
+              "level": "Intermediate",
+              "score": 0.6
+            },
+            {
+              "level": "Basic",
+              "score": 0.3
+            },
+            {
+              "level": "No Experience",
+              "score": 0.0
+            }
+          ]
+        },
+        {
+          "id": "financial-analysis",
+          "description": "Strong financial analysis skills",
+          "weight": 0.2,
+          "type": "HARD_SKILL",
+          "instructions": [
+            {
+              "level": "Expert",
+              "score": 1.0
+            },
+            {
+              "level": "Advanced",
+              "score": 0.8
+            },
+            {
+              "level": "Intermediate",
+              "score": 0.6
+            },
+            {
+              "level": "Basic",
+              "score": 0.3
+            },
+            {
+              "level": "No Experience",
+              "score": 0.0
+            }
+          ]
+        },
+        {
+          "id": "communication-skills",
+          "description": "Excellent written and oral communication skills",
+          "weight": 0.2,
+          "type": "SOFT_SKILL"
+        },
+        {
+          "id": "teamwork",
+          "description": "Strong ability to work in a team",
+          "weight": 0.15,
+          "type": "SOFT_SKILL"
+        },
+        {
+          "id": "task-prioritization",
+          "description": "Ability to prioritize tasks and work under pressure",
+          "weight": 0.15,
+          "type": "SOFT_SKILL"
+        },
+        {
+          "id": "analytical-thinking",
+          "description": "Strong analytical and synthesis capabilities",
+          "weight": 0.1,
+          "type": "SOFT_SKILL"
+        }
+      ]
+    },
+    {
+      "id": "nice-to-have",
+      "importance_level": "NICE_TO_HAVE",
+      "weight": 0.25,
+      "criteria": [
+        {
+          "id": "third-language",
+          "description": "Proficiency in a third language",
+          "weight": 0.2,
+          "type": "LANGUAGE",
+          "instructions": [
+            {
+              "level": "Fluent or Native",
+              "score": 1.0
+            },
+            {
+              "level": "Professional Working Proficiency",
+              "score": 0.7
+            },
+            {
+              "level": "Limited Working Proficiency",
+              "score": 0.4
+            },
+            {
+              "level": "Elementary Proficiency",
+              "score": 0.2
+            },
+            {
+              "level": "No Proficiency",
+              "score": 0.0
+            }
+          ]
+        },
+        {
+          "id": "quantitative-research",
+          "description": "Experience in building quantitative research tools",
+          "weight": 0.2,
+          "type": "HARD_SKILL"
+        },
+        {
+          "id": "qualitative-research",
+          "description": "Experience in building qualitative research tools",
+          "weight": 0.2,
+          "type": "HARD_SKILL"
+        },
+        {
+          "id": "decision-making-tools",
+          "description": "Experience in modeling decision-making tools",
+          "weight": 0.15,
+          "type": "HARD_SKILL"
+        },
+        {
+          "id": "market-analysis",
+          "description": "Experience in market and client environment analysis",
+          "weight": 0.15,
+          "type": "HARD_SKILL"
+        },
+        {
+          "id": "diplomacy",
+          "description": "Diplomatic skills",
+          "weight": 0.1,
+          "type": "SOFT_SKILL"
+        }
+      ]
+    }
+  ]
+}

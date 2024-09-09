@@ -43,7 +43,9 @@ class SchoolDatabase:
 
     def get_school_info(self, name: str, linkedin_url: str):
         results = self.vector_store.similarity_search(
-            name, k=1, filter={"linkedin_url": {"$eq": linkedin_url}}
+            name,
+            k=1,
+            filter={"linkedin_url": {"$eq": linkedin_url}, "name": {"$eq": name}},
         )
 
         if results:
@@ -64,7 +66,10 @@ class SchoolDatabase:
 
     def update_school_info(self, school_info: SchoolInfo):
         self.vector_store.delete(
-            filter={"linkedin_url": {"$eq": school_info.linkedin_url}}
+            filter={
+                "linkedin_url": {"$eq": school_info.linkedin_url},
+                "name": {"$eq": school_info.name},
+            }
         )
         document = self._create_school_document(school_info)
         self.vector_store.add_documents([document])

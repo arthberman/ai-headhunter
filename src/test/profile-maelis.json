@@ -1,0 +1,181 @@
+{
+  "id": "b562cf27-2f5b-47fb-876a-7569b82d8a5d",
+  "firstName": "Maëlis",
+  "lastName": "Flet",
+  "fullName": "Maëlis Flet",
+  "country": "France",
+  "city": "Paris",
+  "state": "Île-de-France",
+  "headline": "Working on something new 🍽️",
+  "summary": "",
+  "createdAt": "2024-08-16T14:00:08.561Z",
+  "updatedAt": "2024-08-16T14:00:09.144Z",
+  "scrapProvider": "RAPIDAPI",
+  "connectionCount": null,
+  "followersCount": null,
+  "isCreator": null,
+  "isHiring": null,
+  "isOpenToWork": null,
+  "linkedin_id": "maelis-flet",
+  "linkedin_urn": "ACoAACLKNnYBDaYGClHJaA7-q4NahGFeCe5gTIg",
+  "skills": [
+    "Corporate finance",
+    "Firm Valuation",
+    "M&A",
+    "Ethics in Finance",
+    "Due Diligence",
+    "Compétences analytiques",
+    "Microsoft Excel",
+    "Finance",
+    "Audit",
+    "Microsoft Office",
+    "Anglais",
+    "Teamwork",
+    "Social Networks",
+    "Communication",
+    "Analyse financière",
+    "LBO",
+    "Finance d’entreprise"
+  ],
+  "avatarId": "fcee789e-94cb-465a-8451-1a08b2d344b5",
+  "experiences": [
+    {
+      "id": "18a88938-2216-42b9-88f3-ef7b8fb63a5c",
+      "createdAt": "2024-08-16T14:00:08.561Z",
+      "updatedAt": "2024-08-16T14:00:08.561Z",
+      "ProfileId": "b562cf27-2f5b-47fb-876a-7569b82d8a5d",
+      "startsAt": "2020-04-29T22:00:00.000Z",
+      "endsAt": "2020-08-30T22:00:00.000Z",
+      "companyId": "dd0d0b76-9283-4e80-a7bd-4365c2dde26a",
+      "title": "Financial Controller Assistant",
+      "description": "",
+      "location": "Élancourt, Île-de-France, France",
+      "company": {
+        "id": "dd0d0b76-9283-4e80-a7bd-4365c2dde26a",
+        "name": "Ginger (CEBTP & BURGEAP & DELEO)",
+        "linkedinUrl": "https://www.linkedin.com/company/groupeginger/",
+        "linkedinId": null,
+        "logoId": "71fd3f7e-cae3-4ecb-975d-d665595f730f"
+      }
+    },
+    {
+      "id": "ccb2402b-3f07-4c32-bf14-811f85f4b675",
+      "createdAt": "2024-08-16T14:00:08.561Z",
+      "updatedAt": "2024-08-16T14:00:08.561Z",
+      "ProfileId": "b562cf27-2f5b-47fb-876a-7569b82d8a5d",
+      "startsAt": "2022-01-30T23:00:00.000Z",
+      "endsAt": "2022-06-29T22:00:00.000Z",
+      "companyId": "26be103a-eb10-47ea-9f95-cd680441cecf",
+      "title": "Financial Auditor",
+      "description": "",
+      "location": "Puteaux, Île-de-France, France",
+      "company": {
+        "id": "26be103a-eb10-47ea-9f95-cd680441cecf",
+        "name": "Deloitte",
+        "linkedinUrl": "https://www.linkedin.com/company/deloitte/",
+        "linkedinId": null,
+        "logoId": "ed433d20-0c95-44dc-9ef2-2f0bfcfe3933"
+      }
+    },
+    {
+      "id": "ba413b90-4adf-4119-b21b-d990742ac789",
+      "createdAt": "2024-08-16T14:00:08.561Z",
+      "updatedAt": "2024-08-16T14:00:08.561Z",
+      "ProfileId": "b562cf27-2f5b-47fb-876a-7569b82d8a5d",
+      "startsAt": "2022-08-30T22:00:00.000Z",
+      "endsAt": "2023-02-27T23:00:00.000Z",
+      "companyId": "eb9fdf0a-1e41-45a9-8003-e5176a0268b8",
+      "title": "Transaction Services Analyst",
+      "description": "Mazars Canada is an integrated and independant firm specialized in audit, consulting, financial and fiscal due diligences. The Transaction Services practice provides Financial and Tax due diligence services for their clients in support of their investment projects in Canada and abroad.",
+      "location": "Montréal, Québec, Canada",
+      "company": {
+        "id": "eb9fdf0a-1e41-45a9-8003-e5176a0268b8",
+        "name": "Mazars, Canada",
+        "linkedinUrl": "https://www.linkedin.com/company/forvismazarscanada/",
+        "linkedinId": null,
+        "logoId": "0055ce09-5bec-4403-8f2a-49195f44aecf"
+      }
+    },
+    {
+      "id": "8ca448f6-2b02-45fa-a466-5682dc6e0a5a",
+      "createdAt": "2024-08-16T14:00:08.561Z",
+      "updatedAt": "2024-08-16T14:00:08.561Z",
+      "ProfileId": "b562cf27-2f5b-47fb-876a-7569b82d8a5d",
+      "startsAt": "2023-09-29T22:00:00.000Z",
+      "endsAt": "2024-03-30T23:00:00.000Z",
+      "companyId": "1d56d0de-cd86-41fc-bb27-28e84e6d5bad",
+      "title": "Venture Capital Analyst",
+      "description": "With an international network in major technology hubs, Sienna Venture Capital invests in growth tech companies that aim to sustainably transform their sector and society according to their Tech for Purpose vision. The fund invest in Series B ticket between €5m-15m, in sectors such as cybersecurity, digital health, foodtech, agritech and mobility.",
+      "location": "Ville de Paris, Île-de-France, France",
+      "company": {
+        "id": "1d56d0de-cd86-41fc-bb27-28e84e6d5bad",
+        "name": "Sienna Venture Capital",
+        "linkedinUrl": "https://www.linkedin.com/company/sienna-venture-capital/",
+        "linkedinId": null,
+        "logoId": "917b3f35-47d2-4e27-8798-02f39f696c21"
+      }
+    }
+  ],
+  "educations": [
+    {
+      "id": "2c31cd0d-415f-479c-926c-cf758eabb822",
+      "createdAt": "2024-08-16T14:00:08.561Z",
+      "updatedAt": "2024-08-16T14:00:08.561Z",
+      "ProfileId": "b562cf27-2f5b-47fb-876a-7569b82d8a5d",
+      "startsAt": "2016-12-30T23:00:00.000Z",
+      "endsAt": "2022-12-30T23:00:00.000Z",
+      "schoolId": "f83fdcc7-e280-4d91-9fd3-49861c385ed2",
+      "description": "Final Master Thesis : The Drivers of the Value Creation of Leveraged Buyout Deals in Europe and the Impact of the COVID-19 crisis\n\n- 26th best business school in the world according to Financial Time (2022)\n- 1st French post-bac business school (2022)\n- Triple accreditation : AACSB, AMBA, EQUIS",
+      "fieldOfStudy": "Financial Transactions & Corporate Strategies",
+      "grade": "",
+      "degree": "Master's degree",
+      "school": {
+        "id": "f83fdcc7-e280-4d91-9fd3-49861c385ed2",
+        "name": "IESEG School of Management",
+        "linkedinUrl": "https://www.linkedin.com/school/ieseg-school-of-management/",
+        "linkedinId": "319911",
+        "logoId": null
+      }
+    },
+    {
+      "id": "971f1792-fe58-484d-9c6f-775321754a84",
+      "createdAt": "2024-08-16T14:00:08.561Z",
+      "updatedAt": "2024-08-16T14:00:08.561Z",
+      "ProfileId": "b562cf27-2f5b-47fb-876a-7569b82d8a5d",
+      "startsAt": "2008-12-30T23:00:00.000Z",
+      "endsAt": "2016-12-30T23:00:00.000Z",
+      "schoolId": "d5261916-8b69-4419-acdd-2ce9f1306f55",
+      "description": "",
+      "fieldOfStudy": "",
+      "grade": "Honors",
+      "degree": "Scientific Baccalauréat",
+      "school": {
+        "id": "d5261916-8b69-4419-acdd-2ce9f1306f55",
+        "name": "Louis Pasteur, Neuilly-sur-Seine",
+        "linkedinUrl": "",
+        "linkedinId": "",
+        "logoId": null
+      }
+    },
+    {
+      "id": "293c0c1b-124e-4820-a24b-202c58196c50",
+      "createdAt": "2024-08-16T14:00:08.561Z",
+      "updatedAt": "2024-08-16T14:00:08.561Z",
+      "ProfileId": "b562cf27-2f5b-47fb-876a-7569b82d8a5d",
+      "startsAt": "2017-12-30T23:00:00.000Z",
+      "endsAt": "2017-12-30T23:00:00.000Z",
+      "schoolId": "ba269012-57e4-4337-bf2f-329fc2a2cea9",
+      "description": "Academic exchange during an academic semester at Konkuk University in Seoul, South Korea",
+      "fieldOfStudy": "Management, Business & Economics ",
+      "grade": "",
+      "degree": "Licence",
+      "school": {
+        "id": "ba269012-57e4-4337-bf2f-329fc2a2cea9",
+        "name": "건국대학교",
+        "linkedinUrl": "https://www.linkedin.com/school/%EA%B1%B4%EA%B5%AD%EB%8C%80%ED%95%99%EA%B5%90/",
+        "linkedinId": "15096927",
+        "logoId": null
+      }
+    }
+  ]
+}
