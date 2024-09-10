@@ -20,6 +20,6 @@ ENV VIRTUAL_ENV=/app/.venv
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
 
-COPY .env ./
+COPY .env .
 
 CMD ["uv", "run", "src/server.py"]
