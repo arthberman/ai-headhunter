@@ -156,7 +156,7 @@ async def run_worker():
             activities=[
                 activity_process_matcher,
             ],
-            max_activities_per_second=2 / 60,
+            max_activities_per_second=1 / 60,
         ) as worker_1,
         worker.Worker(
             client,
@@ -165,7 +165,7 @@ async def run_worker():
                 activity_parse_job_posting,
                 activity_parse_scorecard,  # You can add different activities for the second worker if needed
             ],
-            max_task_queue_activities_per_second=5 / 60,
+            max_task_queue_activities_per_second=2 / 60,
         ) as worker_2,
     ):
         logger.info(
