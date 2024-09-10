@@ -5,8 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "intelligences/repio-intelligence/**"
-      - "packages/**" # Trigger on changes in packages/
+      - "src/**"
   workflow_dispatch:
 
 permissions:
