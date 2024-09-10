@@ -156,7 +156,7 @@ async def run_worker():
             activities=[
                 activity_process_matcher,
             ],
-            max_activities_per_second=2 / 60,
+            max_activities_per_second=1 / 60,
         ) as worker_1,
         worker.Worker(
             client,
