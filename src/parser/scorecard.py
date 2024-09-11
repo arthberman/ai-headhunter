@@ -24,6 +24,21 @@ class CriterionEnrichment(BaseModel):
     )
 
 
+class CriterionWithContext(BaseModel):
+    criterion_description: str = Field(
+        description="Description of the criterion.",
+    )
+    criterion_context: str = Field(
+        description="Context of the criterion. This is the context related to the criterion.",
+    )
+
+
+class ListCriterionWithContext(BaseModel):
+    criteria: List[CriterionWithContext] = Field(
+        description="List of criteria with context.",
+    )
+
+
 def parse_scorecard(raw_job_posting: str) -> Scorecard:
     model = init_chat_model(
         model="gpt-4o-2024-08-06",
@@ -41,6 +56,28 @@ def parse_scorecard(raw_job_posting: str) -> Scorecard:
         criterion.guidelines = enriched_criterion.guidelines
         criterion.examples_positive = enriched_criterion.examples_positive
         criterion.examples_negative = enriched_criterion.examples_negative
+
+    criteria_with_context = enrich_criterion_with_context(output, raw_job_posting)
+
+    # Create a dictionary for easier lookup
+    context_dict = {
+        c.criterion_description: c.criterion_context
+        for c in criteria_with_context.criteria
+    }
+
+    # Update output with context for each criterion
+    for criterion in (
+        output.mustHaveCriteria.criteria
+        + output.importantCriteria.criteria
+        + output.niceToHaveCriteria.criteria
+    ):
+        if criterion.description is not None and criterion.description in context_dict:
+            criterion.context = context_dict[criterion.description]
+        else:
+            print(
+                f"Warning: No context found for criterion with description: {criterion.description}"
+            )
+            criterion.context = ""  # Set a default empty context
 
     return output
 
@@ -62,6 +99,37 @@ def enrich_criterion(
         {
             "criterion_description": criterion_description,
             "job_posting": raw_job_posting,
+        }
+    )
+
+    return output
+
+
+def enrich_criterion_with_context(
+    scorecard: Scorecard, raw_job_posting: str
+) -> ListCriterionWithContext:
+    model = init_chat_model(
+        model="gpt-4o-2024-08-06",
+        model_provider="openai",
+        temperature=0,
+    )
+
+    prompt = hub.pull("parser-scorecard-context")
+    structured_model = model.with_structured_output(ListCriterionWithContext)
+
+    # List of all criteria (mustHaveCriteria and importantCriteria and niceToHaveCriteria) with id and description
+    scorecard_criteria = [
+        {"description": criterion.description}
+        for criterion in scorecard.mustHaveCriteria.criteria
+        + scorecard.importantCriteria.criteria
+        + scorecard.niceToHaveCriteria.criteria
+    ]
+
+    chain = prompt | structured_model
+    output = chain.invoke(
+        {
+            "scorecard_criteria": scorecard_criteria,
+            "raw_job_posting": raw_job_posting,
         }
     )
 
