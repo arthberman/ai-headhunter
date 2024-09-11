@@ -43,6 +43,10 @@ class BaseCriterion(BaseModel):
         description="List of examples that do not meet the criterion, illustrating profiles that fall short of the requirement",
     )
 
+    context: Optional[str] = Field(
+        description="Context of the criterion. This is the context related to the criterion.",
+    )
+
 
 class MustHaveCriterion(BaseCriterion):
     weight: float = Field(
