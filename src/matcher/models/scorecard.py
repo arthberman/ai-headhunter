@@ -43,6 +43,10 @@ class BaseCriterion(BaseModel):
         description="List of examples that do not meet the criterion, illustrating profiles that fall short of the requirement",
     )
 
+    context: Optional[str] = Field(
+        description="Context of the criterion. This is the context related to the criterion.",
+    )
+
 
 class MustHaveCriterion(BaseCriterion):
     weight: float = Field(
@@ -106,7 +110,9 @@ class Scorecard(BaseModel):
     jobPostingId: Optional[str] = Field(
         ..., description="ID of the associated job posting"
     )
-
+    context: Optional[str] = Field(
+        description="Context of the scorecard. This provides overall context for all criteria."
+    )
     importantWeight: float = Field(
         description="Weight for the IMPORTANT section. Must be between 0 and 1 inclusive."
     )
@@ -147,16 +153,19 @@ def filter_criteria_by_type(
     for criterion in scorecard.mustHaveCriteria.criteria:
         if criterion.type in criteriaTypes:
             criterion.importance = ImportanceLevel.MUST_HAVE
+            criterion.context = criterion.context
             filteredCriteria.append(criterion)
 
     for criterion in scorecard.importantCriteria.criteria:
         if criterion.type in criteriaTypes:
             criterion.importance = ImportanceLevel.IMPORTANT
+            criterion.context = criterion.context
             filteredCriteria.append(criterion)
 
     for criterion in scorecard.niceToHaveCriteria.criteria:
         if criterion.type in criteriaTypes:
             criterion.importance = ImportanceLevel.NICE_TO_HAVE
+            criterion.context = criterion.context
             filteredCriteria.append(criterion)
 
     return filteredCriteria
