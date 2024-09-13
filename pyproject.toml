@@ -6,17 +6,20 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "python-dotenv>=1.0.1",
-    "langchain>=0.2.14",
-    "langchain-community>=0.2.12",
+    "langchain>=0.2.16",
+    "langchain-community>=0.2.16",
     "langchainhub>=0.1.21",
     "langchain-anthropic>=0.1.23",
-    "langchain-groq>=0.1.9",
-    "langchain-core>=0.2.34",
-    "langgraph>=0.2.14",
-    "langchain-postgres>=0.0.9",
-    "langchain-openai>=0.1.22",
-    "pydantic>=2.8.2",
-    "temporalio>=1.7.0",
+    "langchain-groq>=0.1.10",
+    "langchain-core>=0.2.39",
+    "langgraph>=0.2.19",
+    "langchain-postgres>=0.0.11",
+    "langchain-openai>=0.1.24",
+    "pydantic>=2.9.1",
+    "temporalio>=1.7.1",
+    "toml>=0.10.2",
+    "packaging>=24.1",
+    "ipykernel>=6.29.5",
 ]
 
 [build-system]
@@ -24,9 +27,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.uv]
-dev-dependencies = [
-    "ipykernel>=6.29.5",
-]
+dev-dependencies = ["ipykernel>=6.29.5"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/matcher", "src/parser", "src/utils"]
