@@ -49,6 +49,8 @@ def synthesis(state: MainGraphState) -> MainGraphState:
 
 
 def compile_graph() -> CompiledGraph:
+    # we can use input_schema to specify the input type of the graph
+    # we can use output_schema to specify the output type of the graph
     workflow = StateGraph(MainGraphState)
 
     workflow.add_node("node_language_enrichment", node_language_enrichment)
