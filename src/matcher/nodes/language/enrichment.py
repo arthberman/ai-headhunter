@@ -2,7 +2,7 @@ from typing import List
 
 from langchain import hub
 from langchain.chat_models import init_chat_model
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 from matcher.models.language import LanguageProficiency
 from matcher.state import MainGraphState

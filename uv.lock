@@ -573,7 +573,7 @@ wheels = [
 
 [[package]]
 name = "langchain"
-version = "0.2.16"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -587,28 +587,29 @@ dependencies = [
     { name = "sqlalchemy" },
     { name = "tenacity" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fd/53/8ebf21de8d17e7e0f0998f28d689f60d7ed420acb7ab2fba59ca04e80e54/langchain-0.2.16.tar.gz", hash = "sha256:ffb426a76a703b73ac69abad77cd16eaf03dda76b42cff55572f592d74944166", size = 414668 }
+sdist = { url = "https://files.pythonhosted.org/packages/ac/7f/59912969fcfa7e987751505d9e682bde103a332ead8308220d805295a4d2/langchain-0.3.0.tar.gz", hash = "sha256:a7c23892440bd1f5b9e029ff0dd709dd881ae927c4c0a3210ac64dba9bbf3f7f", size = 415522 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0d/29/635343c0d155997569b544d26da5a2a9ebade2423baffc9cd6066b01a386/langchain-0.2.16-py3-none-any.whl", hash = "sha256:8f59ee8b45f268df4b924ea3b9c63e49286efa756d16b3f6a9de5c6e502c36e1", size = 1001195 },
+    { url = "https://files.pythonhosted.org/packages/8a/db/38de43dae7e23f8de1d92e9a02c2d7cf8b604c25f76a65da3e6959233b78/langchain-0.3.0-py3-none-any.whl", hash = "sha256:59a75a6a1eb7bfd2a6bf0c7a5816409a8fdc9046187b07af287b23b9899617af", size = 1002879 },
 ]
 
 [[package]]
 name = "langchain-anthropic"
-version = "0.1.23"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anthropic" },
     { name = "defusedxml" },
     { name = "langchain-core" },
+    { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/17/4f/7515ed7bcd4866726d53da2b9831bb4950576936415a90196432944d75e0/langchain_anthropic-0.1.23.tar.gz", hash = "sha256:f2ce045bd0ae09d5f11fed4b84a38ce306822b7bcac77232345f40115df66d51", size = 19778 }
+sdist = { url = "https://files.pythonhosted.org/packages/c8/a7/163638b044f04d663cb7c7c10160060def9ba9e9717478c5e15fdaa3e319/langchain_anthropic-0.2.0.tar.gz", hash = "sha256:98ee94350677ed4cba82f1c551b72a134b475172b955a37926c26c65bcae01c4", size = 20109 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3e/00/823996fe8aba3b13342136bd079acc989ad2a0eee90ea477e0e37e3c4a14/langchain_anthropic-0.1.23-py3-none-any.whl", hash = "sha256:89cafdaf4c9e522484b0ca8bafcceb0a5e4ffca89f7c7c9cec1e2ba411208208", size = 21294 },
+    { url = "https://files.pythonhosted.org/packages/52/86/07072482a00378485507343998c2e826da1433fdf6717545015cd7c60be9/langchain_anthropic-0.2.0-py3-none-any.whl", hash = "sha256:f3cb92e6c215bab7e83fc07629ee8dee4e8dc2d4dd0301e4bd6530ac3caa3d31", size = 21600 },
 ]
 
 [[package]]
 name = "langchain-community"
-version = "0.2.16"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -617,19 +618,20 @@ dependencies = [
     { name = "langchain-core" },
     { name = "langsmith" },
     { name = "numpy" },
+    { name = "pydantic-settings" },
     { name = "pyyaml" },
     { name = "requests" },
     { name = "sqlalchemy" },
     { name = "tenacity" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f2/94/917668a886bbc1f57c16b9ab976a37917b06fc26dd7fa28e7ab3a562c6aa/langchain_community-0.2.16.tar.gz", hash = "sha256:ab416b793a7aed1fa46ebaffd29993296b02286a99819eabc43be2ea8e41ae78", size = 1586524 }
+sdist = { url = "https://files.pythonhosted.org/packages/06/c8/6ecc070a51eaaca3a1b764ab97995238696cee874af5f8c8691989129ac7/langchain_community-0.3.0.tar.gz", hash = "sha256:1ee8a469ad66977f21b9d96bdcdd8549c5281c474f0f9cc13b932efd63a78105", size = 1591569 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/94/f9/d33c0d0fe430ad443df069fcc6845c279bd29b57dec36adf5ab35d141b0b/langchain_community-0.2.16-py3-none-any.whl", hash = "sha256:115e1419c176091d4e00240cb5a38612a249e70f213516b6cacae61a8794a868", size = 2335934 },
+    { url = "https://files.pythonhosted.org/packages/07/3d/a30549f1c5fa023b833a81eab43f99d6f603bed5ecfaef175f53e7166dbf/langchain_community-0.3.0-py3-none-any.whl", hash = "sha256:40084f1f785f0fb56c8698ff059bbda8bd8c683cbdffa7902a0e04e72961496c", size = 2346560 },
 ]
 
 [[package]]
 name = "langchain-core"
-version = "0.2.39"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jsonpatch" },
@@ -640,41 +642,41 @@ dependencies = [
     { name = "tenacity" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7e/bc/8988eb9c2dfdc730ff57bbbb82319f10cea3ca4ee0dcff825debd36aeb19/langchain_core-0.2.39.tar.gz", hash = "sha256:73d7b6f0b0212bc8069c3640d69e8d75faa51097784019ffa5c36c617c04acb0", size = 316503 }
+sdist = { url = "https://files.pythonhosted.org/packages/72/08/e2130514c5b7a5e0fbaaa27d1ddbc76906c28e4e41ec5c00a19f87364110/langchain_core-0.3.0.tar.gz", hash = "sha256:1249149ea3ba24c9c761011483c14091573a5eb1a773aa0db9c8ad155dd4a69d", size = 324246 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ab/a5/1fa67701385d524919828905d0d079b9c4675aa2e4745708923193c027c4/langchain_core-0.2.39-py3-none-any.whl", hash = "sha256:5a5ad4e1c02d13e7021c026b2c7965069ad71ef67b018274cd52bab56e39143e", size = 396554 },
+    { url = "https://files.pythonhosted.org/packages/75/a4/3eba5bb842219342ecd855d52febc3f3dcec3130e40bca9ab55b7ce0bd3d/langchain_core-0.3.0-py3-none-any.whl", hash = "sha256:bee6dae2366d037ef0c5b87401fed14b5497cad26f97724e8c9ca7bc9239e847", size = 405138 },
 ]
 
 [[package]]
 name = "langchain-groq"
-version = "0.1.10"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "groq" },
     { name = "langchain-core" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cc/6c/8c2b8240c0f8d5cf6979f47307af0e83e8f9de0940e8661798246a32cb0b/langchain_groq-0.1.10.tar.gz", hash = "sha256:a5e69190fd89420ab759845956f64230473c8229446c8e7022b1cbc269a51078", size = 14915 }
+sdist = { url = "https://files.pythonhosted.org/packages/f4/ac/cd1f8297fd19856e2209773e98a4191d8e1f633a1c3f6af50b431536f0c5/langchain_groq-0.2.0.tar.gz", hash = "sha256:36932bbdfe19176130acb660a0c7ba8db55f5fdee6b0ee69b53794d5308542ae", size = 14911 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a5/33/fb1f1cbc2fb644b09e075eb030e2c1ffb71b03d62800d4994e56f77e2b9a/langchain_groq-0.1.10-py3-none-any.whl", hash = "sha256:ef18331ba31b13ea44b7ac5467ad31b7efdf5bfe7c219cdf585311811b06f6b8", size = 14455 },
+    { url = "https://files.pythonhosted.org/packages/dd/85/425765bc9895f992059a5b893dd6843d795b62b68a78c738a990767c7c87/langchain_groq-0.2.0-py3-none-any.whl", hash = "sha256:23a891f87b6399b988c128cd6656781850a6bd34c91de5e283e713d8fce18d9e", size = 14434 },
 ]
 
 [[package]]
 name = "langchain-openai"
-version = "0.1.24"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "openai" },
     { name = "tiktoken" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/40/74/fe8709ad4503bae89e41c0286874b82f87e6ed321416d5229c0e2793aae6/langchain_openai-0.1.24.tar.gz", hash = "sha256:3f7ef5c26d232685d3c367b7ec523799563c468725e4ca2e616d7c4a96bd16f3", size = 45224 }
+sdist = { url = "https://files.pythonhosted.org/packages/52/c4/212c859112aaa7f11d6f1c5b643ac65f8d5f6e218600546180421dfa6557/langchain_openai-0.2.0.tar.gz", hash = "sha256:441ec8fd254992e5fa81d375e60849993a81db5e9e42a79344ebff7a40a0b45f", size = 45142 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/44/5b/7c80b53d372cff285d04887de9c59b69657fcd30039ff986f22e7bea4471/langchain_openai-0.1.24-py3-none-any.whl", hash = "sha256:7dc27f1dd50090a409fb5e970b07aaf3ff32c027cc1e8da1d1272f950e93e02c", size = 51551 },
+    { url = "https://files.pythonhosted.org/packages/8c/de/865dedcb252db4725e6e458fb28845038217fdade1df40a9e41b0579c534/langchain_openai-0.2.0-py3-none-any.whl", hash = "sha256:9a1a69ba0706f23ec2941096ead0bc39202cac0e9782a5d6c8d92cb2280c2759", size = 51465 },
 ]
 
 [[package]]
 name = "langchain-postgres"
-version = "0.0.11"
+version = "0.0.12"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
@@ -684,21 +686,21 @@ dependencies = [
     { name = "psycopg-pool" },
     { name = "sqlalchemy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a5/61/fe7fcf38731c8941dd926b12c3b28412c371c79fb8f9269d140e72ac724a/langchain_postgres-0.0.11.tar.gz", hash = "sha256:99a8893e11a5ec7fb45c48557a1b11ccd4ebdd53daf82a0140a79e56e872c080", size = 21459 }
+sdist = { url = "https://files.pythonhosted.org/packages/54/87/9c1363b2a39c369c2786fee287aeecc20fed2d98f40b9dab5a9ab208f5e6/langchain_postgres-0.0.12.tar.gz", hash = "sha256:fe44c8073345463720355c86b676c56fc867d5c0995066353f60f2a5d01d0d0d", size = 21476 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/38/0d/d68920e0549fa60236c4588cb875858fc7c10aa9bc37eb53e5ffc6685a5b/langchain_postgres-0.0.11-py3-none-any.whl", hash = "sha256:d521418fdc7b43b28fdeddbac07b56e3df01586ffffb2f3eb87961bd922549c2", size = 21888 },
+    { url = "https://files.pythonhosted.org/packages/21/9f/00fdc9a1da7e856e9cc3705ae0155b8d7bf0e1317e5bc8fe1354944ebb3f/langchain_postgres-0.0.12-py3-none-any.whl", hash = "sha256:b3a8e8fa318ecea1874675ae2bed08fc320e7d4c4f65e016f95808d1164dad51", size = 21909 },
 ]
 
 [[package]]
 name = "langchain-text-splitters"
-version = "0.2.4"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/83/b3/b1ccde47c86c5fe2585dc012555cff7949c556bd6993dd9c09e49a356190/langchain_text_splitters-0.2.4.tar.gz", hash = "sha256:f7daa7a3b0aa8309ce248e2e2b6fc8115be01118d336c7f7f7dfacda0e89bf29", size = 20236 }
+sdist = { url = "https://files.pythonhosted.org/packages/57/35/08ac1ca01c58da825f070bd1fdc9192a9ff52c0a048f74c93b05df70c127/langchain_text_splitters-0.3.0.tar.gz", hash = "sha256:f9fe0b4d244db1d6de211e7343d4abc4aa90295aa22e1f0c89e51f33c55cd7ce", size = 20234 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8f/f3/d01591229e9d0eec1e8106ed6f9b670f299beb1c94fed4aa335afa78acb0/langchain_text_splitters-0.2.4-py3-none-any.whl", hash = "sha256:2702dee5b7cbdd595ccbe43b8d38d01a34aa8583f4d6a5a68ad2305ae3e7b645", size = 25552 },
+    { url = "https://files.pythonhosted.org/packages/da/6a/d1303b722a3fa7a0a8c2f8f5307e42f0bdbded46d99cca436f3db0df5294/langchain_text_splitters-0.3.0-py3-none-any.whl", hash = "sha256:e84243e45eaff16e5b776cd9c81b6d07c55c010ebcb1965deb3d1792b7358e83", size = 25543 },
 ]
 
 [[package]]
@@ -717,15 +719,15 @@ wheels = [
 
 [[package]]
 name = "langgraph"
-version = "0.2.19"
+version = "0.2.21"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "langgraph-checkpoint" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/ce/11342ad704f19f21a4c187851654825d47eeef321223de711618b5e536fe/langgraph-0.2.19.tar.gz", hash = "sha256:7d3f41cd61e4dcf248919fa3f66d0033bc70c5017148f7657c25c47f0daf8450", size = 78748 }
+sdist = { url = "https://files.pythonhosted.org/packages/4c/ef/fd280c4b8890d09c9ab8323946122d5f5d869f7ad6dacf617f1e75a24bfd/langgraph-0.2.21.tar.gz", hash = "sha256:87346bc8d7cba08cac5bc97c7f11550d054c3197272c8599e13349ab789a3d28", size = 80014 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c4/07/28ec40ab15ef8b2012af60c9647116e976ff3053576f440494d4e6c462f3/langgraph-0.2.19-py3-none-any.whl", hash = "sha256:f341de2d13a6b6256ddce23454e50273164344f13909e231c50ad2c0d0dbef89", size = 97069 },
+    { url = "https://files.pythonhosted.org/packages/cd/4e/9263e4ac96de6b076f179ee3a638fb55e47e254362be71a90cdbeb21048f/langgraph-0.2.21-py3-none-any.whl", hash = "sha256:4a9319bab8eab84a6a9954177ded7fcd57c5fa87bb617adc3855a0713f3fc614", size = 97609 },
 ]
 
 [[package]]
@@ -738,6 +740,21 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ba/52/088f3716eeeaaf871015d25179f285ae2405edab184c519c0017c3e1c155/langgraph_checkpoint-1.0.9.tar.gz", hash = "sha256:0e8646d8cfeaa6586acecf0a0a0da17488612036ece07bffe886b851fae717e2", size = 14464 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/52/fe/91d57af314ff323d167b96fb71b1782703d6bae0c4b60d97748e62b37ffe/langgraph_checkpoint-1.0.9-py3-none-any.whl", hash = "sha256:9765c0005d645a22940c5df92f05f34fbda669466994096c3546a005da8572fc", size = 15854 },
+]
+
+[[package]]
+name = "langgraph-checkpoint-postgres"
+version = "1.0.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "langgraph-checkpoint" },
+    { name = "orjson" },
+    { name = "psycopg" },
+    { name = "psycopg-pool" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/93/dc/7b160963ef2296ffa7461fd9873bf9bad8f4d2772d1f123abce5ecbf699b/langgraph_checkpoint_postgres-1.0.6.tar.gz", hash = "sha256:64c5ca6b2a92bd61743d60c13533ea89107ff8d7a3622fd5eac24d2c58497a46", size = 9288 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/01/85/76a487da915e161439a7bf8b27a3760b3a11e749f29bf085ac2a570ec9e6/langgraph_checkpoint_postgres-1.0.6-py3-none-any.whl", hash = "sha256:1f47fa82b312356254b574385c1351cdd9d6c1a42959d292d08725a3437c1cb0", size = 12059 },
 ]
 
 [[package]]
@@ -990,27 +1007,27 @@ wheels = [
 
 [[package]]
 name = "psycopg"
-version = "3.2.1"
+version = "3.2.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ff/8e/f176997fd790d3dce9fa0ca695391beaeee39af7ecd6d426c4c063cf6744/psycopg-3.2.1.tar.gz", hash = "sha256:dc8da6dc8729dacacda3cc2f17d2c9397a70a66cf0d2b69c91065d60d5f00cb7", size = 155313 }
+sdist = { url = "https://files.pythonhosted.org/packages/fe/70/d1e4c251be6e0752cbc7408f0556f8f922690837309442b9019122295712/psycopg-3.2.2.tar.gz", hash = "sha256:8bad2e497ce22d556dac1464738cb948f8d6bab450d965cf1d8a8effd52412e0", size = 155483 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8a/0e/0f755db36f47f96464463385552f8f132a981731356837c9a30a11ab2d35/psycopg-3.2.1-py3-none-any.whl", hash = "sha256:ece385fb413a37db332f97c49208b36cf030ff02b199d7635ed2fbd378724175", size = 197743 },
+    { url = "https://files.pythonhosted.org/packages/3f/89/e63ec25b80290c4a923cdb5ecd5dbc85e310f93fb84b7f294006c9269d95/psycopg-3.2.2-py3-none-any.whl", hash = "sha256:babf565d459d8f72fb65da5e211dd0b58a52c51e4e1fa9cadecff42d6b7619b2", size = 197852 },
 ]
 
 [[package]]
 name = "psycopg-pool"
-version = "3.2.2"
+version = "3.2.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7f/57/9353b9ca259eaa3f0da2780eae7136948e70a8423e66b08a1115e7501860/psycopg_pool-3.2.2.tar.gz", hash = "sha256:9e22c370045f6d7f2666a5ad1b0caf345f9f1912195b0b25d0d3bcc4f3a7389c", size = 29665 }
+sdist = { url = "https://files.pythonhosted.org/packages/ad/a6/efa7fa8204d2dedf5f1b53b24154c8da0291788e99b7fb544fcaf4a3a29c/psycopg_pool-3.2.3.tar.gz", hash = "sha256:bb942f123bef4b7fbe4d55421bd3fb01829903c95c0f33fd42b7e94e5ac9b52a", size = 29661 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e5/0f/1cbe48737ac568e09fe03fbbcc585cdb535b5efb7709ba9b3f38a7ad7645/psycopg_pool-3.2.2-py3-none-any.whl", hash = "sha256:273081d0fbfaced4f35e69200c89cb8fbddfe277c38cc86c235b90a2ec2c8153", size = 38140 },
+    { url = "https://files.pythonhosted.org/packages/3b/30/7bc6c070ef1135a44005fe39dd749a6bde41c5770fed7349b544f277fa78/psycopg_pool-3.2.3-py3-none-any.whl", hash = "sha256:53bd8e640625e01b2927b2ad96df8ed8e8f91caea4597d45e7673fc7bbb85eb1", size = 38141 },
 ]
 
 [[package]]
@@ -1087,6 +1104,19 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/d1/3d/9f96bbd6212b4b0a6dc6d037e446208d3420baba2b2b81e544094b18a859/pydantic_core-2.23.3-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:203171e48946c3164fe7691fc349c79241ff8f28306abd4cad5f4f75ed80bc8d", size = 2121468 },
     { url = "https://files.pythonhosted.org/packages/ac/50/7399d536d6600d69059a87fff89861332c97a7b3471327a3663c7576e707/pydantic_core-2.23.3-cp313-none-win32.whl", hash = "sha256:76bdab0de4acb3f119c2a4bff740e0c7dc2e6de7692774620f7452ce11ca76c8", size = 1725373 },
     { url = "https://files.pythonhosted.org/packages/24/ba/9ac8744ab636c1161c598cc5e8261379b6b0f1d63c31242bf9d5ed41ed32/pydantic_core-2.23.3-cp313-none-win_amd64.whl", hash = "sha256:37ba321ac2a46100c578a92e9a6aa33afe9ec99ffa084424291d84e456f490c1", size = 1920594 },
+]
+
+[[package]]
+name = "pydantic-settings"
+version = "2.5.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "python-dotenv" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/68/27/0bed9dd26b93328b60a1402febc780e7be72b42847fa8b5c94b7d0aeb6d1/pydantic_settings-2.5.2.tar.gz", hash = "sha256:f90b139682bee4d2065273d5185d71d37ea46cfe57e1b5ae184fc6a0b2484ca0", size = 70938 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/29/8d/29e82e333f32d9e2051c10764b906c2a6cd140992910b5f49762790911ba/pydantic_settings-2.5.2-py3-none-any.whl", hash = "sha256:2c912e55fd5794a59bf8c832b9de832dcfdf4778d79ff79b708744eed499a907", size = 26864 },
 ]
 
 [[package]]
@@ -1252,7 +1282,10 @@ dependencies = [
     { name = "langchain-postgres" },
     { name = "langchainhub" },
     { name = "langgraph" },
+    { name = "langgraph-checkpoint-postgres" },
     { name = "packaging" },
+    { name = "psycopg" },
+    { name = "psycopg-pool" },
     { name = "pydantic" },
     { name = "python-dotenv" },
     { name = "temporalio" },
@@ -1267,16 +1300,19 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "ipykernel", specifier = ">=6.29.5" },
-    { name = "langchain", specifier = ">=0.2.16" },
-    { name = "langchain-anthropic", specifier = ">=0.1.23" },
-    { name = "langchain-community", specifier = ">=0.2.16" },
-    { name = "langchain-core", specifier = ">=0.2.39" },
-    { name = "langchain-groq", specifier = ">=0.1.10" },
-    { name = "langchain-openai", specifier = ">=0.1.24" },
-    { name = "langchain-postgres", specifier = ">=0.0.11" },
+    { name = "langchain", specifier = ">=0.3.0" },
+    { name = "langchain-anthropic", specifier = ">=0.2.0" },
+    { name = "langchain-community", specifier = ">=0.3.0" },
+    { name = "langchain-core", specifier = ">=0.3.0" },
+    { name = "langchain-groq", specifier = ">=0.2.0" },
+    { name = "langchain-openai", specifier = ">=0.2.0" },
+    { name = "langchain-postgres", specifier = ">=0.0.12" },
     { name = "langchainhub", specifier = ">=0.1.21" },
-    { name = "langgraph", specifier = ">=0.2.19" },
+    { name = "langgraph", specifier = ">=0.2.21" },
+    { name = "langgraph-checkpoint-postgres", specifier = ">=1.0.6" },
     { name = "packaging", specifier = ">=24.1" },
+    { name = "psycopg", specifier = ">=3.2.2" },
+    { name = "psycopg-pool", specifier = ">=3.2.3" },
     { name = "pydantic", specifier = ">=2.9.1" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "temporalio", specifier = ">=1.7.1" },

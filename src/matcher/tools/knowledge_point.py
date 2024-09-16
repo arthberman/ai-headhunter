@@ -11,7 +11,7 @@ from sqlalchemy.dialects.postgresql import UUID as sqlUUID
 from sqlalchemy.sql import func
 
 from matcher.models.knowledge_point import KnowledgePoint
-from matcher.models.scorecard import CriteriaType
+from scorecard.models.scorecard import CriteriaType
 
 load_dotenv()
 
