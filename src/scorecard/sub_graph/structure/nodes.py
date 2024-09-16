@@ -1,12 +1,10 @@
-from typing import List, Union
+from typing import List
 from langchain import hub
 from langchain.chat_models import init_chat_model
 from scorecard.models.scorecard import (
-    CriteriaType,
     ImportanceLevel,
     Scorecard,
     BaseCriterion,
-    ScoringDistribution,
 )
 from scorecard.sub_graph.structure.state import StructureGraphState
 from scorecard.sub_graph.structure.models import (
@@ -30,12 +28,18 @@ def generate_scorecard_structure(state: StructureGraphState) -> StructureGraphSt
         {
             "previous_scorecard": state.scorecard,
             "raw_job_posting": state.raw_job_posting,
-            "global_context": state.global_context,
-            "questions": state.questions,
+            "web_context": state.web_context,
+            "generated_questions": state.generated_questions,
+            "human_context": state.human_context,
+            "human_feedback": state.human_feedback,
         }
     )
 
-    return {"scorecard": output}
+    return {
+        "scorecard": output,
+        "human_context": (state.human_context or []) + (state.human_feedback or []),
+        "human_feedback": [],
+    }
 
 
 def judge_scorecard_structure(state: StructureGraphState) -> StructureGraphState:
