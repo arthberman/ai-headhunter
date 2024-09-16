@@ -3,7 +3,6 @@ from pydantic import BaseModel, Field
 
 from scorecard.models.question import Question
 from scorecard.models.scorecard import Scorecard
-from scorecard.sub_graph.enrichment.state import GlobalContext
 
 
 class ScorecardGraphState(BaseModel):

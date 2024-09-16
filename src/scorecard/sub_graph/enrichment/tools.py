@@ -6,10 +6,10 @@ from pydantic import BaseModel, Field
 from langchain_core.tools import BaseTool
 
 
-class GlobalContext(BaseModel):
+class WebContext(BaseModel):
     """Respond to the user with this"""
 
-    global_context: List[str] = Field(
+    web_context: List[str] = Field(
         description="List of context elements (results from the web search)"
     )
 
@@ -20,5 +20,5 @@ def get_tools() -> List[BaseTool]:
         include_answer=True,
     )
 
-    tools = [tavily_tool, GlobalContext]
+    tools = [tavily_tool, WebContext]
     return tools

@@ -3,13 +3,13 @@ from langchain import hub
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, MessagesState
 
-from scorecard.sub_graph.enrichment.tools import GlobalContext, get_tools
+from scorecard.sub_graph.enrichment.tools import WebContext, get_tools
 
 
 # Define the AgentState
 class AgentState(MessagesState):
     raw_job_posting: str
-    global_context: GlobalContext
+    web_context: WebContext
 
 
 def init_agent(state: AgentState):
@@ -36,9 +36,9 @@ def call_model(state: AgentState):
 
 # Define the function that responds to the user
 def respond(state: AgentState):
-    response = GlobalContext(**state["messages"][-1].tool_calls[0]["args"])
+    response = WebContext(**state["messages"][-1].tool_calls[0]["args"])
     # We return the final answer
-    return {"global_context": response.global_context}
+    return {"web_context": response.web_context}
 
 
 # Define the function that determines whether to continue or not
@@ -48,7 +48,7 @@ def should_continue(state: AgentState):
     # If there is only one tool call and it is the response tool call we respond to the user
     if (
         len(last_message.tool_calls) == 1
-        and last_message.tool_calls[0]["name"] == "GlobalContext"
+        and last_message.tool_calls[0]["name"] == "WebContext"
     ):
         return "respond"
     # Otherwise we will use the tool node again

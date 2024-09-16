@@ -19,7 +19,7 @@ def node_generate_questions(state: ScorecardGraphState) -> ScorecardGraphState:
     res: ListQuestions = chain.invoke(
         {
             "raw_job_posting": state.raw_job_posting,
-            "global_context": state.global_context,
+            "web_context": state.web_context,
         }
     )
 
