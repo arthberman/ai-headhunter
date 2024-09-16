@@ -16,7 +16,7 @@ from matcher.graph import compile_graph
 from matcher.models.career_path import CareerPathAnalysis
 from matcher.models.job_posting import JobPosting
 from matcher.models.profile import Profile
-from matcher.models.scorecard import ListScoredCriterion, Scorecard
+from scorecard.models.scorecard import ListScoredCriterion, Scorecard
 from matcher.state import MainGraphState
 from utils.logger import setup_logger
 

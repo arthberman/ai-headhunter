@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Dict, List, Optional
 
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class ImportanceLevel(str, Enum):
@@ -28,13 +28,14 @@ class ScoringDistribution(str, Enum):
 
 
 class BaseCriterion(BaseModel):
-    id: Optional[str] = Field(description="Unique identifier for the criterion")
+    id: Optional[str] = Field(None, description="Unique identifier for the criterion")
     description: str = Field(..., description="Detailed description of the criterion")
     type: CriteriaType = Field(
         ...,
         description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION)",
     )
     context: Optional[str] = Field(
+        None,
         description="This is the context of the job posting that is relevant to the criterion (definition of the scope).",
     )
     scoring_distribution: ScoringDistribution = Field(
@@ -42,12 +43,14 @@ class BaseCriterion(BaseModel):
         description="The type of scoring distribution for this criterion",
     )
     distribution_params: Optional[Dict[str, float]] = Field(
+        None,
         description="Parameters specific to the chosen scoring distribution",
     )
 
 
 class Scorecard(BaseModel):
     context: Optional[str] = Field(
+        None,
         description="Global context of the scorecard.",
     )
     mustHaveCriteria: List[BaseCriterion] = Field(..., description="MUST_HAVE criteria")

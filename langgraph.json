@@ -1,7 +1,8 @@
 {
   "dockerfile_lines": [],
   "graphs": {
-    "judge": "./src/test/test_judge.py:app"
+    "structure": "./src/scorecard/sub_graph/structure/graph.py:create_structure_graph",
+    "scorecard": "./src/scorecard/graph.py:create_scorecard_graph"
   },
   "env": ".env.studio",
   "python_version": "3.12",

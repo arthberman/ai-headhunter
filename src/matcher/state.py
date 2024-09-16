@@ -1,7 +1,7 @@
 import operator
 from typing import Annotated, List, Optional
 
-from langchain.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 from matcher.models.career_path import CareerPathAnalysis
 from matcher.models.company import CompanyInfo
@@ -9,7 +9,7 @@ from matcher.models.job_posting import JobPosting
 from matcher.models.language import LanguageProficiency
 from matcher.models.profile import Profile, ProfileEducation, ProfileExperience
 from matcher.models.school import SchoolInfo
-from matcher.models.scorecard import Scorecard, ListScoredCriterion
+from scorecard.models.scorecard import Scorecard, ListScoredCriterion
 
 
 class MainGraphState(BaseModel):
@@ -24,14 +24,14 @@ class MainGraphState(BaseModel):
         default_factory=list
     )
 
-    career_path_analysis: Optional[CareerPathAnalysis]
-    education_analysis: Optional[ListScoredCriterion]
-    experience_analysis: Optional[ListScoredCriterion]
-    soft_skill_analysis: Optional[ListScoredCriterion]
-    hard_skill_analysis: Optional[ListScoredCriterion]
-    language_analysis: Optional[ListScoredCriterion]
-    industry_knowledge_analysis: Optional[ListScoredCriterion]
-    additional_qualification_analysis: Optional[ListScoredCriterion]
+    career_path_analysis: Optional[CareerPathAnalysis] = None
+    education_analysis: Optional[ListScoredCriterion] = None
+    experience_analysis: Optional[ListScoredCriterion] = None
+    soft_skill_analysis: Optional[ListScoredCriterion] = None
+    hard_skill_analysis: Optional[ListScoredCriterion] = None
+    language_analysis: Optional[ListScoredCriterion] = None
+    industry_knowledge_analysis: Optional[ListScoredCriterion] = None
+    additional_qualification_analysis: Optional[ListScoredCriterion] = None
 
     must_have_score: Optional[float] = Field(default=None, ge=0, le=1)
     important_score: Optional[float] = Field(default=None, ge=0, le=1)

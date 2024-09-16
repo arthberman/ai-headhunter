@@ -1,14 +1,14 @@
 from typing import List, Optional
 
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class LocationInfo(BaseModel):
     """Detailed location information"""
 
-    city: Optional[str] = Field(description="City where the job is located")
+    city: Optional[str] = Field(None, description="City where the job is located")
     region: Optional[str] = Field(
-        description="State, province, or region where the job is located"
+        None, description="State, province, or region where the job is located"
     )
     country: str = Field(description="Country where the job is located (full name)")
     countryCode: str = Field(
@@ -22,7 +22,7 @@ class JobPosting(BaseModel):
     title: str = Field(description="Title of the job")
     company: str = Field(description="Name of the company offering the job")
     department: Optional[str] = Field(
-        description="Department or division within the company"
+        None, description="Department or division within the company"
     )
 
     missions: List[str] = Field(description="List of missions for the job")
@@ -48,7 +48,7 @@ class JobPosting(BaseModel):
 
     languages: List[str] = Field(description="List of languages required for the job")
     educationLevel: Optional[str] = Field(
-        description="Education level required for the job"
+        None, description="Education level required for the job"
     )
 
     contractType: str = Field(description="Type of contract for the job")
@@ -58,22 +58,22 @@ class JobPosting(BaseModel):
     remote: bool = Field(description="Is the job remote")
 
     compensation: Optional[str] = Field(
-        description="Compensation for the job, if specified"
+        None, description="Compensation for the job, if specified"
     )
     benefits: Optional[List[str]] = Field(
-        description="List of benefits for the job, if any"
+        None, description="List of benefits for the job, if any"
     )
 
     applicationInstructions: Optional[str] = Field(
-        description="Instructions for applying to the job"
+        None, description="Instructions for applying to the job"
     )
     careerProgression: Optional[str] = Field(
-        description="Information about career progression opportunities"
+        None, description="Information about career progression opportunities"
     )
     diversityStatement: Optional[str] = Field(
-        description="Company's statement on diversity and inclusion"
+        None, description="Company's statement on diversity and inclusion"
     )
 
     additionalInformation: Optional[str] = Field(
-        description="Any additional important information about the job or company"
+        None, description="Any additional important information about the job or company"
     )

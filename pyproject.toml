@@ -5,21 +5,24 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "python-dotenv>=1.0.1",
-    "langchain>=0.2.16",
-    "langchain-community>=0.2.16",
-    "langchainhub>=0.1.21",
-    "langchain-anthropic>=0.1.23",
-    "langchain-groq>=0.1.10",
-    "langchain-core>=0.2.39",
-    "langgraph>=0.2.19",
-    "langchain-postgres>=0.0.11",
-    "langchain-openai>=0.1.24",
-    "pydantic>=2.9.1",
-    "temporalio>=1.7.1",
-    "toml>=0.10.2",
-    "packaging>=24.1",
-    "ipykernel>=6.29.5",
+  "python-dotenv>=1.0.1",
+  "langchain>=0.3.0",
+  "langchain-community>=0.3.0",
+  "langchainhub>=0.1.21",
+  "langchain-anthropic>=0.2.0",
+  "langchain-groq>=0.2.0",
+  "langchain-core>=0.3.0",
+  "langgraph>=0.2.21",
+  "langchain-postgres>=0.0.12",
+  "langchain-openai>=0.2.0",
+  "pydantic>=2.9.1",
+  "temporalio>=1.7.1",
+  "toml>=0.10.2",
+  "packaging>=24.1",
+  "ipykernel>=6.29.5",
+  "psycopg>=3.2.2",
+  "psycopg-pool>=3.2.3",
+  "langgraph-checkpoint-postgres>=1.0.6",
 ]
 
 [build-system]
@@ -27,7 +30,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.uv]
-dev-dependencies = ["ipykernel>=6.29.5"]
+dev-dependencies = [
+    "ipykernel>=6.29.5",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/matcher", "src/parser", "src/utils"]

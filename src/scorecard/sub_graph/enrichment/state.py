@@ -1,6 +1,6 @@
 from typing import List
 
-from langchain.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 from langgraph.graph import MessagesState
 
 from scorecard.sub_graph.enrichment.tools import GlobalContext

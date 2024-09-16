@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated, Any, Dict, List, Optional
 
-from langchain.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class ProfileEducation(BaseModel):

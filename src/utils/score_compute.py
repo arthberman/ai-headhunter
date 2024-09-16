@@ -1,6 +1,6 @@
 from typing import Dict
 
-from matcher.models.scorecard import ImportanceLevel, Scorecard
+from scorecard.models.scorecard import ImportanceLevel, Scorecard
 from matcher.state import MainGraphState
 
 

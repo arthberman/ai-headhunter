@@ -4,10 +4,10 @@ from enum import Enum
 
 from langchain import hub
 from langchain.chat_models import init_chat_model
-from langchain_core.pydantic_v1 import Field
+from pydantic import Field
 from langgraph.graph import END, StateGraph, START
 
-from matcher.models.scorecard import (
+from scorecard.models.scorecard import (
     CriteriaType,
     ImportanceLevel,
     ImportantCriterion,

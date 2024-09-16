@@ -1,10 +1,10 @@
 from typing import List
 from langchain import hub
 from langchain.chat_models import init_chat_model
-from langchain_core.pydantic_v1 import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator
 
 from matcher.models.job_posting import JobPosting
-from matcher.models.scorecard import Scorecard
+from scorecard.models.scorecard import Scorecard
 
 
 class CriterionEnrichment(BaseModel):

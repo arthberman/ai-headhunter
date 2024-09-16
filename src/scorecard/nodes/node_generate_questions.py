@@ -2,10 +2,9 @@ from typing import List
 
 from langchain import hub
 from langchain.chat_models import init_chat_model
-from scorecard.state import ScorecardGraphState
-
 
 from scorecard.models.question import ListQuestions
+from scorecard.state import ScorecardGraphState
 
 
 def node_generate_questions(state: ScorecardGraphState) -> ScorecardGraphState:
@@ -17,11 +16,11 @@ def node_generate_questions(state: ScorecardGraphState) -> ScorecardGraphState:
 
     chain = prompt | model
 
-    res = chain.invoke(
+    res: ListQuestions = chain.invoke(
         {
             "raw_job_posting": state.raw_job_posting,
             "global_context": state.global_context,
         }
     )
 
-    return {"questions": res}
+    return {"generated_questions": res.questions}

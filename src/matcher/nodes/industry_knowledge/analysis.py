@@ -1,7 +1,7 @@
 from langchain import hub
 from langchain.chat_models import init_chat_model
 
-from matcher.models.scorecard import ListScoredCriterion, filter_criteria_by_type
+from scorecard.models.scorecard import ListScoredCriterion, filter_criteria_by_type
 from matcher.state import MainGraphState
 from matcher.tools.knowledge_point import get_knowledge_points
 from utils.format import format_data
