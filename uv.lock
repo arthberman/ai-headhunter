@@ -418,6 +418,15 @@ wheels = [
 ]
 
 [[package]]
+name = "httpx-sse"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4c/60/8f4281fa9bbf3c8034fd54c0e7412e66edbab6bc74c4996bd616f8d0406e/httpx-sse-0.4.0.tar.gz", hash = "sha256:1e81a3a3070ce322add1d3529ed42eb5f70817f45ed6ec915ab753f961139721", size = 12624 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e1/9b/a181f281f65d776426002f330c31849b86b31fc9d848db62e16f03ff739f/httpx_sse-0.4.0-py3-none-any.whl", hash = "sha256:f329af6eae57eaa2bdfd962b42524764af68075ea87370a2de920af5341e318f", size = 7819 },
+]
+
+[[package]]
 name = "huggingface-hub"
 version = "0.24.7"
 source = { registry = "https://pypi.org/simple" }
@@ -719,15 +728,15 @@ wheels = [
 
 [[package]]
 name = "langgraph"
-version = "0.2.21"
+version = "0.2.22"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "langgraph-checkpoint" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4c/ef/fd280c4b8890d09c9ab8323946122d5f5d869f7ad6dacf617f1e75a24bfd/langgraph-0.2.21.tar.gz", hash = "sha256:87346bc8d7cba08cac5bc97c7f11550d054c3197272c8599e13349ab789a3d28", size = 80014 }
+sdist = { url = "https://files.pythonhosted.org/packages/e8/93/d58a108222bfddc7dc85741ec088f6987a4315a439f98aaf3f10d1275545/langgraph-0.2.22.tar.gz", hash = "sha256:1913d2533cac6bed17f2322dc9b458871a6181ed3ab35bb5a91c1440e3c3cc0b", size = 80635 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cd/4e/9263e4ac96de6b076f179ee3a638fb55e47e254362be71a90cdbeb21048f/langgraph-0.2.21-py3-none-any.whl", hash = "sha256:4a9319bab8eab84a6a9954177ded7fcd57c5fa87bb617adc3855a0713f3fc614", size = 97609 },
+    { url = "https://files.pythonhosted.org/packages/58/09/ce553961d11f723c1ae19e2b3ab24468b10f506247e88ffbdb64b8c17989/langgraph-0.2.22-py3-none-any.whl", hash = "sha256:0669e2520a88c0ffd26d9bc930f0bdd490106ca04f1dfc970d8ae4e3787c6fa3", size = 98451 },
 ]
 
 [[package]]
@@ -744,7 +753,7 @@ wheels = [
 
 [[package]]
 name = "langgraph-checkpoint-postgres"
-version = "1.0.6"
+version = "1.0.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langgraph-checkpoint" },
@@ -752,9 +761,23 @@ dependencies = [
     { name = "psycopg" },
     { name = "psycopg-pool" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/93/dc/7b160963ef2296ffa7461fd9873bf9bad8f4d2772d1f123abce5ecbf699b/langgraph_checkpoint_postgres-1.0.6.tar.gz", hash = "sha256:64c5ca6b2a92bd61743d60c13533ea89107ff8d7a3622fd5eac24d2c58497a46", size = 9288 }
+sdist = { url = "https://files.pythonhosted.org/packages/36/6d/92622e3d378654d68abcc9d34ab0c6034bd97cf4afc83f61999977f0b3d5/langgraph_checkpoint_postgres-1.0.7.tar.gz", hash = "sha256:d13a17ba7642afbaf451b524aedadd1fb6ad6cd26991ec624d258dcad7bb0f40", size = 9294 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/01/85/76a487da915e161439a7bf8b27a3760b3a11e749f29bf085ac2a570ec9e6/langgraph_checkpoint_postgres-1.0.6-py3-none-any.whl", hash = "sha256:1f47fa82b312356254b574385c1351cdd9d6c1a42959d292d08725a3437c1cb0", size = 12059 },
+    { url = "https://files.pythonhosted.org/packages/c7/71/8430d493788aef4dd4067c8c08c58b8b2ca9197e88d9c65e5884d3054e75/langgraph_checkpoint_postgres-1.0.7-py3-none-any.whl", hash = "sha256:0ad5ec97ad833990d60aa531f3dc2756a1fa7f610c81b241f464ef7a4195e1e2", size = 12099 },
+]
+
+[[package]]
+name = "langgraph-sdk"
+version = "0.1.30"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "httpx-sse" },
+    { name = "orjson" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/40/c8/61641f1d49d5e31c41db86661692fcdfef91af06a393da14b364cd2b44a9/langgraph_sdk-0.1.30.tar.gz", hash = "sha256:1b9cf98a797914cfcc647b68e5039cc7768cb7a94c42e3391e3b47ebf0357841", size = 13329 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e5/9b/d0c24bb2679b8ac78574d85a4313db9bbed5269121fdb2810dfebd731177/langgraph_sdk-0.1.30-py3-none-any.whl", hash = "sha256:e82d4e8913d493dbcf20e0bb05db495fc2469244753635c23b03e3b77c5f8ae6", size = 13791 },
 ]
 
 [[package]]
@@ -1283,6 +1306,7 @@ dependencies = [
     { name = "langchainhub" },
     { name = "langgraph" },
     { name = "langgraph-checkpoint-postgres" },
+    { name = "langgraph-sdk" },
     { name = "packaging" },
     { name = "psycopg" },
     { name = "psycopg-pool" },
@@ -1308,8 +1332,9 @@ requires-dist = [
     { name = "langchain-openai", specifier = ">=0.2.0" },
     { name = "langchain-postgres", specifier = ">=0.0.12" },
     { name = "langchainhub", specifier = ">=0.1.21" },
-    { name = "langgraph", specifier = ">=0.2.21" },
-    { name = "langgraph-checkpoint-postgres", specifier = ">=1.0.6" },
+    { name = "langgraph", specifier = ">=0.2.22" },
+    { name = "langgraph-checkpoint-postgres", specifier = ">=1.0.7" },
+    { name = "langgraph-sdk", specifier = ">=0.1.30" },
     { name = "packaging", specifier = ">=24.1" },
     { name = "psycopg", specifier = ">=3.2.2" },
     { name = "psycopg-pool", specifier = ">=3.2.3" },

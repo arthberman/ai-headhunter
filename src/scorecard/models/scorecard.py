@@ -34,12 +34,8 @@ class BaseCriterion(BaseModel):
         ...,
         description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION)",
     )
-    context: Optional[str] = Field(
+    scoring_distribution: Optional[ScoringDistribution] = Field(
         None,
-        description="This is the context of the job posting that is relevant to the criterion (definition of the scope).",
-    )
-    scoring_distribution: ScoringDistribution = Field(
-        ...,
         description="The type of scoring distribution for this criterion",
     )
     distribution_params: Optional[Dict[str, float]] = Field(
