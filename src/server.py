@@ -20,10 +20,14 @@ from scorecard.models.scorecard import ListScoredCriterion, Scorecard
 from matcher.state import MainGraphState
 from utils.logger import setup_logger
 
+from langgraph_sdk import get_client
+
 # Ignore LangChainBetaWarning
 warnings.filterwarnings("ignore", category=LangChainBetaWarning)
 
 logger = setup_logger()
+
+client = get_client(url=os.environ["LANGGRAPH_URL"])
 
 
 @activity.defn(name="parse_job_posting")
@@ -45,6 +49,26 @@ async def activity_parse_scorecard(raw_job_posting: str) -> Dict[str, Any]:
         chain = RunnableLambda(parse_scorecard)
         res: Scorecard = await chain.ainvoke(raw_job_posting)
         return res.json()
+    except Exception as e:
+        logger.error(f"Error processing scorecard: {str(e)}", exc_info=True)
+        raise ValueError(f"Failed to process scorecard: {str(e)}") from e
+
+
+@activity.defn(name="parse_scorecard_graph")
+async def activity_parse_scorecard_graph(raw_job_posting: str) -> Dict[str, Any]:
+    """Parse a scorecard from a job posting"""
+    try:
+        print("Parsing scorecard graph")
+        assistant = await client.assistants.create(graph_id="scorecard")
+        thread = await client.threads.create()
+        await client.runs.wait(
+            assistant_id=assistant["assistant_id"],
+            thread_id=thread["thread_id"],
+            input={"raw_job_posting": raw_job_posting},
+            interrupt_after=["generate_questions"],
+        )
+        print({"thread_id": thread["thread_id"]})
+        return {"thread_id": thread["thread_id"]}
     except Exception as e:
         logger.error(f"Error processing scorecard: {str(e)}", exc_info=True)
         raise ValueError(f"Failed to process scorecard: {str(e)}") from e
@@ -163,7 +187,8 @@ async def run_worker():
             task_queue=task_queue_parser,
             activities=[
                 activity_parse_job_posting,
-                activity_parse_scorecard,  # You can add different activities for the second worker if needed
+                activity_parse_scorecard,
+                activity_parse_scorecard_graph,
             ],
             max_task_queue_activities_per_second=2 / 60,
         ) as worker_2,

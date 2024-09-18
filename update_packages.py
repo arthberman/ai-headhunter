@@ -1,6 +1,7 @@
 import subprocess
 import toml
 import re
+import os
 
 
 def run_command(command):
@@ -76,6 +77,7 @@ def update_packages():
         print(
             "No updates were necessary. All packages are already at their latest versions."
         )
+        os.remove("requirements.txt")
         return
 
     # Custom TOML dumper to add new lines after each dependency
@@ -91,6 +93,10 @@ def update_packages():
         toml.dump(pyproject, f, encoder=CustomTOMLEncoder())
 
     print("pyproject.toml has been updated with the latest package versions.")
+
+    # Delete the requirements.txt file
+    os.remove("requirements.txt")
+    print("requirements.txt has been deleted.")
 
 
 if __name__ == "__main__":
