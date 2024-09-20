@@ -22,7 +22,8 @@ dependencies = [
   "langgraph-checkpoint-postgres>=1.0.7",
   "langgraph-sdk>=0.1.30",
   "langchain-postgres>=0.0.12",
-  "psycopg2-binary>=2.9.9",
+  "psycopg-binary>=3.2.2",
+  "sqlalchemy>=2.0.35",
 ]
 
 [build-system]

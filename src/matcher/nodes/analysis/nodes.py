@@ -12,7 +12,6 @@ from matcher.state import MainGraphState
 def init_agent(state: AnalysisMainState) -> AnalysisMainState:
     hub_prompt = hub.pull("analysis-react")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
-    print(state.criterion_context)
     formatted_messages = chat_prompt.format_messages(
         criterion_id=state.criterion_id,
         criterion_description=state.criterion_description,

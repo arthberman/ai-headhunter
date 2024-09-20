@@ -1,43 +1,65 @@
-import json
-import os
-from matcher.nodes.analysis.state import AnalysisMainState, AnalysisOutputState
 from parser.profile import parse_profile
-from matcher.models.profile import Profile
+from typing import Set
 
 from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.graph import CompiledGraph
 
+from matcher.models.profile import Profile
+from matcher.nodes.analysis.graph import get_analysis_graph
+from matcher.nodes.analysis.state import AnalysisOutputState
 from matcher.nodes.enrichment.education import node_education_enrichment
 from matcher.nodes.enrichment.experience import node_experience_enrichment
 from matcher.nodes.enrichment.language import node_language_enrichment
-from matcher.state import MainGraphState, InputGraphState
+from matcher.state import InputGraphState, MainGraphState, OverallGraphState
 from scorecard.models.scorecard import Scorecard
 
-from matcher.nodes.analysis.graph import get_analysis_graph
 
-
-def continue_to_school_enrichment(state: MainGraphState):
+def continue_to_school_enrichment(state: OverallGraphState):
     if state.profile.educations:
-        return [
-            Send("node_education_enrichment", {"education": e})
-            for e in state.profile.educations
-        ]
+        # Use a set to keep track of unique (school, linkedin_url) pairs
+        unique_schools: Set[tuple] = set()
+        enrichment_tasks = []
+
+        for e in state.profile.educations:
+            school_key = (e.school, e.linkedin_url)
+            if school_key not in unique_schools:
+                unique_schools.add(school_key)
+                enrichment_tasks.append(
+                    Send(
+                        "node_education_enrichment",
+                        {"education": e},
+                    )
+                )
+
+        return enrichment_tasks if enrichment_tasks else "init_analysis"
     else:
-        return "test"
+        return "init_analysis"
 
 
-def continue_to_company_enrichment(state: MainGraphState):
+def continue_to_company_enrichment(state: OverallGraphState):
     if state.profile.experiences:
-        return [
-            Send("node_experience_enrichment", {"experience": e})
-            for e in state.profile.experiences
-        ]
+        # Use a set to keep track of unique (company, linkedin_url) pairs
+        unique_companies: Set[tuple] = set()
+        enrichment_tasks = []
+
+        for e in state.profile.experiences:
+            company_key = (e.company, e.linkedin_url)
+            if company_key not in unique_companies:
+                unique_companies.add(company_key)
+                enrichment_tasks.append(
+                    Send(
+                        "node_experience_enrichment",
+                        {"experience": e},
+                    )
+                )
+
+        return enrichment_tasks if enrichment_tasks else "init_analysis"
     else:
-        return "test"
+        return "init_analysis"
 
 
-def init_node(state: MainGraphState) -> MainGraphState:
+def init_node(state: OverallGraphState) -> OverallGraphState:
 
     profile_json = {
         "id": "f2d18a3c-0229-4198-b108-7b184397d93c",
@@ -259,7 +281,7 @@ def init_node(state: MainGraphState) -> MainGraphState:
                 "description": "42's pedagogy is based on peer-to-peer learning: a participatory approach, without courses or teachers, that allows students to unleash their creativity through project-based learning.\n\nDuring my time I led the total rebuild of 42's Food truck website that enabled all students to order food. The website handled more than 700 orders per day.",
                 "fieldOfStudy": "",
                 "grade": "Level 21",
-                "degree": "Engineer’s Degree",
+                "degree": "Engineer's Degree",
                 "school": {
                     "id": "16adc77b-9842-4a56-9e4b-225e4d6926aa",
                     "name": "42",
@@ -475,7 +497,7 @@ def end_analysis(state: GenerateOutputState) -> MainGraphState:
 
 
 def compile_matcher_graph() -> CompiledGraph:
-    workflow = StateGraph(MainGraphState, input=InputGraphState)
+    workflow = StateGraph(OverallGraphState, input=InputGraphState)
 
     workflow.add_node("init_node", init_node)
     workflow.add_node("node_language_enrichment", node_language_enrichment)
