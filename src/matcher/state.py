@@ -9,13 +9,14 @@ from matcher.models.job_posting import JobPosting
 from matcher.models.language import LanguageProficiency
 from matcher.models.profile import Profile, ProfileEducation, ProfileExperience
 from matcher.models.school import SchoolInfo
-from scorecard.models.scorecard import Scorecard, ListScoredCriterion
+from scorecard.models.scorecard import Scorecard
+from matcher.nodes.analysis.models import ScoredCriterion
 
 
 class MainGraphState(BaseModel):
-    profile: Profile = Field(...)
-    jobPosting: JobPosting = Field(...)
-    scorecard: Scorecard = Field(...)
+    profile: Optional[Profile] = Field(default=None)
+    # jobPosting: JobPosting = Field(...)
+    scorecard: Optional[Scorecard] = Field(default=None)
     analysisId: Optional[str] = Field(default=None)
 
     education_enrichment: Annotated[List[SchoolInfo], operator.add]
@@ -24,11 +25,11 @@ class MainGraphState(BaseModel):
         default_factory=list
     )
 
+    scored_criterion: Annotated[List[ScoredCriterion], operator.add]
+
 
 class InputGraphState(BaseModel):
-    profile: Profile = Field(...)
-    jobPosting: JobPosting = Field(...)
-    scorecard: Scorecard = Field(...)
+    analysisId: Optional[str] = Field(default=None)
 
 
 class EducationState(BaseModel):

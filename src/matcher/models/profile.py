@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 class ProfileEducation(BaseModel):
     startsAt: Annotated[datetime, Field(description="Start date of education")]
     endsAt: Annotated[Optional[datetime], Field(description="End date of education")]
+    duration: Annotated[Optional[str], Field(description="Education duration")]
     school: Annotated[str, Field(description="School name")]
     fieldOfStudy: Annotated[Optional[str], Field(description="Field of study")]
     description: Annotated[Optional[str], Field(description="Education description")]
@@ -18,6 +19,7 @@ class ProfileEducation(BaseModel):
 class ProfileExperience(BaseModel):
     startsAt: Annotated[datetime, Field(description="Start date of experience")]
     endsAt: Annotated[Optional[datetime], Field(description="End date of experience")]
+    duration: Annotated[Optional[str], Field(description="Experience duration")]
     company: Annotated[str, Field(description="Company name")]
     description: Annotated[Optional[str], Field(description="Experience description")]
     title: Annotated[Optional[str], Field(description="Job title")]

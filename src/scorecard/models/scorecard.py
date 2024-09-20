@@ -34,6 +34,10 @@ class BaseCriterion(BaseModel):
         ...,
         description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION)",
     )
+    context: Optional[str] = Field(
+        None,
+        description="This is the context of the job posting that is relevant to the criterion (definition of the scope).",
+    )
     scoring_distribution: Optional[ScoringDistribution] = Field(
         None,
         description="The type of scoring distribution for this criterion",
@@ -45,10 +49,6 @@ class BaseCriterion(BaseModel):
 
 
 class Scorecard(BaseModel):
-    context: Optional[str] = Field(
-        None,
-        description="Global context of the scorecard.",
-    )
     mustHaveCriteria: List[BaseCriterion] = Field(..., description="MUST_HAVE criteria")
     importantCriteria: List[BaseCriterion] = Field(
         ..., description="IMPORTANT criteria"
@@ -56,21 +56,6 @@ class Scorecard(BaseModel):
     niceToHaveCriteria: List[BaseCriterion] = Field(
         ..., description="NICE_TO_HAVE criteria"
     )
-
-
-class ScoredCriterion(BaseModel):
-    id: str = Field(..., description="Unique identifier for the criterion")
-    score: float = Field(
-        ..., ge=0, le=1, description="Score assigned to this criterion"
-    )
-    explanation: str = Field(..., description="Explanation for the assigned score")
-    confidence_level: float = Field(
-        ..., ge=0, le=1, description="Confidence level in the assigned score (0 to 1)"
-    )
-
-
-class ListScoredCriterion(BaseModel):
-    scoredCriteria: List[ScoredCriterion] = Field(description="List of scored criteria")
 
 
 def load_scorecard_from_json(filePath: str) -> Scorecard:

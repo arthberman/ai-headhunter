@@ -1,10 +1,11 @@
 import os
 from datetime import datetime, timedelta
 
-from langchain.schema import Document
+from langchain_core.documents import Document
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_openai import OpenAIEmbeddings
 from langchain_postgres import PGVector
+from langchain_postgres.vectorstores import PGVector
 
 from matcher.models.company import CompanyInfo
 
@@ -16,7 +17,7 @@ class CompanyDatabase:
     def __init__(self):
         self.connection_string = os.getenv("DATABASE_URL")
         self.embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
-        self.collection_name = "companies"
+        self.collection_name = "companies2"
         self.vector_store = PGVector(
             connection=self.connection_string,
             embeddings=self.embeddings,
@@ -42,7 +43,7 @@ class CompanyDatabase:
 
     def get_company_info(self, name: str, linkedin_url: str):
         results = self.vector_store.similarity_search(
-            name,
+            query=name,
             k=1,
             filter={"linkedin_url": {"$eq": linkedin_url}, "name": {"$eq": name}},
         )
@@ -81,6 +82,8 @@ db = CompanyDatabase()
 # Define functions
 def get_company(name: str, linkedin_url: str) -> CompanyInfo:
     """Query the company database for information about a specific company."""
+
+    return None
 
     result = db.get_company_info(name, linkedin_url)
     if result:
