@@ -1,16 +1,16 @@
 import operator
 from typing import Annotated, List, Optional
 
+from langgraph.channels.context import Context
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import sessionmaker
 
-from matcher.models.career_path import CareerPathAnalysis
 from matcher.models.company import CompanyInfo
-from matcher.models.job_posting import JobPosting
 from matcher.models.language import LanguageProficiency
 from matcher.models.profile import Profile, ProfileEducation, ProfileExperience
 from matcher.models.school import SchoolInfo
-from scorecard.models.scorecard import Scorecard
 from matcher.nodes.analysis.models import ScoredCriterion
+from scorecard.models.scorecard import Scorecard
 
 
 class MainGraphState(BaseModel):
@@ -26,6 +26,10 @@ class MainGraphState(BaseModel):
     )
 
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
+
+
+class OverallGraphState(MainGraphState):
+    pass
 
 
 class InputGraphState(BaseModel):
