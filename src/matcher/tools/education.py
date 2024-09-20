@@ -1,10 +1,11 @@
 import os
 from datetime import datetime, timedelta
 
-from langchain.schema import Document
+from langchain_core.documents import Document
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_openai import OpenAIEmbeddings
 from langchain_postgres import PGVector
+from langchain_postgres.vectorstores import PGVector
 
 from matcher.models.school import SchoolInfo
 
@@ -16,7 +17,7 @@ class SchoolDatabase:
     def __init__(self):
         self.connection_string = os.getenv("DATABASE_URL")
         self.embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
-        self.collection_name = "schools"
+        self.collection_name = "schools2"
         self.vector_store = PGVector(
             connection=self.connection_string,
             embeddings=self.embeddings,
@@ -43,11 +44,10 @@ class SchoolDatabase:
 
     def get_school_info(self, name: str, linkedin_url: str):
         results = self.vector_store.similarity_search(
-            name,
+            query=name,
             k=1,
             filter={"linkedin_url": {"$eq": linkedin_url}, "name": {"$eq": name}},
         )
-
         if results:
             doc = results[0]
             last_updated = doc.metadata.get("last_updated")
@@ -82,7 +82,7 @@ db = SchoolDatabase()
 # Define functions
 def get_school(name: str, linkedin_url: str) -> SchoolInfo:
     """Query the school database for information about a specific school."""
-
+    return None
     result = db.get_school_info(name, linkedin_url)
     if result:
         return result

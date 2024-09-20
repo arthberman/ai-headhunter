@@ -1,5 +1,6 @@
 from langchain import hub
 from langchain.chat_models import init_chat_model
+from typing import cast
 
 from matcher.models.company import CompanyInfo
 from matcher.models.profile import ProfileExperience
@@ -17,23 +18,25 @@ def node_experience_enrichment(state: ExperienceState) -> MainGraphState:
     tavily_res = tavily_tool.invoke({"query": f"company {experience.company}"})
     prompt = hub.pull("experience-enrichment")
     model = init_chat_model(
-        model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
+        model="gpt-4o-mini", model_provider="openai", temperature=0
     ).with_structured_output(CompanyInfo)
 
     chain = prompt | model
-    res = chain.invoke(
-        {
-            "web_browsing_result": tavily_res,
-            "company": experience.company,
-            "company_title": experience.title,
-            "company_description": experience.description,
-            "linkedin_url": experience.linkedin_url,
-        }
+    res = cast(
+        CompanyInfo,
+        chain.invoke(
+            {
+                "web_browsing_result": tavily_res,
+                "company": experience.company,
+                "company_title": experience.title,
+                "company_description": experience.description,
+                "linkedin_url": experience.linkedin_url,
+            }
+        ),
     )
 
-    company_info = CompanyInfo(**res.dict())
-    if company_info.uncertainty == False:
-        update_company(company_info)
-        return {"experience_enrichment": [company_info]}
+    """ if res.uncertainty == False:
+        update_company(res)
+        return {"experience_enrichment": [res]} """
 
-    return {"experience_enrichment": []}
+    return {"experience_enrichment": [res]}

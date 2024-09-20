@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, date
 
 from matcher.models.profile import (
     Profile,
@@ -13,6 +13,28 @@ from matcher.models.profile import (
 )
 
 
+def compute_duration(starts_at, ends_at):
+    """Compute duration between two dates, handling null end date."""
+    if ends_at is None or ends_at == "1899-12-30T23:50:39.000Z":
+        ends_at = date.today()
+    else:
+        ends_at = ends_at.date()
+
+    starts_at = starts_at.date()
+    delta = ends_at - starts_at
+    years = delta.days // 365
+    months = (delta.days % 365) // 30
+
+    if years > 0 and months > 0:
+        return f"{years} year{'s' if years > 1 else ''} {months} month{'s' if months > 1 else ''}"
+    elif years > 0:
+        return f"{years} year{'s' if years > 1 else ''}"
+    elif months > 0:
+        return f"{months} month{'s' if months > 1 else ''}"
+    else:
+        return "Less than a month"
+
+
 def parse_profile(profile: json) -> Profile:
     """Convert a raw JSON object to a Profile object"""
 
@@ -24,6 +46,14 @@ def parse_profile(profile: json) -> Profile:
                 datetime.fromisoformat(exp["endsAt"])
                 if exp["endsAt"] != "1899-12-30T23:50:39.000Z"
                 else None
+            ),
+            duration=compute_duration(
+                datetime.fromisoformat(exp["startsAt"]),
+                (
+                    datetime.fromisoformat(exp["endsAt"])
+                    if exp["endsAt"] != "1899-12-30T23:50:39.000Z"
+                    else None
+                ),
             ),
             company=exp["company"]["name"],
             description=exp["description"],
@@ -39,6 +69,14 @@ def parse_profile(profile: json) -> Profile:
         ProfileEducation(
             startsAt=datetime.fromisoformat(edu["startsAt"]),
             endsAt=datetime.fromisoformat(edu["endsAt"]),
+            duration=compute_duration(
+                datetime.fromisoformat(edu["startsAt"]),
+                (
+                    datetime.fromisoformat(edu["endsAt"])
+                    if edu["endsAt"] != "1899-12-30T23:50:39.000Z"
+                    else None
+                ),
+            ),
             school=edu["school"]["name"],
             description=edu["description"],
             fieldOfStudy=edu["fieldOfStudy"],
