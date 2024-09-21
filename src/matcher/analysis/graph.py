@@ -1,23 +1,27 @@
 from langgraph.graph import END, START, StateGraph
 from langgraph.prebuilt import ToolNode
 
-from matcher.nodes.analysis.nodes import (
+from matcher.analysis.nodes import (
     init_agent,
     call_model,
     respond,
     should_continue,
 )
-from matcher.nodes.analysis.tools import get_tools
-from matcher.nodes.analysis.state import (
+from matcher.analysis.tools import get_tools
+from matcher.analysis.state import (
     AnalysisMainState,
     MainGraphState,
 )
+from src.matcher.configuration import Configuration
 
 
 def get_analysis_graph():
     # Define a new graph
     workflow = StateGraph(
-        AnalysisMainState, input=AnalysisMainState, output=MainGraphState
+        AnalysisMainState,
+        input=AnalysisMainState,
+        output=MainGraphState,
+        config_schema=Configuration,
     )
 
     # Define the nodes

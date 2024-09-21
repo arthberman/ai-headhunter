@@ -15,6 +15,15 @@ def run_command(command):
     return output.decode("utf-8")
 
 
+class CustomTOMLEncoder(toml.TomlEncoder):
+    def __init__(self, _dict=dict, preserve=False):
+        super().__init__(_dict, preserve)
+        self.dump_funcs[list] = self._dump_list
+
+    def _dump_list(self, v):
+        return "[{}]".format(",\n  ".join(self.dump_value(u) for u in v))
+
+
 def update_packages():
     # Read the current pyproject.toml before updates
     with open("pyproject.toml", "r") as f:
@@ -48,9 +57,11 @@ def update_packages():
     dependencies = pyproject["project"]["dependencies"]
     original_dependencies = original_pyproject["project"]["dependencies"]
     updates_made = False
+    updated_packages = []
 
     for i, dep in enumerate(dependencies):
         name = re.split("[=<>]", dep)[0].strip()
+        original_version = re.split("[=<>]", original_dependencies[i])[-1].strip()
         for req in updated_requirements:
             req_parts = req.strip().split("==")
             if len(req_parts) == 2:
@@ -60,7 +71,7 @@ def update_packages():
                 req_version = None
 
             if req_name.lower() == name.lower():
-                if req_version:
+                if req_version and req_version != original_version:
                     # Keep any existing version specifiers (e.g., >=)
                     specifier = re.search(r"([<>=]+)", dep)
                     if specifier:
@@ -71,6 +82,7 @@ def update_packages():
                     if new_dep != original_dependencies[i]:
                         dependencies[i] = new_dep
                         updates_made = True
+                        updated_packages.append((name, original_version, req_version))
                 break
 
     if not updates_made:
@@ -80,23 +92,30 @@ def update_packages():
         os.remove("requirements.txt")
         return
 
-    # Custom TOML dumper to add new lines after each dependency
-    class CustomTOMLEncoder(toml.TomlEncoder):
-        def dump_sections(self, o, sup):
-            retstr = super().dump_sections(o, sup)
-            if sup == ["project", "dependencies"]:
-                return "\n".join([line.rstrip() for line in retstr.split("\n")])
-            return retstr
+    # Print the list of updated packages
+    print("\nUpdated packages:")
+    for name, old_version, new_version in updated_packages:
+        print(f"{name} @{old_version} to @{new_version}")
 
     # Write the updated pyproject.toml
     with open("pyproject.toml", "w") as f:
         toml.dump(pyproject, f, encoder=CustomTOMLEncoder())
+        # Add an extra newline at the end of the file
+        f.write("\n")
 
     print("pyproject.toml has been updated with the latest package versions.")
 
     # Delete the requirements.txt file
     os.remove("requirements.txt")
     print("requirements.txt has been deleted.")
+
+    # Run uv sync
+    print("Running uv sync...")
+    sync_result = run_command("uv sync")
+    if sync_result is not None:
+        print("uv sync completed successfully.")
+    else:
+        print("Error occurred while running uv sync.")
 
 
 if __name__ == "__main__":

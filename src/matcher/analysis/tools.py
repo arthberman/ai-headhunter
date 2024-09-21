@@ -1,16 +1,16 @@
 # First we initialize the model we want to use.
-from typing import List, Dict, Any, Optional, cast, Union, Literal
 from enum import Enum
+from typing import Any, Dict, List, Optional, Union, cast
 
 from langchain_community.tools import TavilySearchResults
+from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import BaseTool, tool
 from langgraph.prebuilt import InjectedState
 from typing_extensions import Annotated
 
-from matcher.nodes.analysis.state import AnalysisMainState
-
-
-from matcher.nodes.analysis.models import ScoredCriterion
+from matcher.analysis.models import ScoredCriterion
+from matcher.analysis.state import AnalysisMainState
+from matcher.configuration import Configuration
 from utils.format import format_data
 
 
@@ -62,13 +62,16 @@ def get_candidate_info(
     return format_data(info_map[info_type])
 
 
-def search_web(query: str) -> Optional[list[dict[str, Any]]]:
+def search_web(
+    query: str, *, config: Optional[RunnableConfig] = None
+) -> Optional[list[dict[str, Any]]]:
     """Query a search engine.
 
     This function queries the web to fetch comprehensive, accurate, and trusted results. It's particularly useful
     for answering questions about current events. Provide as much context in the query as needed to ensure high recall.
     """
-    wrapped = TavilySearchResults(max_results=5)
+    configuration = Configuration.from_runnable_config(config)
+    wrapped = TavilySearchResults(max_results=configuration.max_search_results)
     result = wrapped.invoke({"query": query})
     return cast(list[dict[str, Any]], result)
 

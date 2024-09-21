@@ -4,8 +4,8 @@ from typing import Annotated, Sequence, List
 from langchain_core.messages import BaseMessage
 from pydantic import BaseModel, Field
 
-from matcher.nodes.analysis.models import ScoredCriterion
 from matcher.state import MainGraphState
+from scorecard.models.scorecard import BaseCriterion
 
 
 class AnalysisOutputState(BaseModel):
@@ -16,6 +16,5 @@ class AnalysisOutputState(BaseModel):
 class AnalysisMainState(BaseModel):
     main_state: MainGraphState
     messages: Annotated[Sequence[BaseMessage], operator.add]
-    criterion_id: str = Field(..., description="Criterion ID")
-    criterion_description: str = Field(..., description="Criterion description")
-    criterion_context: str = Field(..., description="Criterion context")
+    criterion: BaseCriterion = Field(...)
+    loop_step: Annotated[int, operator.add] = Field(default=0)
