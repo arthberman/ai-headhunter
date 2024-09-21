@@ -3,16 +3,13 @@ from typing import Optional
 
 from langchain import hub
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
+from langchain_core.runnables import RunnableConfig
 
 from matcher.analysis.state import AnalysisMainState, AnalysisOutputState
 from matcher.analysis.tools import ScoredCriterion, get_tools
 from matcher.state import MainGraphState
 from src.matcher.configuration import Configuration
-from langchain_core.runnables import RunnableConfig
-
 from src.matcher.utils import init_model
-from langchain.chat_models import init_chat_model
 
 
 def init_agent(state: AnalysisMainState) -> AnalysisMainState:

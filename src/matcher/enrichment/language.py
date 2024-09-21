@@ -1,12 +1,14 @@
-from typing import List, cast
+from typing import List, Optional, cast
 
 from langchain import hub
 from langchain.chat_models import init_chat_model
-from langchain_core.runnables import Runnable
+from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
 from matcher.models.language import LanguageProficiency
 from matcher.state import MainGraphState
+from src.matcher.configuration import Configuration
+from src.matcher.utils import init_model
 
 
 class StructuredOutput(BaseModel):
@@ -15,12 +17,27 @@ class StructuredOutput(BaseModel):
     )
 
 
-def node_language_enrichment(state: MainGraphState) -> MainGraphState:
+def node_language_enrichment(
+    state: MainGraphState, config: Optional[RunnableConfig] = None
+) -> MainGraphState:
+    """Enrich the profile with language proficiency."""
+
+    # Load configuration from the provided RunnableConfig
+    configuration = Configuration.from_runnable_config(config)
+
+    # Initialize the raw model with the provided configuration
+    raw_model = init_model(configuration.enrichment_model)
+
+    # Initialize the prompt
     prompt = hub.pull("language-enrichment")
-    model = init_chat_model(
-        model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
-    )
-    chain = cast(Runnable, prompt | model.with_structured_output(StructuredOutput))
+
+    # Bind the model to the structured output
+    model = raw_model.with_structured_output(StructuredOutput)
+
+    # Create the chain
+    chain = cast(Runnable, prompt | model)
+
+    # Invoke the chain
     res = cast(
         StructuredOutput,
         chain.invoke({"profile": state.profile, "knowledge_points": ""}),
