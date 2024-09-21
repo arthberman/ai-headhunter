@@ -10,7 +10,7 @@ class ImportanceLevel(str, Enum):
     NICE_TO_HAVE = "NICE_TO_HAVE"
 
 
-class CriteriaType(str, Enum):
+class CriterionType(str, Enum):
     EDUCATION = "EDUCATION"
     EXPERIENCE = "EXPERIENCE"
     LANGUAGE = "LANGUAGE"
@@ -30,7 +30,7 @@ class ScoringDistribution(str, Enum):
 class BaseCriterion(BaseModel):
     id: Optional[str] = Field(None, description="Unique identifier for the criterion")
     description: str = Field(..., description="Detailed description of the criterion")
-    type: CriteriaType = Field(
+    type: CriterionType = Field(
         ...,
         description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION)",
     )
@@ -67,7 +67,7 @@ def load_scorecard_from_json(filePath: str) -> Scorecard:
 
 
 def filter_criteria_by_type(
-    scorecard: Scorecard, criteriaTypes: List[CriteriaType]
+    scorecard: Scorecard, criteriaTypes: List[CriterionType]
 ) -> List[BaseCriterion]:
     filteredCriteria = []
 

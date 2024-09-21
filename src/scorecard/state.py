@@ -1,8 +1,10 @@
 from typing import List, Optional
+
 from pydantic import BaseModel, Field
 
 from scorecard.models.question import Question
 from scorecard.models.scorecard import Scorecard
+from scorecard.models.synthesis import Synthesis
 
 
 class ScorecardGraphState(BaseModel):
@@ -24,6 +26,9 @@ class ScorecardGraphState(BaseModel):
     )
     human_context: Optional[List[str]] = Field(
         None, description="List of context elements from the human feedback"
+    )
+    synthesis: Optional[Synthesis] = Field(
+        None, description="Synthesis of the scorecard"
     )
 
 

@@ -11,17 +11,13 @@ dependencies = [
   "langchainhub>=0.1.21",
   "langchain-anthropic>=0.2.1",
   "langchain-groq>=0.2.0",
-  "langchain-core>=0.3.2",
-  "langgraph>=0.2.22",
+  "langchain-core>=0.3.5",
+  "langgraph>=0.2.23",
   "langchain-openai>=0.2.0",
   "pydantic>=2.9.2",
-  "temporalio>=1.7.1",
   "toml>=0.10.2",
   "packaging>=24.1",
   "ipykernel>=6.29.5",
-  "langgraph-checkpoint-postgres>=1.0.7",
-  "langgraph-sdk>=0.1.30",
-  "langchain-postgres>=0.0.12",
   "psycopg-binary>=3.2.2",
   "sqlalchemy>=2.0.35",
 ]
@@ -31,7 +27,25 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.uv]
-dev-dependencies = ["ipykernel>=6.29.5"]
+dev-dependencies = ["ipykernel>=6.29.5", "ruff>=0.6.6"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/matcher", "src/parser", "src/utils"]
+
+[tool.ruff]
+lint.select = [
+  "E",    # pycodestyle
+  "F",    # pyflakes
+  "I",    # isort
+  "D",    # pydocstyle
+  "D401", # First line should be in imperative mood
+  "T201",
+  "UP",
+]
+lint.ignore = ["UP006", "UP007", "UP035", "D417", "E501"]
+include = ["*.py", "*.pyi", "*.ipynb"]
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D", "UP"]
+"ntbk/*" = ["D", "UP", "T201"]
+[tool.ruff.lint.pydocstyle]
+convention = "google"

@@ -3,7 +3,7 @@ from typing import List, Optional, Dict
 
 from pydantic import BaseModel
 from scorecard.models.scorecard import (
-    CriteriaType,
+    CriterionType,
     ImportanceLevel,
     Scorecard,
     BaseCriterion,
@@ -20,7 +20,7 @@ class ActionType(str, Enum):
 class StructureAction(BaseModel):
     actionType: ActionType
     importance: ImportanceLevel
-    type: CriteriaType
+    type: CriterionType
     description: str
     scoring_distribution: ScoringDistribution
     distribution_params: Optional[Dict[str, float]]

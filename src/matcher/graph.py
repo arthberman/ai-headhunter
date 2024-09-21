@@ -1,21 +1,24 @@
 from parser.profile import parse_profile
-from typing import Set
+from typing import Optional, Set
 
+from langchain_core.runnables import RunnableConfig
 from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.graph import CompiledGraph
 
+from matcher.analysis.graph import get_analysis_graph
+from matcher.analysis.state import AnalysisOutputState
+from matcher.configuration import Configuration
+from matcher.enrichment.education import node_education_enrichment
+from matcher.enrichment.experience import node_experience_enrichment
+from matcher.enrichment.language import node_language_enrichment
 from matcher.models.profile import Profile
-from matcher.nodes.analysis.graph import get_analysis_graph
-from matcher.nodes.analysis.state import AnalysisOutputState
-from matcher.nodes.enrichment.education import node_education_enrichment
-from matcher.nodes.enrichment.experience import node_experience_enrichment
-from matcher.nodes.enrichment.language import node_language_enrichment
-from matcher.state import InputGraphState, MainGraphState, OverallGraphState
+from matcher.state import InputGraphState, MainGraphState
 from scorecard.models.scorecard import Scorecard
+from matcher.synthesis.node import node_synthesis
 
 
-def continue_to_school_enrichment(state: OverallGraphState):
+def continue_to_school_enrichment(state: MainGraphState):
     if state.profile.educations:
         # Use a set to keep track of unique (school, linkedin_url) pairs
         unique_schools: Set[tuple] = set()
@@ -37,7 +40,7 @@ def continue_to_school_enrichment(state: OverallGraphState):
         return "init_analysis"
 
 
-def continue_to_company_enrichment(state: OverallGraphState):
+def continue_to_company_enrichment(state: MainGraphState):
     if state.profile.experiences:
         # Use a set to keep track of unique (company, linkedin_url) pairs
         unique_companies: Set[tuple] = set()
@@ -59,7 +62,14 @@ def continue_to_company_enrichment(state: OverallGraphState):
         return "init_analysis"
 
 
-def init_node(state: OverallGraphState) -> OverallGraphState:
+def init_node(
+    state: MainGraphState, *, config: Optional[RunnableConfig] = None
+) -> MainGraphState:
+    configuration = Configuration.from_runnable_config(config)
+    print("init_node")
+    print("---")
+    print(configuration)
+    print("---")
 
     profile_json = {
         "id": "f2d18a3c-0229-4198-b108-7b184397d93c",
@@ -470,15 +480,9 @@ def continue_to_analysis(state: MainGraphState):
     return [
         Send(
             "node_analysis",
-            {
-                "main_state": state,
-                "messages": [],
-                "criterion_id": "c.id",
-                "criterion_description": c.description,
-                "criterion_context": c.context,
-            },
+            {"main_state": state, "messages": [], "criterion": criterion},
         )
-        for c in all_criteria
+        for criterion in all_criteria
     ]
 
 
@@ -488,16 +492,14 @@ def test(state: MainGraphState) -> MainGraphState:
 
 
 # This is what the node that generates the final answer will take in
-class GenerateOutputState(MainGraphState, AnalysisOutputState):
-    pass
-
-
-def end_analysis(state: GenerateOutputState) -> MainGraphState:
-    return state
+""" class GenerateOutputState(MainGraphState, AnalysisOutputState):
+    pass """
 
 
 def compile_matcher_graph() -> CompiledGraph:
-    workflow = StateGraph(OverallGraphState, input=InputGraphState)
+    workflow = StateGraph(
+        MainGraphState, input=InputGraphState, config_schema=Configuration
+    )
 
     workflow.add_node("init_node", init_node)
     workflow.add_node("node_language_enrichment", node_language_enrichment)
@@ -508,7 +510,7 @@ def compile_matcher_graph() -> CompiledGraph:
         get_analysis_graph(),
     )
     workflow.add_node("init_analysis", test)
-    workflow.add_node("end_analysis", end_analysis)
+    workflow.add_node("node_synthesis", node_synthesis)
 
     workflow.add_edge(START, "init_node")
 
@@ -535,7 +537,7 @@ def compile_matcher_graph() -> CompiledGraph:
     workflow.add_conditional_edges(
         "init_analysis", continue_to_analysis, ["node_analysis"]
     )
-    workflow.add_edge("node_analysis", "end_analysis")
-    workflow.add_edge("end_analysis", END)
+    workflow.add_edge("node_analysis", "node_synthesis")
+    workflow.add_edge("node_synthesis", END)
 
     return workflow.compile()
