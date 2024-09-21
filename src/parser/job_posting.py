@@ -1,7 +1,7 @@
 from langchain import hub
 from langchain.chat_models import init_chat_model
 
-from matcher.models.job_posting import JobPosting
+from candidate_matcher.models.job_posting import JobPosting
 
 
 def parse_job_posting(jobOffer: str) -> JobPosting:

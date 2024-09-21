@@ -1,7 +1,7 @@
 from typing import Dict
 
-from scorecard.models.scorecard import ImportanceLevel, Scorecard
-from matcher.state import MainGraphState
+from scorecard_generator.models.scorecard import ImportanceLevel, Scorecard
+from candidate_matcher.state import MainGraphState
 
 
 def calculate_final_score(state: MainGraphState) -> Dict[str, float]:
