@@ -30,7 +30,12 @@ build-backend = "hatchling.build"
 dev-dependencies = ["ipykernel>=6.29.5", "ruff>=0.6.6"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/matcher", "src/parser", "src/utils"]
+packages = [
+  "src/candidate_matcher",
+  "src/parser",
+  "src/utils",
+  "src/scorecard_generator",
+]
 
 [tool.ruff]
 lint.select = [

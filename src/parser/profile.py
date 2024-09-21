@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, date
 
-from matcher.models.profile import (
+from candidate_matcher.models.profile import (
     Profile,
     ProfileCertification,
     ProfileEducation,
