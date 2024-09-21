@@ -1,16 +1,19 @@
 import os
-from sqlalchemy import create_engine, ARRAY, Column, String
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Session, sessionmaker, declarative_base
-from langchain import hub
-from langchain.chat_models import init_chat_model
-from sqlalchemy import select
 import uuid
+from typing import cast
 
+from langchain import hub
+from langchain_community.tools import TavilySearchResults
+from langchain_core.runnables import Runnable, RunnableConfig
+from sqlalchemy import ARRAY, Column, String, create_engine, select
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
+
+from matcher.configuration import Configuration
 from matcher.models.company import CompanyInfo
 from matcher.models.profile import ProfileExperience
 from matcher.state import ExperienceState, MainGraphState
-from langchain_community.tools import TavilySearchResults
+from matcher.utils import init_model
 
 Base = declarative_base()
 
@@ -66,11 +69,16 @@ def add_company_to_db(session: Session, company_info: CompanyInfo) -> None:
     session.commit()
 
 
-def node_experience_enrichment(state: ExperienceState) -> MainGraphState:
+def node_experience_enrichment(
+    state: ExperienceState, config: RunnableConfig
+) -> MainGraphState:
     experience: ProfileExperience = state["experience"]
     db_session = create_db_session()
 
     try:
+        # Load configuration from the provided RunnableConfig
+        configuration = Configuration.from_runnable_config(config)
+
         # Check if the company exists in the database
         db_company = get_company_from_db(
             db_session, experience.company, experience.linkedin_url
@@ -93,18 +101,23 @@ def node_experience_enrichment(state: ExperienceState) -> MainGraphState:
         # If not in database, perform Tavily search
         tavily_res = tavily_tool.invoke({"query": f"company {experience.company}"})
         prompt = hub.pull("experience-enrichment")
-        model = init_chat_model(
-            model="gpt-4o-mini", model_provider="openai", temperature=0
-        ).with_structured_output(CompanyInfo)
-        chain = prompt | model
-        res: CompanyInfo = chain.invoke(
-            {
-                "web_browsing_result": tavily_res,
-                "company": experience.company,
-                "company_title": experience.title,
-                "company_description": experience.description,
-                "linkedin_url": experience.linkedin_url,
-            }
+
+        # Initialize the chat model with the provided configuration
+        raw_model = init_model(configuration.enrichment_model)
+        model = raw_model.with_structured_output(CompanyInfo)
+
+        chain = cast(Runnable, prompt | model)
+        res = cast(
+            CompanyInfo,
+            chain.invoke(
+                {
+                    "web_browsing_result": tavily_res,
+                    "company": experience.company,
+                    "company_title": experience.title,
+                    "company_description": experience.description,
+                    "linkedin_url": experience.linkedin_url,
+                }
+            ),
         )
 
         # Add the new company info to the database

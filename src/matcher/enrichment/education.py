@@ -1,16 +1,19 @@
 import os
-from sqlalchemy import create_engine, ARRAY, Column, String
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Session, sessionmaker, declarative_base
-from langchain import hub
-from langchain.chat_models import init_chat_model
-from sqlalchemy import select
 import uuid
+from typing import cast
 
+from langchain import hub
+from langchain_community.tools import TavilySearchResults
+from langchain_core.runnables import Runnable, RunnableConfig
+from sqlalchemy import ARRAY, Column, String, create_engine, select
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
+
+from matcher import configuration
 from matcher.models.profile import ProfileEducation
 from matcher.models.school import SchoolInfo
-from matcher.state import MainGraphState, EducationState
-from langchain_community.tools import TavilySearchResults
+from matcher.state import EducationState, MainGraphState
+from matcher.utils import init_model
 
 Base = declarative_base()
 
@@ -65,7 +68,9 @@ def add_school_to_db(session: Session, school_info: SchoolInfo) -> None:
     session.commit()
 
 
-def node_education_enrichment(state: EducationState) -> MainGraphState:
+def node_education_enrichment(
+    state: EducationState, config: RunnableConfig
+) -> MainGraphState:
     education: ProfileEducation = state["education"]
     db_session = create_db_session()
 
@@ -92,17 +97,22 @@ def node_education_enrichment(state: EducationState) -> MainGraphState:
         # If not in database, perform Tavily search
         tavily_res = tavily_tool.invoke({"query": f"school {education.school}"})
         prompt = hub.pull("education-enrichment")
-        model = init_chat_model(
-            model="gpt-4o-mini", model_provider="openai", temperature=0
-        ).with_structured_output(SchoolInfo)
-        chain = prompt | model
-        res: SchoolInfo = chain.invoke(
-            {
-                "web_browsing_result": tavily_res,
-                "school": education.school,
-                "school_description": education.description,
-                "linkedin_url": education.linkedin_url,
-            }
+
+        # Initialize the chat model with the provided configuration
+        raw_model = init_model(configuration.enrichment_model)
+        model = raw_model.with_structured_output(SchoolInfo)
+
+        chain = cast(Runnable, prompt | model)
+        res = cast(
+            SchoolInfo,
+            chain.invoke(
+                {
+                    "web_browsing_result": tavily_res,
+                    "school": education.school,
+                    "school_description": education.description,
+                    "linkedin_url": education.linkedin_url,
+                }
+            ),
         )
 
         # Add the new school info to the database
