@@ -9,13 +9,19 @@ class Configuration(BaseModel):
 
     analysis_model: str = Field(
         default="openai/gpt-4o-2024-08-06",
-        description="The name of the language model to use for the agent. "
+        description="The name of the language model to use for the analysis. "
         "Should be in the form: provider/model-name.",
     )
 
     enrichment_model: str = Field(
         default="openai/gpt-4o-mini",
-        description="The name of the language model to use for the agent. "
+        description="The name of the language model to use for the enrichment. "
+        "Should be in the form: provider/model-name.",
+    )
+
+    synthesis_model: str = Field(
+        default="anthropic/claude-3-5-sonnet-20240620",
+        description="The name of the language model to use for the synthesis. "
         "Should be in the form: provider/model-name.",
     )
 

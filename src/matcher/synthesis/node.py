@@ -1,28 +1,28 @@
-from typing import cast
+from typing import Optional, cast
 
 from langchain import hub
 from langchain.chat_models import init_chat_model
-from langchain_core.runnables import RunnableLambda
+from langchain_core.runnables import RunnableConfig, RunnableLambda
+
+from matcher.analysis.models import ScoredCriterion
 from matcher.state import MainGraphState
 from matcher.synthesis.models import ExtendedScoredCriterion, Synthesis
-from src.scorecard.models.scorecard import ImportanceLevel
+from src.matcher.configuration import Configuration
+from src.matcher.utils import init_model
+from src.scorecard.models.scorecard import ImportanceLevel, Scorecard
 
 
-def node_synthesis(state: MainGraphState) -> MainGraphState:
-    prompt = hub.pull("analyse-synthesis")
-    model = init_chat_model(
-        model="claude-3-5-sonnet-20240620", model_provider="anthropic", temperature=0
-    )
-    chain = cast(RunnableLambda, prompt | model.with_structured_output(Synthesis))
+def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorecard):
+    """Extend the scored criterion with the scorecard."""
 
     extended_scored_criterion = []
-    for scored_criterion in state.scored_criterion:
+    for scored_criterion in scored_criterion:
         criterion = next(
             (
                 c
-                for c in state.scorecard.mustHaveCriteria
-                + state.scorecard.importantCriteria
-                + state.scorecard.niceToHaveCriteria
+                for c in scorecard.mustHaveCriteria
+                + scorecard.importantCriteria
+                + scorecard.niceToHaveCriteria
                 if c.id == scored_criterion.id
             ),
             None,
@@ -34,10 +34,10 @@ def node_synthesis(state: MainGraphState) -> MainGraphState:
                     description=criterion.description,
                     importance_level=(
                         ImportanceLevel.MUST_HAVE
-                        if criterion in state.scorecard.mustHaveCriteria
+                        if criterion in scorecard.mustHaveCriteria
                         else (
                             ImportanceLevel.IMPORTANT
-                            if criterion in state.scorecard.importantCriteria
+                            if criterion in scorecard.importantCriteria
                             else ImportanceLevel.NICE_TO_HAVE
                         )
                     ),
@@ -45,6 +45,33 @@ def node_synthesis(state: MainGraphState) -> MainGraphState:
                 )
             )
 
+    return extended_scored_criterion
+
+
+def node_synthesis(
+    state: MainGraphState, config: Optional[RunnableConfig] = None
+) -> MainGraphState:
+    """Synthesize the output."""
+
+    # Load configuration from the provided RunnableConfig
+    configuration = Configuration.from_runnable_config(config)
+
+    # Initialize the prompt
+    prompt = hub.pull("analyse-synthesis")
+
+    # Initialize the model
+    raw_model = init_model(configuration.synthesis_model)
+    model = raw_model.with_structured_output(Synthesis)
+
+    # Create the chain
+    chain = cast(RunnableLambda, prompt | model)
+
+    # Extend the scored criterion with the scorecard
+    extended_scored_criterion = extend_scored_criterion(
+        state.scored_criterion, state.scorecard
+    )
+
+    # Invoke the chain
     res = cast(
         Synthesis,
         chain.invoke(
