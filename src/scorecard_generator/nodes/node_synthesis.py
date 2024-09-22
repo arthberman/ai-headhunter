@@ -13,7 +13,7 @@ def node_synthesis(state: ScorecardGraphState) -> ScorecardGraphState:
         model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
     )
     structured_model = model.with_structured_output(Synthesis)
-    prompt = hub.pull("scorecard-synthesis")
+    prompt = hub.pull("generate-scorecard-synthesis")
 
     chain = prompt | structured_model
     synthesis = cast(Synthesis, chain.invoke(state))

@@ -21,7 +21,7 @@ def generate_scorecard_structure(state: StructureGraphState) -> StructureGraphSt
         temperature=0,
     )
     structured_model = model.with_structured_output(Scorecard)
-    prompt = hub.pull("parser-scorecard")
+    prompt = hub.pull("generate-scorecard-structure")
 
     chain = prompt | structured_model
     output: Scorecard = chain.invoke(

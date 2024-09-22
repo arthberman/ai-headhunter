@@ -15,7 +15,7 @@ from src.candidate_matcher.utils import init_model
 def init_agent(state: AnalysisMainState) -> AnalysisMainState:
     """Initialize the agent with the provided state."""
 
-    hub_prompt = hub.pull("analysis-react")
+    hub_prompt = hub.pull("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
     formatted_messages = chat_prompt.format_messages(
         id=state.criterion.id,
