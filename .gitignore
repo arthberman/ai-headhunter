@@ -172,3 +172,4 @@ cython_debug/
 
 /local/
 .ruff_cache/
+.env.*
