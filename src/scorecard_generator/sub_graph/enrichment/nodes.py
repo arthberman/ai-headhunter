@@ -13,7 +13,7 @@ class AgentState(MessagesState):
 
 
 def init_agent(state: AgentState):
-    hub_prompt = hub.pull("scorecard-enrichment-react-basic")
+    hub_prompt = hub.pull("generate-scorecard-enrichment")
 
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 

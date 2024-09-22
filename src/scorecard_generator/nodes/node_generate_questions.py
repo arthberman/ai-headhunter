@@ -8,7 +8,7 @@ from scorecard_generator.state import ScorecardGraphState
 
 
 def node_generate_questions(state: ScorecardGraphState) -> ScorecardGraphState:
-    prompt = hub.pull("scorecard-enrichment-questions")
+    prompt = hub.pull("generate-scorecard-questions")
 
     model = init_chat_model(
         model="gpt-4o-2024-08-06", model_provider="openai", temperature=0

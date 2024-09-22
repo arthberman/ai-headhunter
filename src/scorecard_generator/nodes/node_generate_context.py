@@ -23,15 +23,13 @@ class ListCriterionWithContext(BaseModel):
 
 
 def node_generate_context(state: ScorecardGraphState) -> ScorecardGraphState:
-    prompt = hub.pull("parser-scorecard-context")
-
     model = init_chat_model(
         model="gpt-4o-2024-08-06",
         model_provider="openai",
         temperature=0,
     )
 
-    prompt = hub.pull("parser-scorecard-context")
+    prompt = hub.pull("generate-scorecard-context")
     structured_model = model.with_structured_output(ListCriterionWithContext)
 
     scorecard_criteria = [

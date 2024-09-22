@@ -10,7 +10,7 @@ from scorecard_generator.state import ScorecardGraphState
 def node_generate_scoring_distribution(
     state: ScorecardGraphState,
 ) -> ScorecardGraphState:
-    prompt = hub.pull("parser-scorecard-scoring-distribution")
+    prompt = hub.pull("generate-scorecard-scoring-distribution")
 
     model = init_chat_model(
         model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
