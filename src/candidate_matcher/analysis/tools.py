@@ -106,12 +106,6 @@ def get_knowledge_points(criterion_types: list[CriterionType]) -> list[Knowledge
 
     This function should be called at the beginning of the process to obtain knowledge points relevant to the specified criterion types.
     If the item to score involves multiple criteria (e.g., language and experience), this function should be called with a list of criterion types.
-
-    Args:
-        criterion_types (list[CriterionType]): The list of criterion types for which to retrieve knowledge points.
-
-    Returns:
-        list[KnowledgePoint]: A list of knowledge points relevant to the specified criterion types.
     """
     database_url = os.getenv("DATABASE_URL")
     if not database_url:
