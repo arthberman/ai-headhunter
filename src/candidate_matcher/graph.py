@@ -1,24 +1,23 @@
-from utils.parse_profile import parse_profile
-from typing import Optional, Set
+from typing import Set
 
-from langchain_core.runnables import RunnableConfig
 from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.graph import CompiledGraph
 
 from candidate_matcher.analysis.graph import get_analysis_graph
-from candidate_matcher.analysis.state import AnalysisOutputState
 from candidate_matcher.configuration import Configuration
 from candidate_matcher.enrichment.education import node_education_enrichment
 from candidate_matcher.enrichment.experience import node_experience_enrichment
 from candidate_matcher.enrichment.language import node_language_enrichment
 from candidate_matcher.models.profile import Profile
 from candidate_matcher.state import InputGraphState, MainGraphState
-from scorecard_generator.models.scorecard import Scorecard
 from candidate_matcher.synthesis.node import node_synthesis
+from scorecard_generator.models.scorecard import Scorecard
+from utils.parse_profile import parse_profile
 
 
 def continue_to_school_enrichment(state: MainGraphState):
+    """Continue to school enrichment."""
     if state.profile.educations:
         # Use a set to keep track of unique (school, linkedin_url) pairs
         unique_schools: Set[tuple] = set()
@@ -41,6 +40,7 @@ def continue_to_school_enrichment(state: MainGraphState):
 
 
 def continue_to_company_enrichment(state: MainGraphState):
+    """Continue to company enrichment."""
     if state.profile.experiences:
         # Use a set to keep track of unique (company, linkedin_url) pairs
         unique_companies: Set[tuple] = set()
@@ -62,15 +62,8 @@ def continue_to_company_enrichment(state: MainGraphState):
         return "init_analysis"
 
 
-def init_node(
-    state: MainGraphState, *, config: Optional[RunnableConfig] = None
-) -> MainGraphState:
-    configuration = Configuration.from_runnable_config(config)
-    print("init_node")
-    print("---")
-    print(configuration)
-    print("---")
-
+def init_node(state: MainGraphState) -> MainGraphState:
+    """Initialize the node."""
     profile_json = {
         "id": "f2d18a3c-0229-4198-b108-7b184397d93c",
         "firstName": "Alexandre",
@@ -304,131 +297,6 @@ def init_node(
     }
     profile: Profile = parse_profile(profile_json)
 
-    scorecard_json_all = {
-        "mustHaveCriteria": [
-            {
-                "id": None,
-                "type": "EXPERIENCE",
-                "context": "Given Ynstant's startup nature and focus on real-time carpooling, experience in a Consumer startup that raised more than $100k in funding is crucial. This criteria should be strictly followed",
-                "description": "Minimum of 1 year of experience in a Consumer startup that raised more than $100k in funding.",
-                "distribution_params": None,
-                "scoring_distribution": "CONTINUOUS",
-            },
-            {
-                "id": None,
-                "type": "HARD_SKILL",
-                "context": "Data analysis skills are essential for monitoring and optimizing CEE processes, identifying anomalies, and ensuring compliance, which are key responsibilities in this role at Ynstant.",
-                "description": "Proficiency in data analysis using SQL, Python, and pandas.",
-                "distribution_params": {
-                    "Basic": 0.3,
-                    "Advanced": 0.9,
-                    "Intermediate": 0.6,
-                },
-                "scoring_distribution": "ORDINAL",
-            },
-            {
-                "id": None,
-                "type": "SOFT_SKILL",
-                "context": "Effective communication is vital for collaborating with diverse stakeholders, including team members and regulatory bodies, to ensure smooth operations and compliance in the energy savings certification process.",
-                "description": "Strong communication skills to effectively interact with various stakeholders.",
-                "distribution_params": None,
-                "scoring_distribution": "GAUSSIAN",
-            },
-            {
-                "id": None,
-                "type": "INDUSTRY_KNOWLEDGE",
-                "context": "Ensuring compliance with CEE regulations is critical, as it directly impacts the company's ability to operate legally and efficiently in the energy sector, requiring meticulous attention to detail.",
-                "description": "Ability to ensure compliance of CEE files with regulations.",
-                "distribution_params": None,
-                "scoring_distribution": "GAUSSIAN",
-            },
-        ],
-        "importantCriteria": [
-            {
-                "id": None,
-                "type": "HARD_SKILL",
-                "context": "Automation skills are valuable for reducing manual workload and increasing efficiency in handling CEE files, aligning with Ynstant's innovative approach to operations.",
-                "description": "Experience with automation tools or scripting to streamline processes.",
-                "distribution_params": {
-                    "Basic": 0.3,
-                    "Advanced": 0.9,
-                    "Intermediate": 0.6,
-                },
-                "scoring_distribution": "ORDINAL",
-            },
-            {
-                "id": None,
-                "type": "SOFT_SKILL",
-                "context": "Cultural sensitivity is important in a startup like Ynstant, where diverse teams and stakeholders are involved, ensuring effective communication and collaboration across different backgrounds.",
-                "description": "Cultural sensitivity and awareness to navigate diverse environments.",
-                "distribution_params": None,
-                "scoring_distribution": "GAUSSIAN",
-            },
-            {
-                "id": None,
-                "type": "SOFT_SKILL",
-                "context": "The role involves managing critical operations under tight deadlines, requiring resilience and the ability to maintain performance under pressure, which is crucial in a startup environment.",
-                "description": "Ability to handle high-pressure situations and significant mental workload.",
-                "distribution_params": None,
-                "scoring_distribution": "GAUSSIAN",
-            },
-            {
-                "id": None,
-                "type": "SOFT_SKILL",
-                "context": "A proactive mindset is essential for identifying and addressing operational challenges quickly, which is vital in a startup focused on innovation and efficiency.",
-                "description": "Proactive approach to problem-solving and initiative-taking.",
-                "distribution_params": None,
-                "scoring_distribution": "GAUSSIAN",
-            },
-            {
-                "id": None,
-                "type": "SOFT_SKILL",
-                "context": "A results-oriented approach aligns with Ynstant's dynamic culture, emphasizing the importance of achieving operational goals to support the company's growth and sustainability mission.",
-                "description": "Results-oriented mindset with a focus on achieving goals.",
-                "distribution_params": None,
-                "scoring_distribution": "GAUSSIAN",
-            },
-            {
-                "id": None,
-                "type": "SOFT_SKILL",
-                "context": "Intellectual honesty ensures transparent and ethical decision-making, which is crucial for maintaining trust and integrity in operations, especially in regulatory compliance.",
-                "description": "Intellectual honesty in operations and decision-making processes.",
-                "distribution_params": None,
-                "scoring_distribution": "GAUSSIAN",
-            },
-        ],
-        "niceToHaveCriteria": [
-            {
-                "id": None,
-                "type": "INDUSTRY_KNOWLEDGE",
-                "context": "Experience in the mobility sector, especially in a startup, provides valuable insights into the challenges and opportunities of developing innovative transportation solutions like Ynstant's carpooling app.",
-                "description": "Experience in a startup environment, particularly in the mobility sector.",
-                "distribution_params": None,
-                "scoring_distribution": "GAUSSIAN",
-            },
-            {
-                "id": None,
-                "type": "HARD_SKILL",
-                "context": "Advanced scripting skills are crucial for efficiently managing data anomalies, reducing errors, and enhancing the overall efficiency of CEE operations, supporting Ynstant's tech-driven approach.",
-                "description": "Advanced skills in developing automation scripts to handle anomalies in data processing.",
-                "distribution_params": {
-                    "Basic": 0.3,
-                    "Advanced": 0.9,
-                    "Intermediate": 0.6,
-                },
-                "scoring_distribution": "ORDINAL",
-            },
-            {
-                "id": None,
-                "type": "LANGUAGE",
-                "context": "Fluency in French is essential for effective communication within the Paris-based team and with local stakeholders, ensuring smooth collaboration and understanding of regulatory requirements.",
-                "description": "Fluency in French to facilitate communication within the team and with local stakeholders.",
-                "distribution_params": None,
-                "scoring_distribution": "BINARY",
-            },
-        ],
-    }
-
     scorecard_json = {
         "mustHaveCriteria": [
             {
@@ -465,13 +333,13 @@ def init_node(
             }
         ],
     }
-
     scorecard: Scorecard = Scorecard.model_validate(scorecard_json)
 
     return {"profile": profile, "scorecard": scorecard}
 
 
 def continue_to_analysis(state: MainGraphState):
+    """Continue to the analysis graph."""
     all_criteria = (
         state.scorecard.mustHaveCriteria
         + state.scorecard.importantCriteria
@@ -486,17 +354,13 @@ def continue_to_analysis(state: MainGraphState):
     ]
 
 
-def test(state: MainGraphState) -> MainGraphState:
-    print("test node")
+def init_analysis(state: MainGraphState) -> MainGraphState:
+    """BLANK : Initialize the analysis graph."""
     return state
 
 
-# This is what the node that generates the final answer will take in
-""" class GenerateOutputState(MainGraphState, AnalysisOutputState):
-    pass """
-
-
 def compile_candidate_matcher_graph() -> CompiledGraph:
+    """Compile the candidate matcher graph."""
     workflow = StateGraph(
         MainGraphState, input=InputGraphState, config_schema=Configuration
     )
@@ -509,7 +373,7 @@ def compile_candidate_matcher_graph() -> CompiledGraph:
         "node_analysis",
         get_analysis_graph(),
     )
-    workflow.add_node("init_analysis", test)
+    workflow.add_node("init_analysis", init_analysis)
     workflow.add_node("node_synthesis", node_synthesis)
 
     workflow.add_edge(START, "init_node")

@@ -1,20 +1,30 @@
 # First we initialize the model we want to use.
+import os
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union, cast
 
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import RunnableConfig
-from langchain_core.tools import BaseTool, tool
+from langchain_core.tools import BaseTool
 from langgraph.prebuilt import InjectedState
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import sessionmaker
 from typing_extensions import Annotated
 
 from candidate_matcher.analysis.models import ScoredCriterion
 from candidate_matcher.analysis.state import AnalysisMainState
 from candidate_matcher.configuration import Configuration
+from candidate_matcher.models.knowledge_point import (
+    KnowledgePoint,
+    KnowledgePointDB,
+)
+from scorecard_generator.models.scorecard import CriterionType
 from utils.format_data import format_data
 
 
 class CandidateInfoType(Enum):
+    """The type of information to get about the candidate."""
+
     EXPERIENCES = "experiences"
     SKILLS = "skills"
     CERTIFICATIONS = "certifications"
@@ -86,5 +96,39 @@ def get_tools() -> List[BaseTool]:
         ScoredCriterion,
         search_web,
         get_candidate_info,
+        get_knowledge_points,
     ]
     return tools
+
+
+def get_knowledge_points(criterion_types: list[CriterionType]) -> list[KnowledgePoint]:
+    """Retrieve knowledge base entries by a list of criterion types.
+
+    This function should be called at the beginning of the process to obtain knowledge points relevant to the specified criterion types.
+    If the item to score involves multiple criteria (e.g., language and experience), this function should be called with a list of criterion types.
+
+    Args:
+        criterion_types (list[CriterionType]): The list of criterion types for which to retrieve knowledge points.
+
+    Returns:
+        list[KnowledgePoint]: A list of knowledge points relevant to the specified criterion types.
+    """
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable is not set")
+    engine = create_engine(database_url)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    session = SessionLocal()
+
+    try:
+        stmt = select(KnowledgePointDB).where(
+            KnowledgePointDB.type.in_(criterion_types)
+        )
+        result = session.execute(stmt).scalars().all()
+        knowledge_points = [
+            KnowledgePoint(type=kp.type, description=kp.description) for kp in result
+        ]  # Convert to KnowledgePoint with only type and description
+    finally:
+        session.close()
+
+    return knowledge_points

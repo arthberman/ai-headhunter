@@ -2,19 +2,19 @@ from datetime import datetime
 from typing import Optional
 
 from langchain import hub
+from langchain_core.messages import AIMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 
-from candidate_matcher.analysis.state import AnalysisMainState, AnalysisOutputState
+from candidate_matcher.analysis.state import AnalysisMainState
 from candidate_matcher.analysis.tools import ScoredCriterion, get_tools
+from candidate_matcher.configuration import Configuration
 from candidate_matcher.state import MainGraphState
-from src.candidate_matcher.configuration import Configuration
-from src.candidate_matcher.utils import init_model
+from candidate_matcher.utils import init_model
 
 
 def init_agent(state: AnalysisMainState) -> AnalysisMainState:
     """Initialize the agent with the provided state."""
-
     hub_prompt = hub.pull("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
     formatted_messages = chat_prompt.format_messages(
@@ -34,16 +34,18 @@ def call_model(
     state: AnalysisMainState, *, config: Optional[RunnableConfig] = None
 ) -> AnalysisMainState:
     """Call the model with the provided state and configuration."""
-
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
     # Check if the loop step is greater than the maximum number of loops
-    if state.loop_step == configuration.analysis_max_loops:
+    if state.loop_step == configuration.analysis_max_loops - 1:
         return {
             "messages": [
-                "You exceeded the maximum number of loops. You must respond to the user by calling the ScoredCriterion tool."
-            ]
+                AIMessage(
+                    content="You exceeded the maximum number of loops. You must respond to the user by calling the WebContext tool now.",
+                )
+            ],
+            "loop_step": 1,
         }
 
     # Initialize the raw model with the provided configuration and bind the tools
@@ -63,9 +65,8 @@ def call_model(
 
 
 # Define the function that responds to the user
-def respond(state: AnalysisOutputState) -> MainGraphState:
+def respond(state: AnalysisMainState) -> MainGraphState:
     """Respond to the user with the scored criterion."""
-
     response = ScoredCriterion(**state.messages[-1].tool_calls[0]["args"])
     # We return the final answer
     return {"scored_criterion": [response]}
@@ -76,12 +77,11 @@ def should_continue(
     state: AnalysisMainState, config: RunnableConfig
 ) -> AnalysisMainState:
     """Determine whether to continue or not."""
-
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
-    # Check if the loop step is greater than the maximum number of loops + 2
-    if state.loop_step >= configuration.analysis_max_loops + 2:
+    # Check if the loop step exceeds the maximum number of loops
+    if state.loop_step >= configuration.analysis_max_loops + 3:
         return "__end__"
 
     messages = state.messages

@@ -2,13 +2,9 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 from langchain.chat_models import init_chat_model
 from langchain_core.language_models import BaseChatModel
-from langchain_core.runnables import RunnableConfig
-
-from candidate_matcher.configuration import Configuration
 
 
 def init_model(fully_specified_name: str) -> BaseChatModel:

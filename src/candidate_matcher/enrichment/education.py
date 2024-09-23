@@ -1,15 +1,16 @@
 import os
 import uuid
-from typing import cast
+from datetime import datetime
+from typing import Optional, cast
 
 from langchain import hub
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import Runnable, RunnableConfig
-from sqlalchemy import ARRAY, Column, String, create_engine, select
+from sqlalchemy import ARRAY, Column, DateTime, String, create_engine, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-from candidate_matcher import configuration
+from candidate_matcher.configuration import Configuration
 from candidate_matcher.models.profile import ProfileEducation
 from candidate_matcher.models.school import SchoolInfo
 from candidate_matcher.state import EducationState, MainGraphState
@@ -19,6 +20,8 @@ Base = declarative_base()
 
 
 class EnrichmentSchool(Base):
+    """School enrichment model."""
+
     __tablename__ = "EnrichmentSchool"
     id = Column(
         UUID(as_uuid=True),
@@ -26,6 +29,10 @@ class EnrichmentSchool(Base):
         default=uuid.uuid4,
         unique=True,
         nullable=False,
+    )
+    createdAt = Column(DateTime, nullable=False, default=datetime.now)
+    updatedAt = Column(
+        DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
     )
     name = Column(String, nullable=False)
     description = Column(String)
@@ -38,6 +45,7 @@ tavily_tool = TavilySearchResults(max_results=3)
 
 
 def create_db_session():
+    """Create a database session."""
     database_url = os.getenv("DATABASE_URL")
     if not database_url:
         raise ValueError("DATABASE_URL environment variable is not set")
@@ -50,6 +58,7 @@ def create_db_session():
 def get_school_from_db(
     session: Session, name: str, linkedin_url: str
 ) -> EnrichmentSchool | None:
+    """Get a school from the database."""
     stmt = select(EnrichmentSchool).where(
         (EnrichmentSchool.name == name) & (EnrichmentSchool.linkedinUrl == linkedin_url)
     )
@@ -57,6 +66,7 @@ def get_school_from_db(
 
 
 def add_school_to_db(session: Session, school_info: SchoolInfo) -> None:
+    """Add a school to the database."""
     new_school = EnrichmentSchool(
         name=school_info.name,
         description=school_info.description,
@@ -69,12 +79,16 @@ def add_school_to_db(session: Session, school_info: SchoolInfo) -> None:
 
 
 def node_education_enrichment(
-    state: EducationState, config: RunnableConfig
+    state: EducationState, *, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:
+    """Enrich the education of the candidate."""
     education: ProfileEducation = state["education"]
     db_session = create_db_session()
 
     try:
+        # Load configuration from the provided RunnableConfig
+        configuration = Configuration.from_runnable_config(config)
+
         # Check if the school exists in the database
         db_school = get_school_from_db(
             db_session, education.school, education.linkedin_url

@@ -8,14 +8,14 @@ from scorecard_generator.sub_graph.enrichment.nodes import (
     respond,
     should_continue,
 )
-from scorecard_generator.sub_graph.enrichment.state import EnrichmentGraphState
+from scorecard_generator.sub_graph.enrichment.state import OutputGraphState
 from scorecard_generator.sub_graph.enrichment.tools import get_tools
 
 
 def get_enrichment_graph():
     """Get the enrichment graph."""
     # Define a new graph
-    workflow = StateGraph(AgentState, output=EnrichmentGraphState)
+    workflow = StateGraph(AgentState, output=OutputGraphState)
 
     # Define the nodes
     workflow.add_node("init_agent", init_agent)

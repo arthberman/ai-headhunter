@@ -1,7 +1,6 @@
 from typing import List, Optional, cast
 
 from langchain import hub
-from langchain.chat_models import init_chat_model
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
@@ -12,6 +11,8 @@ from src.candidate_matcher.utils import init_model
 
 
 class StructuredOutput(BaseModel):
+    """Structured output for the language enrichment model."""
+
     language_proficiency: List[LanguageProficiency] = Field(
         description="List of language proficiencies, each containing a language and its corresponding level"
     )
@@ -21,7 +22,6 @@ def node_language_enrichment(
     state: MainGraphState, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:
     """Enrich the profile with language proficiency."""
-
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 

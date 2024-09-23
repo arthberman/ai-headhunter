@@ -1,11 +1,12 @@
 import os
 import uuid
-from typing import cast
+from datetime import datetime
+from typing import Optional, cast
 
 from langchain import hub
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import Runnable, RunnableConfig
-from sqlalchemy import ARRAY, Column, String, create_engine, select
+from sqlalchemy import ARRAY, Column, DateTime, String, create_engine, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
@@ -19,6 +20,8 @@ Base = declarative_base()
 
 
 class EnrichmentCompany(Base):
+    """Company enrichment model."""
+
     __tablename__ = "EnrichmentCompany"
     id = Column(
         UUID(as_uuid=True),
@@ -26,6 +29,10 @@ class EnrichmentCompany(Base):
         default=uuid.uuid4,
         unique=True,
         nullable=False,
+    )
+    createdAt = Column(DateTime, nullable=False, default=datetime.now)
+    updatedAt = Column(
+        DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
     )
     name = Column(String, nullable=False)
     description = Column(String)
@@ -38,6 +45,7 @@ tavily_tool = TavilySearchResults(max_results=3)
 
 
 def create_db_session():
+    """Create a database session."""
     database_url = os.getenv("DATABASE_URL")
     if not database_url:
         raise ValueError("DATABASE_URL environment variable is not set")
@@ -50,6 +58,7 @@ def create_db_session():
 def get_company_from_db(
     session: Session, name: str, linkedin_url: str
 ) -> EnrichmentCompany | None:
+    """Get a company from the database."""
     stmt = select(EnrichmentCompany).where(
         (EnrichmentCompany.name == name)
         & (EnrichmentCompany.linkedinUrl == linkedin_url)
@@ -58,6 +67,7 @@ def get_company_from_db(
 
 
 def add_company_to_db(session: Session, company_info: CompanyInfo) -> None:
+    """Add a company to the database."""
     new_company = EnrichmentCompany(
         name=company_info.name,
         description=company_info.description,
@@ -70,8 +80,9 @@ def add_company_to_db(session: Session, company_info: CompanyInfo) -> None:
 
 
 def node_experience_enrichment(
-    state: ExperienceState, config: RunnableConfig
+    state: ExperienceState, *, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:
+    """Enrich the experience of the candidate."""
     experience: ProfileExperience = state["experience"]
     db_session = create_db_session()
 

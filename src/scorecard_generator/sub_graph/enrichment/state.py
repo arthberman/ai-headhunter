@@ -3,7 +3,7 @@ from typing import List
 from pydantic import BaseModel, Field
 
 
-class EnrichmentGraphState(BaseModel):
+class OutputGraphState(BaseModel):
     """State of the enrichment graph."""
 
     raw_job_posting: str = Field(
