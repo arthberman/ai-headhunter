@@ -14,7 +14,6 @@ from src.scorecard_generator.models.scorecard import ImportanceLevel, Scorecard
 
 def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorecard):
     """Extend the scored criterion with the scorecard."""
-
     extended_scored_criterion = []
     for scored_criterion in scored_criterion:
         criterion = next(
@@ -52,7 +51,6 @@ def node_synthesis(
     state: MainGraphState, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:
     """Synthesize the output."""
-
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 

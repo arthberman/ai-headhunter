@@ -8,6 +8,8 @@ from scorecard_generator.state import ScorecardGraphState
 
 
 class CriterionWithContext(BaseModel):
+    """Criterion with context."""
+
     criterion_description: str = Field(
         description="Description of the criterion.",
     )
@@ -17,12 +19,15 @@ class CriterionWithContext(BaseModel):
 
 
 class ListCriterionWithContext(BaseModel):
+    """List of criteria with context."""
+
     criteria: List[CriterionWithContext] = Field(
         description="List of criteria with context.",
     )
 
 
 def node_generate_context(state: ScorecardGraphState) -> ScorecardGraphState:
+    """Generate context for the scorecard criteria."""
     model = init_chat_model(
         model="gpt-4o-2024-08-06",
         model_provider="openai",
@@ -64,9 +69,7 @@ def node_generate_context(state: ScorecardGraphState) -> ScorecardGraphState:
         if criterion.description is not None and criterion.description in context_dict:
             criterion.context = context_dict[criterion.description]
         else:
-            print(
-                f"Warning: No context found for criterion with description: {criterion.description}"
-            )
-            criterion.context = ""  # Set a default empty context
+            # No context found for criterion with description
+            criterion.context = ""
 
     return {"scorecard": new_scorecard}

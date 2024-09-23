@@ -5,12 +5,16 @@ from pydantic import BaseModel, Field
 
 
 class ImportanceLevel(str, Enum):
+    """Importance level of the criterion."""
+
     MUST_HAVE = "MUST_HAVE"
     IMPORTANT = "IMPORTANT"
     NICE_TO_HAVE = "NICE_TO_HAVE"
 
 
 class CriterionType(str, Enum):
+    """Criterion type."""
+
     EDUCATION = "EDUCATION"
     EXPERIENCE = "EXPERIENCE"
     LANGUAGE = "LANGUAGE"
@@ -21,6 +25,8 @@ class CriterionType(str, Enum):
 
 
 class ScoringDistribution(str, Enum):
+    """Scoring distribution."""
+
     BINARY = "BINARY"
     CONTINUOUS = "CONTINUOUS"
     ORDINAL = "ORDINAL"
@@ -28,6 +34,8 @@ class ScoringDistribution(str, Enum):
 
 
 class BaseCriterion(BaseModel):
+    """Base criterion."""
+
     id: Optional[str] = Field(None, description="Unique identifier for the criterion")
     description: str = Field(..., description="Detailed description of the criterion")
     type: CriterionType = Field(
@@ -49,6 +57,8 @@ class BaseCriterion(BaseModel):
 
 
 class Scorecard(BaseModel):
+    """Scorecard structure."""
+
     mustHaveCriteria: List[BaseCriterion] = Field(..., description="MUST_HAVE criteria")
     importantCriteria: List[BaseCriterion] = Field(
         ..., description="IMPORTANT criteria"
@@ -56,29 +66,3 @@ class Scorecard(BaseModel):
     niceToHaveCriteria: List[BaseCriterion] = Field(
         ..., description="NICE_TO_HAVE criteria"
     )
-
-
-def load_scorecard_from_json(filePath: str) -> Scorecard:
-    import json
-
-    with open(filePath, "r") as file:
-        data = json.load(file)
-    return Scorecard.parse_obj(data)
-
-
-def filter_criteria_by_type(
-    scorecard: Scorecard, criteriaTypes: List[CriterionType]
-) -> List[BaseCriterion]:
-    filteredCriteria = []
-
-    for importance, criteria_list in [
-        (ImportanceLevel.MUST_HAVE, scorecard.mustHaveCriteria),
-        (ImportanceLevel.IMPORTANT, scorecard.importantCriteria),
-        (ImportanceLevel.NICE_TO_HAVE, scorecard.niceToHaveCriteria),
-    ]:
-        for criterion in criteria_list:
-            if criterion.type in criteriaTypes:
-                criterion.importance = importance
-                filteredCriteria.append(criterion)
-
-    return filteredCriteria

@@ -6,6 +6,8 @@ from scorecard_generator.models.scorecard import CriterionType
 
 
 class Question(BaseModel):
+    """Question to ask the user."""
+
     question: str = Field(..., description="Question to ask the user")
     criteria_type: CriterionType = Field(
         ..., description="Criteria type that the question is about"
@@ -14,6 +16,8 @@ class Question(BaseModel):
 
 
 class ListQuestions(BaseModel):
+    """List of questions to ask the user."""
+
     questions: List[Question] = Field(
         ..., description="List of questions to ask the user"
     )
