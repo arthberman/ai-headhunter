@@ -8,6 +8,8 @@ from scorecard_generator.models.synthesis import Synthesis
 
 
 class ScorecardGraphState(BaseModel):
+    """State of the scorecard graph."""
+
     raw_job_posting: str = Field(
         ..., description="Raw job posting with all the context provided by the user"
     )
@@ -33,6 +35,8 @@ class ScorecardGraphState(BaseModel):
 
 
 class ScorecardInputGraphState(BaseModel):
+    """State of the scorecard input graph."""
+
     raw_job_posting: str = Field(
         ..., description="Raw job posting with all the context provided by the user"
     )

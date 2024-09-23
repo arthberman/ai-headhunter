@@ -1,5 +1,3 @@
-from typing import List
-
 from langchain import hub
 from langchain.chat_models import init_chat_model
 
@@ -10,6 +8,7 @@ from scorecard_generator.state import ScorecardGraphState
 def node_generate_scoring_distribution(
     state: ScorecardGraphState,
 ) -> ScorecardGraphState:
+    """Generate scoring distribution for the scorecard criteria."""
     prompt = hub.pull("generate-scorecard-scoring-distribution")
 
     model = init_chat_model(

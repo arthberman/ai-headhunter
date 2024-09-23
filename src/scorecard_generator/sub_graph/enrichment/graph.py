@@ -3,16 +3,17 @@ from langgraph.prebuilt import ToolNode
 
 from scorecard_generator.sub_graph.enrichment.nodes import (
     AgentState,
-    init_agent,
     call_model,
+    init_agent,
     respond,
     should_continue,
 )
-from scorecard_generator.sub_graph.enrichment.tools import get_tools
 from scorecard_generator.sub_graph.enrichment.state import EnrichmentGraphState
+from scorecard_generator.sub_graph.enrichment.tools import get_tools
 
 
 def get_enrichment_graph():
+    """Get the enrichment graph."""
     # Define a new graph
     workflow = StateGraph(AgentState, output=EnrichmentGraphState)
 

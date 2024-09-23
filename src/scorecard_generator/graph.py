@@ -12,6 +12,7 @@ from scorecard_generator.sub_graph.structure.graph import create_structure_graph
 
 
 def compile_scorecard_generator_graph() -> StateGraph:
+    """Compile the scorecard generator graph."""
     workflow = StateGraph(ScorecardGraphState, input=ScorecardInputGraphState)
 
     # Add nodes to the graph

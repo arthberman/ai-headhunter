@@ -1,8 +1,11 @@
 from typing import List
+
 from pydantic import BaseModel, Field
 
 
 class EnrichmentGraphState(BaseModel):
+    """State of the enrichment graph."""
+
     raw_job_posting: str = Field(
         ..., description="Raw job posting with all the context provided by the user"
     )

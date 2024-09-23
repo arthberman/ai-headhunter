@@ -2,12 +2,12 @@
 from typing import List
 
 from langchain_community.tools import TavilySearchResults
-from pydantic import BaseModel, Field
 from langchain_core.tools import BaseTool
+from pydantic import BaseModel, Field
 
 
 class WebContext(BaseModel):
-    """Respond to the user with this"""
+    """Respond to the user with this tool."""
 
     web_context: List[str] = Field(
         description="List of context elements (results from the web search)"
@@ -15,6 +15,7 @@ class WebContext(BaseModel):
 
 
 def get_tools() -> List[BaseTool]:
+    """Get the tools for the enrichment subgraph."""
     tavily_tool = TavilySearchResults(
         max_results=5,
         include_answer=True,

@@ -1,7 +1,9 @@
-"""Define the models for the scorecard synthesis."""
-
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Synthesis(BaseModel):
-    description: str
+    """Synthesis of the scorecard in one paragraph."""
+
+    description: str = Field(
+        ..., description="Synthesis of the scorecard in one paragraph."
+    )

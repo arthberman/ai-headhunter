@@ -1,18 +1,20 @@
-from langchain_core.prompts import ChatPromptTemplate
 from langchain import hub
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
-from langgraph.graph import END, MessagesState
+from langgraph.graph import MessagesState
 
 from scorecard_generator.sub_graph.enrichment.tools import WebContext, get_tools
 
 
-# Define the AgentState
 class AgentState(MessagesState):
+    """State of the agent."""
+
     raw_job_posting: str
     web_context: WebContext
 
 
 def init_agent(state: AgentState):
+    """Initialize the agent."""
     hub_prompt = hub.pull("generate-scorecard-enrichment")
 
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
@@ -24,8 +26,8 @@ def init_agent(state: AgentState):
     return {"messages": formatted_messages}
 
 
-# Define the function that calls the model
 def call_model(state: AgentState):
+    """Call the model."""
     model_with_response_tool = ChatOpenAI(
         model="gpt-4o-mini", temperature=0
     ).bind_tools(get_tools(), tool_choice="any", parallel_tool_calls=False)
@@ -34,15 +36,15 @@ def call_model(state: AgentState):
     return {"messages": [response]}
 
 
-# Define the function that responds to the user
 def respond(state: AgentState):
+    """Respond to the user."""
     response = WebContext(**state["messages"][-1].tool_calls[0]["args"])
     # We return the final answer
     return {"web_context": response.web_context}
 
 
-# Define the function that determines whether to continue or not
 def should_continue(state: AgentState):
+    """Determine whether to continue or not."""
     messages = state["messages"]
     last_message = messages[-1]
     # If there is only one tool call and it is the response tool call we respond to the user
