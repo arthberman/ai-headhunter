@@ -2,16 +2,16 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.prebuilt import ToolNode
 
 from candidate_matcher.analysis.nodes import (
-    init_agent,
     call_model,
+    init_agent,
     respond,
     should_continue,
 )
-from candidate_matcher.analysis.tools import get_tools
 from candidate_matcher.analysis.state import (
     AnalysisMainState,
     MainGraphState,
 )
+from candidate_matcher.analysis.tools import get_tools
 from src.candidate_matcher.configuration import Configuration
 
 

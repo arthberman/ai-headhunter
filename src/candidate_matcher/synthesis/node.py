@@ -1,7 +1,6 @@
 from typing import Optional, cast
 
 from langchain import hub
-from langchain.chat_models import init_chat_model
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from candidate_matcher.analysis.models import ScoredCriterion

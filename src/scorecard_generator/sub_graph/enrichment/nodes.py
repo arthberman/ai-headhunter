@@ -1,16 +1,29 @@
+import operator
+from typing import Annotated, Optional, Sequence
+
 from langchain import hub
+from langchain_core.messages import AIMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
-from langgraph.graph import MessagesState
+from langchain_core.runnables import RunnableConfig
+from langgraph.errors import NodeInterrupt
+from pydantic import BaseModel, Field
 
+from scorecard_generator.configuration import Configuration
 from scorecard_generator.sub_graph.enrichment.tools import WebContext, get_tools
+from scorecard_generator.utils import init_model
 
 
-class AgentState(MessagesState):
+class AgentState(BaseModel):
     """State of the agent."""
 
-    raw_job_posting: str
-    web_context: WebContext
+    messages: Annotated[Sequence[BaseMessage], operator.add]
+    raw_job_posting: str = Field(
+        ..., description="Raw job posting with all the context provided by the user"
+    )
+    web_context: Optional[WebContext] = Field(
+        None, description="Web context for the job posting"
+    )
+    loop_step: Annotated[int, operator.add] = Field(default=0)
 
 
 def init_agent(state: AgentState):
@@ -20,32 +33,56 @@ def init_agent(state: AgentState):
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
-        raw_job_posting=state["raw_job_posting"]
+        raw_job_posting=state.raw_job_posting
     )
 
     return {"messages": formatted_messages}
 
 
-def call_model(state: AgentState):
+def call_model(state: AgentState, *, config: Optional[RunnableConfig] = None):
     """Call the model."""
-    model_with_response_tool = ChatOpenAI(
-        model="gpt-4o-mini", temperature=0
-    ).bind_tools(get_tools(), tool_choice="any", parallel_tool_calls=False)
+    # Load configuration from the provided RunnableConfig
+    configuration = Configuration.from_runnable_config(config)
 
-    response = model_with_response_tool.invoke(state["messages"])
-    return {"messages": [response]}
+    # Check if the loop step is greater than the maximum number of loops
+    if state.loop_step == configuration.max_loops - 1:
+        return {
+            "messages": [
+                AIMessage(
+                    content="You exceeded the maximum number of loops. You must respond to the user by calling the WebContext tool now.",
+                )
+            ],
+            "loop_step": 1,
+        }
+
+    # Initialize the raw model with the provided configuration and bind the tools
+    raw_model = init_model(configuration.enrichment_model)
+
+    # Bind the tools to the model
+    model = raw_model.bind_tools(
+        get_tools(), tool_choice="any", parallel_tool_calls=False
+    )
+    response = model.invoke(state.messages)
+    return {"messages": [response], "loop_step": 1}
 
 
 def respond(state: AgentState):
     """Respond to the user."""
-    response = WebContext(**state["messages"][-1].tool_calls[0]["args"])
+    response = WebContext(**state.messages[-1].tool_calls[0]["args"])
     # We return the final answer
     return {"web_context": response.web_context}
 
 
-def should_continue(state: AgentState):
+def should_continue(state: AgentState, *, config: Optional[RunnableConfig] = None):
     """Determine whether to continue or not."""
-    messages = state["messages"]
+    # Load configuration from the provided RunnableConfig
+    configuration = Configuration.from_runnable_config(config)
+
+    # Check if the loop step is exceeding the maximum number of loops
+    if state.loop_step >= configuration.max_loops + 3:
+        raise NodeInterrupt("The loop step exceeded the maximum number of loops")
+
+    messages = state.messages
     last_message = messages[-1]
     # If there is only one tool call and it is the response tool call we respond to the user
     if (

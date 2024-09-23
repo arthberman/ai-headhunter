@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
+from scorecard_generator.models.job_posting import JobPosting
 from scorecard_generator.models.question import Question
 from scorecard_generator.models.scorecard import Scorecard
 from scorecard_generator.models.synthesis import Synthesis
@@ -12,6 +13,9 @@ class ScorecardGraphState(BaseModel):
 
     raw_job_posting: str = Field(
         ..., description="Raw job posting with all the context provided by the user"
+    )
+    job_posting: Optional[JobPosting] = Field(
+        None, description="Job posting with all the context provided by the user"
     )
     scorecard: Optional[Scorecard] = Field(
         None, description="Scorecard with all the criteria and questions"
