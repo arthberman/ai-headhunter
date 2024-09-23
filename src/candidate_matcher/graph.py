@@ -1,4 +1,4 @@
-from parser.profile import parse_profile
+from utils.parse_profile import parse_profile
 from typing import Optional, Set
 
 from langchain_core.runnables import RunnableConfig

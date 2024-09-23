@@ -1,11 +1,11 @@
 name: Deploy repio-intelligence to Production
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "src/**"
+  #  push:
+  #    branches:
+  #      - main
+  #    paths:
+  #      - "src/**"
   workflow_dispatch:
 
 permissions:

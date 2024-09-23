@@ -11,7 +11,7 @@ from typing_extensions import Annotated
 from candidate_matcher.analysis.models import ScoredCriterion
 from candidate_matcher.analysis.state import AnalysisMainState
 from candidate_matcher.configuration import Configuration
-from utils.format import format_data
+from utils.format_data import format_data
 
 
 class CandidateInfoType(Enum):
