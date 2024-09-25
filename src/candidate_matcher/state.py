@@ -17,11 +17,13 @@ from scorecard_generator.models.scorecard import Scorecard
 
 
 class MainGraphState(BaseModel):
+    """State of the main graph."""
+
     profile: Optional[Profile] = Field(default=None)
     # jobPosting: JobPosting = Field(...)
     scorecard: Optional[Scorecard] = Field(default=None)
-    scorecard_synthesis: Optional[str] = Field(default=None)
-    analysisId: Optional[str] = Field(default=None)
+    job_synthesis: Optional[str] = Field(default=None)
+    analysis_id: Optional[str] = Field(default=None)
 
     education_enrichment: Annotated[List[SchoolInfo], operator.add]
     experience_enrichment: Annotated[List[CompanyInfo], operator.add]
@@ -34,12 +36,21 @@ class MainGraphState(BaseModel):
 
 
 class InputGraphState(BaseModel):
-    analysisId: Optional[str] = Field(default=None)
+    """State of the input graph."""
+
+    analysis_id: Optional[str] = Field(default=None)
+    profile: Optional[Profile] = Field(default=None)
+    scorecard: Optional[Scorecard] = Field(default=None)
+    job_synthesis: Optional[str] = Field(default=None)
 
 
 class EducationState(BaseModel):
+    """State of the education graph."""
+
     education: ProfileEducation = Field(...)
 
 
 class ExperienceState(BaseModel):
+    """State of the experience graph."""
+
     experience: ProfileExperience = Field(...)

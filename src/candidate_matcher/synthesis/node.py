@@ -75,7 +75,7 @@ def node_synthesis(
             {
                 "profile": state.profile,
                 "extended_scored_criterion": extended_scored_criterion,
-                "scorecard_synthesis": state.scorecard_synthesis,
+                "job_synthesis": state.job_synthesis,
             }
         ),
     )

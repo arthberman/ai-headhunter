@@ -97,7 +97,7 @@ def generate_context(state: ScorecardGraphState) -> ScorecardGraphState:
         c.criterion_description: c.criterion_context for c in output.criteria
     }
 
-    new_scorecard = state.scorecard
+    new_scorecard = state.scorecard.model_copy()
     # Update output with context for each criterion
     for criterion in (
         new_scorecard.mustHaveCriteria
