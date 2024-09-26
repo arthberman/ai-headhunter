@@ -20,6 +20,7 @@ dependencies = [
   "ipykernel>=6.29.5",
   "psycopg-binary>=3.2.2",
   "sqlalchemy>=2.0.35",
+  "langchain-aws>=0.2.1",
 ]
 
 [build-system]

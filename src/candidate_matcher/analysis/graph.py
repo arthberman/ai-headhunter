@@ -16,7 +16,7 @@ from src.candidate_matcher.configuration import Configuration
 
 
 def get_analysis_graph():
-    # Define a new graph
+    """Get the analysis graph."""
     workflow = StateGraph(
         AnalysisMainState,
         input=AnalysisMainState,
