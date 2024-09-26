@@ -6,7 +6,15 @@ from typing import Optional, cast
 from langchain import hub
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import Runnable, RunnableConfig
-from sqlalchemy import ARRAY, Column, DateTime, String, create_engine, select
+from sqlalchemy import (
+    ARRAY,
+    Column,
+    DateTime,
+    String,
+    UniqueConstraint,
+    create_engine,
+    select,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
@@ -39,6 +47,8 @@ class EnrichmentSchool(Base):
     linkedinUrl = Column(String, nullable=False)
     fields = Column(ARRAY(String))
     ranking = Column(String)
+
+    __table_args__ = (UniqueConstraint("name", "linkedinUrl", name="name_linkedinUrl"),)
 
 
 tavily_tool = TavilySearchResults(max_results=3)
