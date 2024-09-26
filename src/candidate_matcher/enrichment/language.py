@@ -4,10 +4,10 @@ from langchain import hub
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
+from candidate_matcher.configuration import Configuration
 from candidate_matcher.models.language import LanguageProficiency
 from candidate_matcher.state import MainGraphState
-from src.candidate_matcher.configuration import Configuration
-from src.candidate_matcher.utils import init_model
+from candidate_matcher.utils import init_model
 
 
 class StructuredOutput(BaseModel):
@@ -26,7 +26,7 @@ def node_language_enrichment(
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the raw model with the provided configuration
-    raw_model = init_model(configuration.enrichment_model)
+    raw_model = init_model(configuration.analysis_model)
 
     # Initialize the prompt
     prompt = hub.pull("generate-language-enrichment")

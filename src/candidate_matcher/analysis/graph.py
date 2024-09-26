@@ -12,7 +12,7 @@ from candidate_matcher.analysis.state import (
     MainGraphState,
 )
 from candidate_matcher.analysis.tools import get_tools
-from src.candidate_matcher.configuration import Configuration
+from candidate_matcher.configuration import Configuration
 
 
 def get_analysis_graph():

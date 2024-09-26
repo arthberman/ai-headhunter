@@ -51,7 +51,7 @@ def call_model(
     raw_model = init_model(configuration.analysis_model)
 
     # Bind the tools to the model
-    model = raw_model.bind_tools(get_tools(), parallel_tool_calls=False)
+    model = raw_model.bind_tools(get_tools())
 
     # Call the model with the provided state
     response = model.invoke(state.messages)

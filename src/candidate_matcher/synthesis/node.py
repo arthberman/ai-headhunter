@@ -4,11 +4,11 @@ from langchain import hub
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from candidate_matcher.analysis.models import ScoredCriterion
+from candidate_matcher.configuration import Configuration
 from candidate_matcher.state import MainGraphState
 from candidate_matcher.synthesis.models import ExtendedScoredCriterion, Synthesis
-from src.candidate_matcher.configuration import Configuration
-from src.candidate_matcher.utils import init_model
-from src.scorecard_generator.models.scorecard import ImportanceLevel, Scorecard
+from candidate_matcher.utils import init_model
+from scorecard_generator.models.scorecard import ImportanceLevel, Scorecard
 
 
 def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorecard):
