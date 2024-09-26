@@ -1,43 +1,52 @@
 from enum import Enum
-from typing import List, Optional, Dict
+from typing import List, Optional
 
 from pydantic import BaseModel
+
 from scorecard_generator.models.scorecard import (
+    BaseCriterion,
     CriterionType,
     ImportanceLevel,
     Scorecard,
-    BaseCriterion,
     ScoringDistribution,
 )
 
 
 class ActionType(str, Enum):
+    """The type of action to perform on the scorecard."""
+
     DELETE = "DELETE"
     ADD = "ADD"
     MOVE_TO_NICE_TO_HAVE = "MOVE_TO_NICE_TO_HAVE"
 
 
 class StructureAction(BaseModel):
+    """An action to perform on the scorecard."""
+
     actionType: ActionType
     importance: ImportanceLevel
     type: CriterionType
     description: str
     scoring_distribution: ScoringDistribution
-    distribution_params: Optional[Dict[str, float]]
 
 
 class StructureJudgeOutput(BaseModel):
+    """The output of the structure judge."""
+
     is_structure_valid: bool
     structure_actions: Optional[List[StructureAction]]
 
 
 # New class to represent a criterion with its importance level
 class CriterionWithImportance(BaseCriterion):
+    """A criterion with its importance level."""
+
     importance: ImportanceLevel
 
 
 # Helper function to convert Scorecard to a list of CriterionWithImportance
 def scorecard_to_criteria_list(scorecard: Scorecard) -> List[CriterionWithImportance]:
+    """Convert a scorecard to a list of criteria with their importance level."""
     criteria_list = []
     for importance, criteria in [
         (ImportanceLevel.MUST_HAVE, scorecard.mustHaveCriteria),
@@ -55,6 +64,7 @@ def scorecard_to_criteria_list(scorecard: Scorecard) -> List[CriterionWithImport
 def criteria_list_to_scorecard(
     criteria_list: List[CriterionWithImportance],
 ) -> Scorecard:
+    """Convert a list of criteria with their importance level back to a scorecard."""
     must_have = []
     important = []
     nice_to_have = []

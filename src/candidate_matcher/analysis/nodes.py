@@ -22,7 +22,6 @@ def init_agent(state: AnalysisMainState) -> AnalysisMainState:
         description=state.criterion.description,
         context=state.criterion.context,
         scoring_distribution=state.criterion.scoring_distribution,
-        distribution_params=state.criterion.distribution_params,
         current_date=datetime.now().strftime("%Y-%m-%d"),
     )
 

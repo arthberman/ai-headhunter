@@ -1,20 +1,23 @@
 from typing import List
+
 from langchain import hub
 from langchain.chat_models import init_chat_model
+
 from scorecard_generator.models.scorecard import (
+    BaseCriterion,
     ImportanceLevel,
     Scorecard,
-    BaseCriterion,
 )
-from scorecard_generator.sub_graph.structure.state import StructureGraphState
 from scorecard_generator.sub_graph.structure.models import (
+    ActionType,
     StructureAction,
     StructureJudgeOutput,
-    ActionType,
 )
+from scorecard_generator.sub_graph.structure.state import StructureGraphState
 
 
 def generate_scorecard_structure(state: StructureGraphState) -> StructureGraphState:
+    """Generate a scorecard structure based on the given state."""
     model = init_chat_model(
         model="gpt-4o-2024-08-06",
         model_provider="openai",
@@ -43,6 +46,7 @@ def generate_scorecard_structure(state: StructureGraphState) -> StructureGraphSt
 
 
 def judge_scorecard_structure(state: StructureGraphState) -> StructureGraphState:
+    """Judge the scorecard structure based on the given state."""
     model = init_chat_model(
         model="gpt-4o-2024-08-06",
         model_provider="openai",
@@ -62,6 +66,7 @@ def judge_scorecard_structure(state: StructureGraphState) -> StructureGraphState
 
 
 def apply_replacements(state: StructureGraphState) -> StructureGraphState:
+    """Apply the replacements to the scorecard."""
     scorecard: Scorecard = state.scorecard
     actions: List[StructureAction] = state.structure_actions
 
@@ -103,9 +108,9 @@ def apply_replacements(state: StructureGraphState) -> StructureGraphState:
 
 
 def create_criterion(action: StructureAction) -> BaseCriterion:
+    """Create a criterion based on the given action."""
     return BaseCriterion(
         description=action.description,
         type=action.type,
         scoring_distribution=action.scoring_distribution,
-        distribution_params=action.distribution_params,
     )

@@ -59,9 +59,7 @@ def call_model(state: AgentState, *, config: Optional[RunnableConfig] = None):
     raw_model = init_model(configuration.enrichment_model)
 
     # Bind the tools to the model
-    model = raw_model.bind_tools(
-        get_tools(), tool_choice="any", parallel_tool_calls=False
-    )
+    model = raw_model.bind_tools(get_tools(), tool_choice="any")
     response = model.invoke(state.messages)
     return {"messages": [response], "loop_step": 1}
 

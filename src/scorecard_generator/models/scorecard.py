@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -29,7 +29,6 @@ class ScoringDistribution(str, Enum):
 
     BINARY = "BINARY"
     CONTINUOUS = "CONTINUOUS"
-    ORDINAL = "ORDINAL"
     GAUSSIAN = "GAUSSIAN"
 
 
@@ -49,10 +48,6 @@ class BaseCriterion(BaseModel):
     scoring_distribution: Optional[ScoringDistribution] = Field(
         None,
         description="The type of scoring distribution for this criterion",
-    )
-    distribution_params: Optional[Dict[str, float]] = Field(
-        None,
-        description="Parameters specific to the chosen scoring distribution",
     )
 
 
