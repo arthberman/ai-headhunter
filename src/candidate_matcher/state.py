@@ -4,6 +4,7 @@ from typing import Annotated, List, Optional
 from pydantic import BaseModel, Field
 
 from candidate_matcher.analysis.models import ScoredCriterion
+from candidate_matcher.career_path.models import CareerPathOutput
 from candidate_matcher.models.company import CompanyInfo
 from candidate_matcher.models.language import LanguageProficiency
 from candidate_matcher.models.profile import (
@@ -32,6 +33,7 @@ class MainGraphState(BaseModel):
     )
 
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
+    career_path: Optional[CareerPathOutput] = Field(default=None)
     synthesis: Optional[Synthesis] = Field(default=None)
 
 

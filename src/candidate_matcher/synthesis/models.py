@@ -2,8 +2,8 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from src.candidate_matcher.analysis.models import ScoredCriterion
-from src.scorecard_generator.models.scorecard import CriterionType, ImportanceLevel
+from candidate_matcher.analysis.models import ScoredCriterion
+from scorecard_generator.models.scorecard import CriterionType, ImportanceLevel
 
 
 class Synthesis(BaseModel):
