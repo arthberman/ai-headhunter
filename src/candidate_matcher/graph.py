@@ -9,11 +9,8 @@ from candidate_matcher.configuration import Configuration
 from candidate_matcher.enrichment.education import node_education_enrichment
 from candidate_matcher.enrichment.experience import node_experience_enrichment
 from candidate_matcher.enrichment.language import node_language_enrichment
-from candidate_matcher.models.profile import Profile
 from candidate_matcher.state import InputGraphState, MainGraphState
 from candidate_matcher.synthesis.node import node_synthesis
-from scorecard_generator.models.scorecard import Scorecard
-from utils.parse_profile import parse_profile
 
 
 def continue_to_school_enrichment(state: MainGraphState):
