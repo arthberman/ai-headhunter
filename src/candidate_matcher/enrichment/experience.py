@@ -15,7 +15,8 @@ from sqlalchemy import (
     create_engine,
     select,
 )
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, insert
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from candidate_matcher.configuration import Configuration
@@ -77,16 +78,31 @@ def get_company_from_db(
 
 
 def add_company_to_db(session: Session, company_info: CompanyInfo) -> None:
-    """Add a company to the database."""
-    new_company = EnrichmentCompany(
+    """Add a company to the database or update if it already exists."""
+    insert_stmt = insert(EnrichmentCompany).values(
         name=company_info.name,
         description=company_info.description,
         linkedinUrl=company_info.linkedin_url,
         sectors=company_info.sectors,
         companyStage=company_info.company_stage,
     )
-    session.add(new_company)
-    session.commit()
+
+    do_update_stmt = insert_stmt.on_conflict_do_update(
+        index_elements=["name", "linkedinUrl"],
+        set_={
+            "description": company_info.description,
+            "sectors": company_info.sectors,
+            "companyStage": company_info.company_stage,
+            "updatedAt": datetime.now(),
+        },
+    )
+
+    try:
+        session.execute(do_update_stmt)
+        session.commit()
+    except IntegrityError as e:
+        session.rollback()
+        raise ValueError(f"IntegrityError occurred: {e}")
 
 
 def node_experience_enrichment(

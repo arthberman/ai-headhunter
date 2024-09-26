@@ -13,9 +13,11 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
     create_engine,
+    insert,
     select,
 )
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from candidate_matcher.configuration import Configuration
@@ -76,16 +78,31 @@ def get_school_from_db(
 
 
 def add_school_to_db(session: Session, school_info: SchoolInfo) -> None:
-    """Add a school to the database."""
-    new_school = EnrichmentSchool(
+    """Add a school to the database or update if it already exists."""
+    insert_stmt = insert(EnrichmentSchool).values(
         name=school_info.name,
         description=school_info.description,
         linkedinUrl=school_info.linkedin_url,
         fields=school_info.fields,
         ranking=school_info.ranking,
     )
-    session.add(new_school)
-    session.commit()
+
+    do_update_stmt = insert_stmt.on_conflict_do_update(
+        index_elements=["name", "linkedinUrl"],
+        set_={
+            "description": school_info.description,
+            "fields": school_info.fields,
+            "ranking": school_info.ranking,
+            "updatedAt": datetime.now(),
+        },
+    )
+
+    try:
+        session.execute(do_update_stmt)
+        session.commit()
+    except IntegrityError as e:
+        session.rollback()
+        raise ValueError(f"IntegrityError occurred while adding/updating school: {e}")
 
 
 def node_education_enrichment(
