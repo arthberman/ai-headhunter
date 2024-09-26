@@ -13,10 +13,9 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
     create_engine,
-    insert,
     select,
 )
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
