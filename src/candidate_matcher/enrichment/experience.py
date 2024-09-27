@@ -52,7 +52,7 @@ class EnrichmentCompany(Base):
     __table_args__ = (UniqueConstraint("name", "linkedinUrl", name="name_linkedinUrl"),)
 
 
-tavily_tool = TavilySearchResults(max_results=3)
+tavily_tool = TavilySearchResults(max_results=5, include_answer=True)
 
 
 def create_db_session():
@@ -130,7 +130,6 @@ def node_experience_enrichment(
                         linkedin_url=db_company.linkedinUrl,
                         sectors=db_company.sectors,
                         company_stage=db_company.companyStage,
-                        uncertainty=False,
                     )
                 ]
             }

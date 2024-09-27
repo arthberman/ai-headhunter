@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -23,8 +23,4 @@ class CompanyInfo(BaseModel):
     company_stage: CompanyStage = Field(
         ...,
         description="Stage of the company in startup, sme, large corporation or multinational",
-    )
-    uncertainty: Optional[bool] = Field(
-        None,
-        description="Flag indicating if there's uncertainty about the accuracy of the information",
     )
