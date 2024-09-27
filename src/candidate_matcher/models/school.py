@@ -13,7 +13,3 @@ class SchoolInfo(BaseModel):
         ..., description="List of specialized fields related to the school"
     )
     ranking: str = Field(..., description="ranking/reputation of the school")
-    uncertainty: Optional[bool] = Field(
-        None,
-        description="Flag indicating if there's uncertainty about the accuracy of the information",
-    )

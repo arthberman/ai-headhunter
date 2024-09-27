@@ -52,13 +52,12 @@ class EnrichmentSchool(Base):
     __table_args__ = (UniqueConstraint("name", "linkedinUrl", name="name_linkedinUrl"),)
 
 
-tavily_tool = TavilySearchResults(max_results=3)
+tavily_tool = TavilySearchResults(max_results=5, include_answer=True)
 
 
 def create_db_session():
     """Create a database session."""
     database_url = os.getenv("DATABASE_URL")
-    print(database_url)
     if not database_url:
         raise ValueError("DATABASE_URL environment variable is not set")
     engine = create_engine(database_url)
@@ -79,7 +78,6 @@ def get_school_from_db(
 
 def add_school_to_db(session: Session, school_info: SchoolInfo) -> None:
     """Add a school to the database or update if it already exists."""
-    print(school_info)
     insert_stmt = insert(EnrichmentSchool).values(
         name=school_info.name,
         description=school_info.description,
@@ -131,7 +129,6 @@ def node_education_enrichment(
                         linkedin_url=db_school.linkedinUrl,
                         fields=db_school.fields,
                         ranking=db_school.ranking,
-                        uncertainty=False,
                     )
                 ]
             }
