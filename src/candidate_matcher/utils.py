@@ -1,5 +1,8 @@
 """Utility functions used in our graph."""
 
+import asyncio
+import functools
+import logging
 from datetime import datetime
 from enum import Enum
 
@@ -31,3 +34,20 @@ def format_data(data):
         return format_data(data.__dict__)
     else:
         return data
+
+
+def log_cancelled_error(func):
+    """Log the error when a function is cancelled."""
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except asyncio.exceptions.CancelledError as e:
+            logging.error(f"Function {func.__name__} was cancelled: {e}")
+            logging.error(f"Cancellation context: {e.__context__}")
+            logging.error(f"Cancellation cause: {e.__cause__}")
+            logging.error("Traceback: ", exc_info=True)
+            raise  # Re-raise the exception after logging
+
+    return wrapper

@@ -23,7 +23,7 @@ from candidate_matcher.configuration import Configuration
 from candidate_matcher.models.profile import ProfileEducation
 from candidate_matcher.models.school import SchoolInfo
 from candidate_matcher.state import EducationState, MainGraphState
-from candidate_matcher.utils import init_model
+from candidate_matcher.utils import init_model, log_cancelled_error
 
 Base = declarative_base()
 
@@ -104,6 +104,7 @@ def add_school_to_db(session: Session, school_info: SchoolInfo) -> None:
         raise ValueError(f"IntegrityError occurred while adding/updating school: {e}")
 
 
+@log_cancelled_error
 def node_education_enrichment(
     state: EducationState, *, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:

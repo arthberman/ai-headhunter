@@ -7,7 +7,7 @@ from candidate_matcher.analysis.models import ScoredCriterion
 from candidate_matcher.configuration import Configuration
 from candidate_matcher.state import MainGraphState
 from candidate_matcher.synthesis.models import ExtendedScoredCriterion, Synthesis
-from candidate_matcher.utils import init_model
+from candidate_matcher.utils import init_model, log_cancelled_error
 from scorecard_generator.models.scorecard import ImportanceLevel, Scorecard
 
 
@@ -46,6 +46,7 @@ def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorec
     return extended_scored_criterion
 
 
+@log_cancelled_error
 def node_synthesis(
     state: MainGraphState, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:

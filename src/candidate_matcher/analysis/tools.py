@@ -18,8 +18,8 @@ from candidate_matcher.models.knowledge_point import (
     KnowledgePoint,
     KnowledgePointDB,
 )
+from candidate_matcher.utils import format_data
 from scorecard_generator.models.scorecard import CriterionType
-from utils.format_data import format_data
 
 
 class CandidateInfoType(Enum):
