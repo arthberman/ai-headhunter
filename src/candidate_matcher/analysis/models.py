@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 
 class ScoredCriterion(BaseModel):
-    """Respond to the user with this"""
+    """Respond to the user with this."""
 
     id: str = Field(..., description="Unique identifier for the criterion")
     score: float = Field(
