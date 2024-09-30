@@ -1,12 +1,14 @@
 from typing import List, Optional
-from pydantic import BaseModel, Field
-from scorecard_generator.models.question import Question
-from scorecard_generator.models.scorecard import Scorecard
+
+from pydantic import Field
+
 from scorecard_generator.state import ScorecardGraphState
 from scorecard_generator.sub_graph.structure.models import StructureAction
 
 
 class StructureGraphState(ScorecardGraphState):
+    """State for the structure graph."""
+
     structure_actions: Optional[List[StructureAction]] = Field(
         None, description="List of actions to be taken to structure the scorecard"
     )

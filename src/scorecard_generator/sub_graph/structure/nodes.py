@@ -29,6 +29,28 @@ def generate_scorecard_structure(state: StructureGraphState) -> StructureGraphSt
     chain = prompt | structured_model
     output: Scorecard = chain.invoke(
         {
+            "raw_job_posting": state.raw_job_posting,
+            "web_context": state.web_context,
+            "generated_questions": state.generated_questions,
+        }
+    )
+
+    return {"scorecard": output}
+
+
+def iterate_scorecard_structure(state: StructureGraphState) -> StructureGraphState:
+    """Iterate the scorecard structure based on the given state."""
+    model = init_chat_model(
+        model="gpt-4o-2024-08-06",
+        model_provider="openai",
+        temperature=0,
+    )
+    structured_model = model.with_structured_output(StructureJudgeOutput)
+    prompt = hub.pull("iterate-scorecard-structure")
+
+    chain = prompt | structured_model
+    output: StructureJudgeOutput = chain.invoke(
+        {
             "previous_scorecard": state.scorecard,
             "raw_job_posting": state.raw_job_posting,
             "web_context": state.web_context,
@@ -39,7 +61,7 @@ def generate_scorecard_structure(state: StructureGraphState) -> StructureGraphSt
     )
 
     return {
-        "scorecard": output,
+        "structure_actions": output.structure_actions,
         "human_context": (state.human_context or []) + (state.human_feedback or []),
         "human_feedback": [],
     }

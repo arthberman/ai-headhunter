@@ -1,10 +1,12 @@
 from datetime import datetime
-from typing import Annotated, Any, Dict, List, Optional
+from typing import Annotated, List, Optional
 
 from pydantic import BaseModel, Field
 
 
 class ProfileEducation(BaseModel):
+    """Profile education."""
+
     startsAt: Annotated[datetime, Field(description="Start date of education")]
     endsAt: Annotated[Optional[datetime], Field(description="End date of education")]
     duration: Annotated[Optional[str], Field(description="Education duration")]
@@ -17,6 +19,8 @@ class ProfileEducation(BaseModel):
 
 
 class ProfileExperience(BaseModel):
+    """Profile experience."""
+
     startsAt: Annotated[datetime, Field(description="Start date of experience")]
     endsAt: Annotated[Optional[datetime], Field(description="End date of experience")]
     duration: Annotated[Optional[str], Field(description="Experience duration")]
@@ -28,14 +32,19 @@ class ProfileExperience(BaseModel):
 
 
 class ProfileVolunteering(BaseModel):
+    """Profile volunteering."""
+
     startsAt: Annotated[datetime, Field(description="Start date of volunteering")]
     endsAt: Annotated[Optional[datetime], Field(description="End date of volunteering")]
+    duration: Annotated[Optional[str], Field(description="Volunteering duration")]
     title: Annotated[Optional[str], Field(description="Volunteering title")]
     description: Annotated[Optional[str], Field(description="Volunteering description")]
     location: Annotated[Optional[str], Field(description="Volunteering location")]
 
 
 class ProfileHonor(BaseModel):
+    """Profile honor."""
+
     title: Annotated[Optional[str], Field(description="Honor title")]
     description: Annotated[Optional[str], Field(description="Honor description")]
     issuer: Annotated[Optional[str], Field(description="Honor issuer")]
@@ -43,13 +52,18 @@ class ProfileHonor(BaseModel):
 
 
 class ProfileProject(BaseModel):
+    """Profile project."""
+
     title: Annotated[Optional[str], Field(description="Project title")]
     description: Annotated[Optional[str], Field(description="Project description")]
     endsAt: Annotated[Optional[datetime], Field(description="Project end date")]
     startsAt: Annotated[Optional[datetime], Field(description="Project start date")]
+    duration: Annotated[Optional[str], Field(description="Project duration")]
 
 
 class ProfileCertification(BaseModel):
+    """Profile certification."""
+
     title: Annotated[Optional[str], Field(description="Certification title")]
     description: Annotated[
         Optional[str], Field(description="Certification description")
@@ -61,11 +75,15 @@ class ProfileCertification(BaseModel):
 
 
 class ProfileLanguage(BaseModel):
+    """Profile language."""
+
     language: Annotated[str, Field(description="Language name")]
     level: Annotated[str, Field(description="Language proficiency level")]
 
 
 class Profile(BaseModel):
+    """Profile."""
+
     id: Annotated[str, Field(description="Unique identifier for the profile")]
     country: Annotated[str, Field(description="Country of the profile")]
     city: Annotated[Optional[str], Field(description="City of the profile")]

@@ -157,7 +157,11 @@ def generate_scoring_distribution(
         ),
     )
 
-    return {"scorecard": res}
+    return {
+        "scorecard": res,
+        "human_feedback": state.human_feedback,
+        "human_context": state.human_context,
+    }
 
 
 def generate_synthesis(state: ScorecardGraphState) -> ScorecardGraphState:
@@ -169,5 +173,15 @@ def generate_synthesis(state: ScorecardGraphState) -> ScorecardGraphState:
     prompt = hub.pull("generate-scorecard-synthesis")
 
     chain = cast(Runnable, prompt | structured_model)
-    synthesis = cast(Synthesis, chain.invoke(state))
+    synthesis = cast(
+        Synthesis,
+        chain.invoke(
+            {
+                "raw_job_posting": state.raw_job_posting,
+                "web_context": state.web_context,
+                "human_context": state.human_context,
+                "generated_questions": state.generated_questions,
+            }
+        ),
+    )
     return {"synthesis": synthesis}
