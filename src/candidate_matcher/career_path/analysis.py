@@ -6,9 +6,10 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from candidate_matcher.career_path.models import CareerPathOutput
 from candidate_matcher.configuration import Configuration
 from candidate_matcher.state import MainGraphState
-from candidate_matcher.utils import init_model
+from candidate_matcher.utils import init_model, log_cancelled_error
 
 
+@log_cancelled_error
 def node_career_path(
     state: MainGraphState, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:

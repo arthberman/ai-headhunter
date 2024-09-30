@@ -23,7 +23,7 @@ from candidate_matcher.configuration import Configuration
 from candidate_matcher.models.company import CompanyInfo
 from candidate_matcher.models.profile import ProfileExperience
 from candidate_matcher.state import ExperienceState, MainGraphState
-from candidate_matcher.utils import init_model
+from candidate_matcher.utils import init_model, log_cancelled_error
 
 Base = declarative_base()
 
@@ -105,6 +105,7 @@ def add_company_to_db(session: Session, company_info: CompanyInfo) -> None:
         raise ValueError(f"IntegrityError occurred: {e}")
 
 
+@log_cancelled_error
 def node_experience_enrichment(
     state: ExperienceState, *, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:

@@ -10,9 +10,10 @@ from candidate_matcher.analysis.state import AnalysisMainState
 from candidate_matcher.analysis.tools import ScoredCriterion, get_tools
 from candidate_matcher.configuration import Configuration
 from candidate_matcher.state import MainGraphState
-from candidate_matcher.utils import init_model
+from candidate_matcher.utils import init_model, log_cancelled_error
 
 
+@log_cancelled_error
 def init_agent(state: AnalysisMainState) -> AnalysisMainState:
     """Initialize the agent with the provided state."""
     hub_prompt = hub.pull("score-analysis-criterion")
@@ -29,6 +30,7 @@ def init_agent(state: AnalysisMainState) -> AnalysisMainState:
 
 
 # Define the function that calls the model
+@log_cancelled_error
 def call_model(
     state: AnalysisMainState, *, config: Optional[RunnableConfig] = None
 ) -> AnalysisMainState:
@@ -64,6 +66,7 @@ def call_model(
 
 
 # Define the function that responds to the user
+@log_cancelled_error
 def respond(state: AnalysisMainState) -> MainGraphState:
     """Respond to the user with the scored criterion."""
     response = ScoredCriterion(**state.messages[-1].tool_calls[0]["args"])
@@ -72,6 +75,7 @@ def respond(state: AnalysisMainState) -> MainGraphState:
 
 
 # Define the function that determines whether to continue or not
+@log_cancelled_error
 def should_continue(
     state: AnalysisMainState, config: RunnableConfig
 ) -> AnalysisMainState:
