@@ -23,15 +23,15 @@ def compile_scorecard_generator_graph() -> StateGraph:
     workflow.add_node("generate_context", generate_context)
     workflow.add_node("generate_scoring_distribution", generate_scoring_distribution)
     workflow.add_node("generate_synthesis", generate_synthesis)
-    workflow.add_node("structure", create_structure_graph())
+    workflow.add_node("generate_structure", create_structure_graph())
 
     # Define the edges
-    workflow.add_edge(START, "generate_synthesis")
-    workflow.add_edge("generate_synthesis", "enrichment")
+    workflow.add_edge(START, "enrichment")
     workflow.add_edge("enrichment", "generate_job_posting")
     workflow.add_edge("generate_job_posting", "generate_questions")
-    workflow.add_edge("generate_questions", "structure")
-    workflow.add_edge("structure", "generate_context")
+    workflow.add_edge("generate_questions", "generate_synthesis")
+    workflow.add_edge("generate_synthesis", "generate_structure")
+    workflow.add_edge("generate_structure", "generate_context")
     workflow.add_edge("generate_context", "generate_scoring_distribution")
     workflow.add_edge("generate_scoring_distribution", END)
 
