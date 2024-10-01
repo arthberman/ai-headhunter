@@ -8,7 +8,6 @@ from scorecard_generator.models.scorecard import (
     CriterionType,
     ImportanceLevel,
     Scorecard,
-    ScoringDistribution,
 )
 
 
@@ -27,7 +26,6 @@ class StructureAction(BaseModel):
     importance: ImportanceLevel
     type: CriterionType
     description: str
-    scoring_distribution: ScoringDistribution
 
 
 class StructureJudgeOutput(BaseModel):

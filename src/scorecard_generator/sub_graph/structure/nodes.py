@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, cast
 
 from langchain import hub
 from langchain.chat_models import init_chat_model
+from langchain_core.runnables import Runnable
 
 from scorecard_generator.models.scorecard import (
     BaseCriterion,
@@ -26,7 +27,7 @@ def generate_scorecard_structure(state: StructureGraphState) -> StructureGraphSt
     structured_model = model.with_structured_output(Scorecard)
     prompt = hub.pull("generate-scorecard-structure")
 
-    chain = prompt | structured_model
+    chain = cast(Runnable, prompt | structured_model)
     output: Scorecard = chain.invoke(
         {
             "raw_job_posting": state.raw_job_posting,
@@ -48,14 +49,12 @@ def iterate_scorecard_structure(state: StructureGraphState) -> StructureGraphSta
     structured_model = model.with_structured_output(StructureJudgeOutput)
     prompt = hub.pull("iterate-scorecard-structure")
 
-    chain = prompt | structured_model
+    chain = cast(Runnable, prompt | structured_model)
     output: StructureJudgeOutput = chain.invoke(
         {
             "previous_scorecard": state.scorecard,
             "raw_job_posting": state.raw_job_posting,
             "web_context": state.web_context,
-            "generated_questions": state.generated_questions,
-            "human_context": state.human_context,
             "human_feedback": state.human_feedback,
         }
     )
@@ -77,7 +76,7 @@ def judge_scorecard_structure(state: StructureGraphState) -> StructureGraphState
     structured_model = model.with_structured_output(StructureJudgeOutput)
     prompt = hub.pull("judge-scorecard-structure")
 
-    chain = prompt | structured_model
+    chain = cast(Runnable, prompt | structured_model)
     output: StructureJudgeOutput = chain.invoke({"scorecard": state.scorecard})
 
     return {
@@ -134,5 +133,4 @@ def create_criterion(action: StructureAction) -> BaseCriterion:
     return BaseCriterion(
         description=action.description,
         type=action.type,
-        scoring_distribution=action.scoring_distribution,
     )
