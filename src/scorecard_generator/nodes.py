@@ -179,7 +179,8 @@ def generate_synthesis(state: ScorecardGraphState) -> ScorecardGraphState:
             {
                 "raw_job_posting": state.raw_job_posting,
                 "web_context": state.web_context,
-                "human_context": state.human_context,
+                "human_context": (state.human_context or [])
+                + (state.human_feedback or []),
                 "generated_questions": state.generated_questions,
             }
         ),
