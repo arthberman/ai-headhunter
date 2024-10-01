@@ -52,7 +52,9 @@ class EnrichmentCompany(Base):
     __table_args__ = (UniqueConstraint("name", "linkedinUrl", name="name_linkedinUrl"),)
 
 
-tavily_tool = TavilySearchResults(max_results=5, include_answer=True)
+tavily_tool = TavilySearchResults(
+    max_results=10, include_answer=True, search_depth="advanced"
+)
 
 
 def create_db_session():
