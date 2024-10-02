@@ -761,28 +761,28 @@ wheels = [
 
 [[package]]
 name = "langgraph"
-version = "0.2.31"
+version = "0.2.32"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "langgraph-checkpoint" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f4/52/46a68845bcb75cfad48920fed45216d1439767cecc765a0699380ced1382/langgraph-0.2.31.tar.gz", hash = "sha256:78759ebd8abcabb1894cf64e07d221a11b970e77553a4f89e1134c3602958341", size = 88761 }
+sdist = { url = "https://files.pythonhosted.org/packages/e5/40/1dc8d11a39272bc1a343787ca722ad7fce1bd74e977ebd7044df8e75d49a/langgraph-0.2.32.tar.gz", hash = "sha256:21c10d3a6b67b1e5d55e2bf4482d43c273e9c866cbdb98986b30f5388c9cf7f7", size = 88785 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/67/5e/1451e8af70f23ec8a29f3f2607ae5082ae9248727f0ace7e52a9c047a23c/langgraph-0.2.31-py3-none-any.whl", hash = "sha256:9e5b4138aae95bfbd928b6f0f2869431060c80d7a62fc831370cf2aed3a488e8", size = 106551 },
+    { url = "https://files.pythonhosted.org/packages/cd/07/2e5560a1bceb16a0f0b213cac79e45810137cd30753893fd43d98e8bb827/langgraph-0.2.32-py3-none-any.whl", hash = "sha256:e3077d33e204ac7eb1ca9b2389d610eb3b6612a1d96aa08415ae2f4af0f6f0d1", size = 106547 },
 ]
 
 [[package]]
 name = "langgraph-checkpoint"
-version = "1.0.14"
+version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "msgpack" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/67/3b/2fb3485d66eaec9f1cf72cc2b9f43876f2a8ee34b409a81f693f93f66299/langgraph_checkpoint-1.0.14.tar.gz", hash = "sha256:5c51f8d8cca4c0ed3e75c264a7bf66a2efa60ff521ed46f05facf606df424eb1", size = 20132 }
+sdist = { url = "https://files.pythonhosted.org/packages/c2/eb/09d7a63fa0fd371940f21a2e8894aa7aefc3724971911e1ad1f4456b92a7/langgraph_checkpoint-2.0.0.tar.gz", hash = "sha256:884ea7fd7c06904865e8fdcae01233e469ad4bc22871d5376b76f8eeab33464c", size = 20139 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ae/e5/cda8bd97ec5e8c875787b0c128f53b734157170bb3d8c1d480b67f0254bf/langgraph_checkpoint-1.0.14-py3-none-any.whl", hash = "sha256:a60cbf06011a5f9c9bfcde971684732acd5df39632c58ff45f02f814519e9d8c", size = 22693 },
+    { url = "https://files.pythonhosted.org/packages/7e/a0/a649b910f0d221ac7d281d80d5cd0484daf4aff2d0adfaf04de99cc33f43/langgraph_checkpoint-2.0.0-py3-none-any.whl", hash = "sha256:a8d7dbfb86fc381ad9619e15de47eb37451b6051b2ce2749ee25cbb41935ef30", size = 22679 },
 ]
 
 [[package]]
@@ -1344,7 +1344,7 @@ requires-dist = [
     { name = "langchain-groq", specifier = ">=0.2.0" },
     { name = "langchain-openai", specifier = ">=0.2.1" },
     { name = "langchainhub", specifier = ">=0.1.21" },
-    { name = "langgraph", specifier = ">=0.2.28" },
+    { name = "langgraph", specifier = ">=0.2.32" },
     { name = "packaging", specifier = ">=24.1" },
     { name = "psycopg-binary", specifier = ">=3.2.3" },
     { name = "pydantic", specifier = ">=2.9.2" },
