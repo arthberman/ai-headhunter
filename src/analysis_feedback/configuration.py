@@ -8,19 +8,19 @@ class Configuration(BaseModel):
     """The configuration for the analysis feedback."""
 
     reformulation_model: str = Field(
-        default="openai/gpt-4o-2024-08-06",
+        default="bedrock_converse/anthropic.claude-3-5-sonnet-20240620-v1:0",
         description="The name of the language model to use for the reformulation. "
         "Should be in the form: provider/model-name.",
     )
 
     extraction_model: str = Field(
-        default="openai/gpt-4o-mini",
+        default="bedrock_converse/anthropic.claude-3-5-sonnet-20240620-v1:0",
         description="The name of the language model to use for the extraction. "
         "Should be in the form: provider/model-name.",
     )
 
     synthesis_model: str = Field(
-        default="openai/gpt-4o-2024-08-06",
+        default="bedrock_converse/anthropic.claude-3-5-sonnet-20240620-v1:0",
         description="The name of the language model to use for the synthesis. "
         "Should be in the form: provider/model-name.",
     )
