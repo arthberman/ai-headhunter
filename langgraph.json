@@ -1,7 +1,8 @@
 {
   "graphs": {
     "candidate_matcher": "./src/candidate_matcher/graph.py:compile_candidate_matcher_graph",
-    "scorecard_generator": "./src/scorecard_generator/graph.py:compile_scorecard_generator_graph"
+    "scorecard_generator": "./src/scorecard_generator/graph.py:compile_scorecard_generator_graph",
+    "analysis_feedback": "./src/analysis_feedback/graph.py:compile_analysis_feedback_graph"
   },
   "env": ".env.studio",
   "python_version": "3.12",

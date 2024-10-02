@@ -1,7 +1,7 @@
 [project]
 name = "repio-intelligence"
 version = "0.0.1"
-description = "Add your description here"
+description = "AI Agents for repio.co"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -12,7 +12,7 @@ dependencies = [
   "langchain-anthropic>=0.2.1",
   "langchain-groq>=0.2.0",
   "langchain-core>=0.3.7",
-  "langgraph>=0.2.28",
+  "langgraph>=0.2.32",
   "langchain-openai>=0.2.1",
   "pydantic>=2.9.2",
   "toml>=0.10.2",
@@ -47,7 +47,6 @@ convention = "google"
 [tool.hatch.build.targets.wheel]
 packages = [
   "src/candidate_matcher",
-  "src/parser",
-  "src/utils",
   "src/scorecard_generator",
+  "src/analysis_feedback",
 ]
