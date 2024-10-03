@@ -8,13 +8,13 @@ class Configuration(BaseModel):
     """The configuration for the scorecard generator."""
 
     enrichment_model: str = Field(
-        default="openai/gpt-4o-mini",
+        default="openai/gpt-4o-2024-08-06",
         description="The name of the language model to use for the enrichment. "
         "Should be in the form: provider/model-name.",
     )
 
     structure_model: str = Field(
-        default="openai/gpt-4o-mini",
+        default="openai/gpt-4o-2024-08-06",
         description="The name of the language model to use for the enrichment. "
         "Should be in the form: provider/model-name.",
     )

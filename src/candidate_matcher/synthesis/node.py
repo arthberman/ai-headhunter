@@ -7,7 +7,7 @@ from candidate_matcher.analysis.models import ScoredCriterion
 from candidate_matcher.configuration import Configuration
 from candidate_matcher.state import MainGraphState
 from candidate_matcher.synthesis.models import ExtendedScoredCriterion, Synthesis
-from candidate_matcher.utils import init_model, log_cancelled_error
+from candidate_matcher.utils import format_data, init_model, log_cancelled_error
 from scorecard_generator.models.scorecard import ImportanceLevel, Scorecard
 
 
@@ -74,7 +74,7 @@ def node_synthesis(
         Synthesis,
         chain.invoke(
             {
-                "profile": state.profile,
+                "profile": format_data(state.profile),
                 "extended_scored_criterion": extended_scored_criterion,
                 "job_synthesis": state.job_synthesis,
             }

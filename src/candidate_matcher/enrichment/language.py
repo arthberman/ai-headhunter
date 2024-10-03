@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from candidate_matcher.configuration import Configuration
 from candidate_matcher.models.language import LanguageProficiency
 from candidate_matcher.state import MainGraphState
-from candidate_matcher.utils import init_model, log_cancelled_error
+from candidate_matcher.utils import format_data, init_model, log_cancelled_error
 
 
 class StructuredOutput(BaseModel):
@@ -41,7 +41,7 @@ def node_language_enrichment(
     # Invoke the chain
     res = cast(
         StructuredOutput,
-        chain.invoke({"profile": state.profile, "knowledge_points": ""}),
+        chain.invoke({"profile": format_data(state.profile), "knowledge_points": ""}),
     )
 
     return {"language_enrichment": res.language_proficiency}

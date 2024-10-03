@@ -5,7 +5,6 @@ from candidate_matcher.analysis.nodes import (
     call_model,
     init_agent,
     respond,
-    respond_exceed_max_loops,
     should_continue,
 )
 from candidate_matcher.analysis.state import (
@@ -29,7 +28,6 @@ def get_analysis_graph():
     workflow.add_node("init_agent", init_agent)
     workflow.add_node("agent", call_model)
     workflow.add_node("respond", respond)
-    workflow.add_node("respond_exceed_max_loops", respond_exceed_max_loops)
     workflow.add_node("tools", ToolNode(get_tools()))
 
     # Set the entrypoint as `init_agent`
@@ -43,7 +41,6 @@ def get_analysis_graph():
         {
             "continue": "tools",
             "respond": "respond",
-            "respond_exceed_max_loops": "respond_exceed_max_loops",
         },
     )
 

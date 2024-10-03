@@ -79,6 +79,7 @@ def search_web(
 
     This function queries the web to fetch comprehensive, accurate, and trusted results. It's particularly useful
     for answering questions about current events. Provide as much context in the query as needed to ensure high recall.
+    Don't use this tool to answer questions about the candidate or the scorecard, as this tool is only for searching the web.
     """
     configuration = Configuration.from_runnable_config(config)
     wrapped = TavilySearchResults(max_results=configuration.max_search_results)
