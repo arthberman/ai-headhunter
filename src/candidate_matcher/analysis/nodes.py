@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Optional, cast
+from typing import Optional
 
 from langchain import hub
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import Runnable, RunnableConfig
+from langchain_core.runnables import RunnableConfig
 
 from candidate_matcher.analysis.state import AnalysisMainState
 from candidate_matcher.analysis.tools import ScoredCriterion, get_tools
@@ -48,11 +48,24 @@ def call_model(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
+    # Check if the loop step is greater than the maximum number of loops
+    if state.loop_step == configuration.analysis_max_loops - 1:
+        return {
+            "messages": [
+                AIMessage(
+                    content="You exceeded the maximum number of loops. You must respond to the user by calling the WebContext tool now."
+                )
+            ],
+            "loop_step": 1,
+        }
+
     # Initialize the raw model with the provided configuration and bind the tools
     raw_model = init_model(configuration.analysis_model)
 
     # Bind the tools to the model
-    model = raw_model.bind_tools(get_tools(), tool_choice="any")
+    model = raw_model.bind_tools(
+        get_tools(), tool_choice="any", parallel_tool_calls=True
+    )
 
     # Call the model with the provided state
     response = model.invoke(state.messages)
@@ -73,39 +86,6 @@ def respond(state: AnalysisMainState) -> MainGraphState:
     return {"scored_criterion": [response]}
 
 
-@log_cancelled_error
-def respond_exceed_max_loops(
-    state: AnalysisMainState, *, config: Optional[RunnableConfig] = None
-) -> MainGraphState:
-    """Respond to the user when the maximum number of loops is exceeded."""
-    # Load configuration from the provided RunnableConfig
-    configuration = Configuration.from_runnable_config(config)
-
-    # Initialize the raw model with the provided configuration
-    raw_model = init_model(configuration.analysis_model)
-
-    # Create a structured output model for the JobPosting
-    model = raw_model.with_structured_output(ScoredCriterion)
-
-    hub_prompt = hub.pull("score-analysis-respond")
-
-    chain = cast(Runnable, model | hub_prompt)
-
-    formatted_messages = [
-        {
-            "type": msg.__class__.__name__,
-            "content": msg.content,
-            "additional_kwargs": msg.additional_kwargs,
-        }
-        for msg in state.messages
-    ]
-
-    output = cast(ScoredCriterion, chain.invoke({"messages": formatted_messages}))
-
-    # We return the final answer
-    return {"scored_criterion": [output]}
-
-
 # Define the function that determines whether to continue or not
 @log_cancelled_error
 def should_continue(
@@ -116,15 +96,16 @@ def should_continue(
     configuration = Configuration.from_runnable_config(config)
 
     # Check if the loop step exceeds the maximum number of loops
-    if state.loop_step >= configuration.analysis_max_loops:
-        return "respond_exceed_max_loops"
+    if state.loop_step >= configuration.analysis_max_loops + 3:
+        return "__end__"
 
     messages = state.messages
     last_message = messages[-1]
 
     # If there is only one tool call and it is the response tool call we respond to the user
     if (
-        len(last_message.tool_calls) == 1
+        last_message.tool_calls
+        and len(last_message.tool_calls) == 1
         and last_message.tool_calls[0]["name"] == "ScoredCriterion"
     ):
         return "respond"

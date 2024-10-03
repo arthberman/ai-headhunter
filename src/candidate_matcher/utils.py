@@ -7,7 +7,6 @@ from datetime import datetime
 from enum import Enum
 
 from langchain.chat_models import init_chat_model
-from langchain_aws import ChatBedrock
 from langchain_core.language_models import BaseChatModel
 
 
@@ -18,14 +17,6 @@ def init_model(fully_specified_name: str) -> BaseChatModel:
     else:
         provider = None
         model = fully_specified_name
-
-    """ if provider == "bedrock_converse" or provider == "bedrock":
-        return ChatBedrock(
-            model_id=model,
-            beta_use_converse_api=False,
-            model_kwargs=dict(temperature=0),
-            disable_streaming=True,
-        ) """
     return init_chat_model(model, model_provider=provider, temperature=0)
 
 

@@ -8,7 +8,7 @@ class Configuration(BaseModel):
     """The configuration for the matcher."""
 
     analysis_model: str = Field(
-        default="bedrock_converse/anthropic.claude-3-5-sonnet-20240620-v1:0",
+        default="openai/gpt-4o-2024-08-06",
         description="The name of the language model to use for the analysis. "
         "Should be in the form: provider/model-name.",
     )
@@ -37,7 +37,7 @@ class Configuration(BaseModel):
     )
 
     analysis_max_loops: int = Field(
-        default=6,
+        default=5,
         description="The maximum number of loops to run the analysis for.",
     )
 
