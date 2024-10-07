@@ -48,3 +48,4 @@ class SynthesizedFeedback(BaseModel):
     """Synthesized feedback."""
 
     synthesized_feedback: str = Field(default=None)
+    is_actionable_and_relevant: bool = Field(default=None)

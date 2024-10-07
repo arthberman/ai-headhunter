@@ -68,9 +68,9 @@ def init_node(state: MainGraphState) -> MainGraphState:
 def continue_to_analysis(state: MainGraphState):
     """Continue to the analysis graph."""
     all_criteria = (
-        state.scorecard.mustHaveCriteria
-        + state.scorecard.importantCriteria
-        + state.scorecard.niceToHaveCriteria
+        state.scorecard.must_have_criteria
+        + state.scorecard.important_criteria
+        + state.scorecard.nice_to_have_criteria
     )
 
     return [

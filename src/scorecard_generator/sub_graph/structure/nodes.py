@@ -99,29 +99,29 @@ def apply_replacements(state: StructureGraphState) -> StructureGraphState:
             new_criterion = create_criterion(action)
 
             if action.importance == ImportanceLevel.MUST_HAVE:
-                scorecard.mustHaveCriteria.append(new_criterion)
+                scorecard.must_have_criteria.append(new_criterion)
             elif action.importance == ImportanceLevel.IMPORTANT:
-                scorecard.importantCriteria.append(new_criterion)
+                scorecard.important_criteria.append(new_criterion)
             elif action.importance == ImportanceLevel.NICE_TO_HAVE:
-                scorecard.niceToHaveCriteria.append(new_criterion)
+                scorecard.nice_to_have_criteria.append(new_criterion)
 
         elif action.actionType == ActionType.DELETE:
             if action.importance == ImportanceLevel.MUST_HAVE:
-                scorecard.mustHaveCriteria = [
+                scorecard.must_have_criteria = [
                     c
-                    for c in scorecard.mustHaveCriteria
+                    for c in scorecard.must_have_criteria
                     if c.description != action.description
                 ]
             elif action.importance == ImportanceLevel.IMPORTANT:
-                scorecard.importantCriteria = [
+                scorecard.important_criteria = [
                     c
-                    for c in scorecard.importantCriteria
+                    for c in scorecard.important_criteria
                     if c.description != action.description
                 ]
             elif action.importance == ImportanceLevel.NICE_TO_HAVE:
-                scorecard.niceToHaveCriteria = [
+                scorecard.nice_to_have_criteria = [
                     c
-                    for c in scorecard.niceToHaveCriteria
+                    for c in scorecard.nice_to_have_criteria
                     if c.description != action.description
                 ]
 

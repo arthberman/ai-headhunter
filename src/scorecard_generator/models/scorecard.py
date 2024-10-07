@@ -54,10 +54,12 @@ class BaseCriterion(BaseModel):
 class Scorecard(BaseModel):
     """Scorecard structure."""
 
-    mustHaveCriteria: List[BaseCriterion] = Field(..., description="MUST_HAVE criteria")
-    importantCriteria: List[BaseCriterion] = Field(
+    must_have_criteria: List[BaseCriterion] = Field(
+        ..., description="MUST_HAVE criteria"
+    )
+    important_criteria: List[BaseCriterion] = Field(
         ..., description="IMPORTANT criteria"
     )
-    niceToHaveCriteria: List[BaseCriterion] = Field(
+    nice_to_have_criteria: List[BaseCriterion] = Field(
         ..., description="NICE_TO_HAVE criteria"
     )
