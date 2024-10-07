@@ -142,4 +142,7 @@ def node_synthesize_feedback(
         ),
     )
 
-    return {"synthesized_feedback": output.synthesized_feedback}
+    return {
+        "synthesized_feedback": output.synthesized_feedback,
+        "is_actionable_and_relevant": output.is_actionable_and_relevant,
+    }

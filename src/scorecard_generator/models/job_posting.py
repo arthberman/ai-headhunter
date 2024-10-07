@@ -11,7 +11,7 @@ class LocationInfo(BaseModel):
         None, description="State, province, or region where the job is located"
     )
     country: str = Field(description="Country where the job is located (full name)")
-    countryCode: str = Field(
+    country_code: str = Field(
         description="ISO 3166-1 alpha-2 country code (e.g., 'FR' for France)"
     )
 
@@ -29,17 +29,17 @@ class JobPosting(BaseModel):
     responsibilities: List[str] = Field(
         description="Detailed list of responsibilities for the role"
     )
-    typicalProfile: str = Field(
+    typical_profile: str = Field(
         description="Typical profile required for the job (ex: a Data Scientist with +5y of experiences, with a Master Degree in CS)"
     )
-    companySpirit: str = Field(
+    company_spirit: str = Field(
         description="Description of the company spirit (what the company does, why they do it, what they believe in)"
     )
-    companyType: Optional[str] = Field(
+    company_type: Optional[str] = Field(
         None,
         description="Type of company (e.g., fast-growing startup, well-established group)",
     )
-    contractType: str = Field(description="Type of contract for the job")
+    contract_type: str = Field(description="Type of contract for the job")
     location: LocationInfo = Field(
         description="Detailed location information for the job"
     )
@@ -50,16 +50,16 @@ class JobPosting(BaseModel):
     benefits: Optional[List[str]] = Field(
         None, description="List of benefits for the job, if any"
     )
-    applicationInstructions: Optional[str] = Field(
+    application_instructions: Optional[str] = Field(
         None, description="Instructions for applying to the job"
     )
-    careerProgression: Optional[str] = Field(
+    career_progression: Optional[str] = Field(
         None, description="Information about career progression opportunities"
     )
-    diversityStatement: Optional[str] = Field(
+    diversity_statement: Optional[str] = Field(
         None, description="Company's statement on diversity and inclusion"
     )
-    additionalInformation: Optional[str] = Field(
+    additional_information: Optional[str] = Field(
         None,
         description="Any additional important information about the job or company",
     )

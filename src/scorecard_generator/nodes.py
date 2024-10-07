@@ -1,11 +1,10 @@
 from typing import List, Optional, cast
 
 from langchain import hub
-from langchain.chat_models import init_chat_model
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
-from candidate_matcher.enrichment.experience import Configuration
+from scorecard_generator.configuration import Configuration
 from scorecard_generator.models.job_posting import JobPosting
 from scorecard_generator.models.question import ListQuestions
 from scorecard_generator.models.scorecard import Scorecard
@@ -21,7 +20,7 @@ def generate_job_posting(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
     # Initialize the chat model with the provided configuration
-    raw_model = init_model(configuration.enrichment_model)
+    raw_model = init_model(configuration.default_model)
     # Create a structured output model for the JobPosting
     model = raw_model.with_structured_output(JobPosting)
     # Pull the prompt from the hub
@@ -61,25 +60,29 @@ class ListCriterionWithContext(BaseModel):
     )
 
 
-def generate_context(state: ScorecardGraphState) -> ScorecardGraphState:
+def generate_context(
+    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+) -> ScorecardGraphState:
     """Generate context for the scorecard criteria."""
-    model = init_chat_model(
-        model="gpt-4o-2024-08-06",
-        model_provider="openai",
-        temperature=0,
-    )
+    # Load configuration from the provided RunnableConfig
+    configuration = Configuration.from_runnable_config(config)
+
+    # Initialize the raw model with the provided configuration
+    raw_model = init_model(configuration.default_model)
+
+    # Create a structured output model for the ListCriterionWithContext
+    model = raw_model.with_structured_output(ListCriterionWithContext)
 
     prompt = hub.pull("generate-scorecard-context")
-    structured_model = model.with_structured_output(ListCriterionWithContext)
 
     scorecard_criteria = [
         {"description": criterion.description}
-        for criterion in state.scorecard.mustHaveCriteria
-        + state.scorecard.importantCriteria
-        + state.scorecard.niceToHaveCriteria
+        for criterion in state.scorecard.must_have_criteria
+        + state.scorecard.important_criteria
+        + state.scorecard.nice_to_have_criteria
     ]
 
-    chain = cast(Runnable, prompt | structured_model)
+    chain = cast(Runnable, prompt | model)
     output = cast(
         ListCriterionWithContext,
         chain.invoke(
@@ -100,9 +103,9 @@ def generate_context(state: ScorecardGraphState) -> ScorecardGraphState:
     new_scorecard = state.scorecard.model_copy()
     # Update output with context for each criterion
     for criterion in (
-        new_scorecard.mustHaveCriteria
-        + new_scorecard.importantCriteria
-        + new_scorecard.niceToHaveCriteria
+        new_scorecard.must_have_criteria
+        + new_scorecard.important_criteria
+        + new_scorecard.nice_to_have_criteria
     ):
         if criterion.description is not None and criterion.description in context_dict:
             criterion.context = context_dict[criterion.description]
@@ -113,13 +116,18 @@ def generate_context(state: ScorecardGraphState) -> ScorecardGraphState:
     return {"scorecard": new_scorecard}
 
 
-def generate_questions(state: ScorecardGraphState) -> ScorecardGraphState:
+def generate_questions(
+    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+) -> ScorecardGraphState:
     """Generate questions for the scorecard criteria."""
+    # Load configuration from the provided RunnableConfig
+    configuration = Configuration.from_runnable_config(config)
+
     prompt = hub.pull("generate-scorecard-questions")
 
-    model = init_chat_model(
-        model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
-    ).with_structured_output(ListQuestions)
+    model = init_model(configuration.default_model).with_structured_output(
+        ListQuestions
+    )
 
     chain = cast(Runnable, prompt | model)
 
@@ -137,14 +145,14 @@ def generate_questions(state: ScorecardGraphState) -> ScorecardGraphState:
 
 
 def generate_scoring_distribution(
-    state: ScorecardGraphState,
+    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
 ) -> ScorecardGraphState:
     """Generate scoring distribution for the scorecard criteria."""
     prompt = hub.pull("generate-scorecard-scoring-distribution")
 
-    model = init_chat_model(
-        model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
-    ).with_structured_output(Scorecard)
+    configuration = Configuration.from_runnable_config(config)
+
+    model = init_model(configuration.default_model).with_structured_output(Scorecard)
 
     chain = cast(Runnable, prompt | model)
 
@@ -164,15 +172,18 @@ def generate_scoring_distribution(
     }
 
 
-def generate_synthesis(state: ScorecardGraphState) -> ScorecardGraphState:
+def generate_synthesis(
+    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+) -> ScorecardGraphState:
     """Synthesize the scorecard."""
-    model = init_chat_model(
-        model="gpt-4o-2024-08-06", model_provider="openai", temperature=0
-    )
-    structured_model = model.with_structured_output(Synthesis)
+    configuration = Configuration.from_runnable_config(config)
+
+    raw_model = init_model(configuration.default_model)
+
+    model = raw_model.with_structured_output(Synthesis)
     prompt = hub.pull("generate-scorecard-synthesis")
 
-    chain = cast(Runnable, prompt | structured_model)
+    chain = cast(Runnable, prompt | model)
     synthesis = cast(
         Synthesis,
         chain.invoke(

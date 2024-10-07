@@ -47,9 +47,9 @@ def scorecard_to_criteria_list(scorecard: Scorecard) -> List[CriterionWithImport
     """Convert a scorecard to a list of criteria with their importance level."""
     criteria_list = []
     for importance, criteria in [
-        (ImportanceLevel.MUST_HAVE, scorecard.mustHaveCriteria),
-        (ImportanceLevel.IMPORTANT, scorecard.importantCriteria),
-        (ImportanceLevel.NICE_TO_HAVE, scorecard.niceToHaveCriteria),
+        (ImportanceLevel.MUST_HAVE, scorecard.must_have_criteria),
+        (ImportanceLevel.IMPORTANT, scorecard.important_criteria),
+        (ImportanceLevel.NICE_TO_HAVE, scorecard.nice_to_have_criteria),
     ]:
         for criterion in criteria:
             criteria_list.append(
@@ -75,7 +75,7 @@ def criteria_list_to_scorecard(
         elif criterion.importance == ImportanceLevel.NICE_TO_HAVE:
             nice_to_have.append(BaseCriterion(**criterion_dict))
     return Scorecard(
-        mustHaveCriteria=must_have,
-        importantCriteria=important,
-        niceToHaveCriteria=nice_to_have,
+        must_have_criteria=must_have,
+        important_criteria=important,
+        nice_to_have_criteria=nice_to_have,
     )
