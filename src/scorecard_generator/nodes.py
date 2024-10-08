@@ -7,10 +7,27 @@ from pydantic import BaseModel, Field
 from scorecard_generator.configuration import Configuration
 from scorecard_generator.models.job_posting import JobPosting
 from scorecard_generator.models.question import ListQuestions
-from scorecard_generator.models.scorecard import Scorecard
+from scorecard_generator.models.scorecard import ScoringDistribution
 from scorecard_generator.models.synthesis import Synthesis
 from scorecard_generator.state import ScorecardGraphState
 from scorecard_generator.utils import init_model
+
+
+class CriterionScoringDistribution(BaseModel):
+    """Criterion ID and its scoring distribution."""
+
+    criterion_id: str = Field(description="ID of the criterion.")
+    scoring_distribution: ScoringDistribution = Field(
+        description="Scoring distribution for the criterion."
+    )
+
+
+class ListCriterionScoringDistributions(BaseModel):
+    """List of criterion scoring distributions."""
+
+    distributions: List[CriterionScoringDistribution] = Field(
+        description="List of criterion scoring distributions."
+    )
 
 
 def generate_job_posting(
@@ -44,8 +61,8 @@ def generate_job_posting(
 class CriterionWithContext(BaseModel):
     """Criterion with context."""
 
-    criterion_description: str = Field(
-        description="Description of the criterion.",
+    criterion_id: str = Field(
+        description="ID of the criterion.",
     )
     criterion_context: str = Field(
         description="Context of the criterion. This is the context related to the criterion.",
@@ -76,7 +93,7 @@ def generate_context(
     prompt = hub.pull("generate-scorecard-context")
 
     scorecard_criteria = [
-        {"description": criterion.description}
+        {"id": criterion.id, "description": criterion.description}
         for criterion in state.scorecard.must_have_criteria
         + state.scorecard.important_criteria
         + state.scorecard.nice_to_have_criteria
@@ -96,9 +113,7 @@ def generate_context(
     )
 
     # Create a dictionary for easier lookup
-    context_dict = {
-        c.criterion_description: c.criterion_context for c in output.criteria
-    }
+    context_dict = {c.criterion_id: c.criterion_context for c in output.criteria}
 
     new_scorecard = state.scorecard.model_copy()
     # Update output with context for each criterion
@@ -107,10 +122,10 @@ def generate_context(
         + new_scorecard.important_criteria
         + new_scorecard.nice_to_have_criteria
     ):
-        if criterion.description is not None and criterion.description in context_dict:
-            criterion.context = context_dict[criterion.description]
+        if criterion.id in context_dict:
+            criterion.context = context_dict[criterion.id]
         else:
-            # No context found for criterion with description
+            # No context found for criterion with id
             criterion.context = ""
 
     return {"scorecard": new_scorecard}
@@ -152,12 +167,14 @@ def generate_scoring_distribution(
 
     configuration = Configuration.from_runnable_config(config)
 
-    model = init_model(configuration.default_model).with_structured_output(Scorecard)
+    model = init_model(configuration.default_model).with_structured_output(
+        ListCriterionScoringDistributions
+    )
 
     chain = cast(Runnable, prompt | model)
 
     res = cast(
-        Scorecard,
+        ListCriterionScoringDistributions,
         chain.invoke(
             {
                 "scorecard": state.scorecard,
@@ -165,8 +182,20 @@ def generate_scoring_distribution(
         ),
     )
 
+    # Update the scorecard with the new scoring distributions
+    new_scorecard = state.scorecard.model_copy()
+    for criterion in (
+        new_scorecard.must_have_criteria
+        + new_scorecard.important_criteria
+        + new_scorecard.nice_to_have_criteria
+    ):
+        for dist in res.distributions:
+            if criterion.id == dist.criterion_id:
+                criterion.scoring_distribution = dist.scoring_distribution
+                break
+
     return {
-        "scorecard": res,
+        "scorecard": new_scorecard,
         "human_feedback": state.human_feedback,
         "human_context": state.human_context,
     }

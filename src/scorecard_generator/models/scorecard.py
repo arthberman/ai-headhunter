@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import List, Optional
+from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
@@ -35,7 +36,10 @@ class ScoringDistribution(str, Enum):
 class BaseCriterion(BaseModel):
     """Base criterion."""
 
-    id: Optional[str] = Field(None, description="Unique identifier for the criterion")
+    id: str = Field(
+        default_factory=lambda: str(uuid4()),
+        description="Unique identifier for the criterion",
+    )
     description: str = Field(..., description="Detailed description of the criterion")
     type: CriterionType = Field(
         ...,
