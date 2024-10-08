@@ -41,7 +41,10 @@ class ScorecardRelatedElement(BaseModel):
 class ReformedHumanFeedback(BaseModel):
     """Reformed Human feedback."""
 
-    human_feedback: str = Field(default=None)
+    reformed_human_feedback: str = Field(
+        default=None,
+        description="Reformed human feedback from the human feedback provided.",
+    )
 
 
 class SynthesizedFeedback(BaseModel):

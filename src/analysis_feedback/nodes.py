@@ -40,7 +40,7 @@ def node_reformulate_human_feedback(
         chain.invoke({"human_feedback": state.raw_human_feedback}),
     )
 
-    return {"human_feedback": output.human_feedback}
+    return {"human_feedback": output.reformed_human_feedback}
 
 
 @log_cancelled_error
