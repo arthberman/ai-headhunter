@@ -6,11 +6,11 @@ from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 
-from candidate_matcher.analysis.state import AnalysisMainState
-from candidate_matcher.analysis.tools import ScoredCriterion, get_tools
-from candidate_matcher.configuration import Configuration
-from candidate_matcher.state import MainGraphState
-from candidate_matcher.utils import init_model, log_cancelled_error
+from iterate_analysis.analysis.state import AnalysisMainState
+from iterate_analysis.analysis.tools import ScoredCriterion, get_tools
+from iterate_analysis.configuration import Configuration
+from iterate_analysis.state import MainGraphState
+from iterate_analysis.utils import init_model, log_cancelled_error
 
 
 @log_cancelled_error
@@ -18,6 +18,7 @@ def init_agent(
     state: AnalysisMainState, *, config: Optional[RunnableConfig] = None
 ) -> AnalysisMainState:
     """Initialize the agent with the provided state."""
+    print("INIT AGENT")
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 

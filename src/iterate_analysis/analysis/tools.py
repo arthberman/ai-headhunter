@@ -11,14 +11,14 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 from typing_extensions import Annotated
 
-from candidate_matcher.analysis.models import ScoredCriterion
-from candidate_matcher.analysis.state import AnalysisMainState
-from candidate_matcher.configuration import Configuration
-from candidate_matcher.models.knowledge_point import (
+from iterate_analysis.analysis.models import ScoredCriterion
+from iterate_analysis.analysis.state import AnalysisMainState
+from iterate_analysis.configuration import Configuration
+from iterate_analysis.models.knowledge_point import (
     KnowledgePoint,
     KnowledgePointDB,
 )
-from candidate_matcher.utils import format_data
+from iterate_analysis.utils import format_data
 from scorecard_generator.models.scorecard import CriterionType
 
 

@@ -3,11 +3,11 @@ from typing import Optional, cast
 from langchain import hub
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
-from candidate_matcher.analysis.models import ScoredCriterion
-from candidate_matcher.configuration import Configuration
-from candidate_matcher.state import MainGraphState
-from candidate_matcher.synthesis.models import ExtendedScoredCriterion, Synthesis
-from candidate_matcher.utils import format_data, init_model, log_cancelled_error
+from iterate_analysis.analysis.models import ScoredCriterion
+from iterate_analysis.configuration import Configuration
+from iterate_analysis.state import MainGraphState
+from iterate_analysis.synthesis.models import ExtendedScoredCriterion, Synthesis
+from iterate_analysis.utils import format_data, init_model, log_cancelled_error
 from scorecard_generator.models.scorecard import ImportanceLevel, Scorecard
 
 

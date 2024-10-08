@@ -1,25 +1,25 @@
 from langgraph.graph import END, START, StateGraph
 from langgraph.prebuilt import ToolNode
 
-from candidate_matcher.analysis.nodes import (
+from iterate_analysis.analysis.nodes import (
     call_model,
     init_agent,
     respond,
     should_continue,
 )
-from candidate_matcher.analysis.state import (
-    AnalysisMainState,
+from iterate_analysis.analysis.tools import get_tools
+from iterate_analysis.configuration import Configuration
+from iterate_analysis.state import (
+    InputGraphState,
     MainGraphState,
 )
-from candidate_matcher.analysis.tools import get_tools
-from candidate_matcher.configuration import Configuration
 
 
-def get_analysis_graph():
+def get_iterate_analysis_graph():
     """Get the analysis graph."""
     workflow = StateGraph(
-        AnalysisMainState,
-        input=AnalysisMainState,
+        MainGraphState,
+        input=InputGraphState,
         output=MainGraphState,
         config_schema=Configuration,
     )
@@ -49,5 +49,5 @@ def get_analysis_graph():
 
     # Compile the graph
     graph = workflow.compile()
-    graph.name = "AnalysisSubGraph"
+    graph.name = "IterateAnalysisSubGraph"
     return graph
