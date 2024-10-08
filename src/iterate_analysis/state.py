@@ -19,13 +19,13 @@ from scorecard_generator.models.scorecard import Scorecard
 class MainGraphState(BaseModel):
     """State of the main graph."""
 
-    profile: Profile = Field(...)
-    scorecard: Scorecard = Field(...)
-    job_synthesis: str = Field(...)
+    profile: Optional[Profile] = Field(default=None)
+    scorecard: Optional[Scorecard] = Field(default=None)
+    job_synthesis: Optional[str] = Field(default=None)
 
-    education_enrichment: Annotated[List[SchoolInfo], operator.add]
-    experience_enrichment: Annotated[List[CompanyInfo], operator.add]
-    language_enrichment: Annotated[List[LanguageProficiency], operator.add]
+    education_enrichment: Optional[List[SchoolInfo]] = Field(default=None)
+    experience_enrichment: Optional[List[CompanyInfo]] = Field(default=None)
+    language_enrichment: Optional[List[LanguageProficiency]] = Field(default=None)
 
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
     synthesis: Optional[Synthesis] = Field(default=None)

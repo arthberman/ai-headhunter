@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from candidate_matcher.analysis.models import ScoredCriterion
+from iterate_analysis.analysis.models import ScoredCriterion
 from scorecard_generator.models.scorecard import CriterionType, ImportanceLevel
 
 
