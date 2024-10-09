@@ -7,7 +7,9 @@ from pydantic import BaseModel, Field
 class ProfileEducation(BaseModel):
     """Profile education."""
 
-    startsAt: Annotated[datetime, Field(description="Start date of education")]
+    startsAt: Annotated[
+        Optional[datetime], Field(description="Start date of education")
+    ]
     endsAt: Annotated[Optional[datetime], Field(description="End date of education")]
     duration: Annotated[Optional[str], Field(description="Education duration")]
     school: Annotated[str, Field(description="School name")]
@@ -21,7 +23,9 @@ class ProfileEducation(BaseModel):
 class ProfileExperience(BaseModel):
     """Profile experience."""
 
-    startsAt: Annotated[datetime, Field(description="Start date of experience")]
+    startsAt: Annotated[
+        Optional[datetime], Field(description="Start date of experience")
+    ]
     endsAt: Annotated[Optional[datetime], Field(description="End date of experience")]
     duration: Annotated[Optional[str], Field(description="Experience duration")]
     company: Annotated[str, Field(description="Company name")]
@@ -34,7 +38,9 @@ class ProfileExperience(BaseModel):
 class ProfileVolunteering(BaseModel):
     """Profile volunteering."""
 
-    startsAt: Annotated[datetime, Field(description="Start date of volunteering")]
+    startsAt: Annotated[
+        Optional[datetime], Field(description="Start date of volunteering")
+    ]
     endsAt: Annotated[Optional[datetime], Field(description="End date of volunteering")]
     duration: Annotated[Optional[str], Field(description="Volunteering duration")]
     title: Annotated[Optional[str], Field(description="Volunteering title")]
