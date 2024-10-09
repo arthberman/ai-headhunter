@@ -80,7 +80,7 @@ class ListCriterionWithContext(BaseModel):
 def generate_context(
     state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
 ) -> ScorecardGraphState:
-    """Generate context for the scorecard criteria."""
+    """Generate context for the scorecard criteria without existing context."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
@@ -92,12 +92,18 @@ def generate_context(
 
     prompt = hub.pull("generate-scorecard-context")
 
-    scorecard_criteria = [
+    # Filter criteria without context
+    criteria_without_context = [
         {"id": criterion.id, "description": criterion.description}
         for criterion in state.scorecard.must_have_criteria
         + state.scorecard.important_criteria
         + state.scorecard.nice_to_have_criteria
+        if not criterion.context
     ]
+
+    # If all criteria have context, return the current state
+    if not criteria_without_context:
+        return {"scorecard": state.scorecard}
 
     chain = cast(Runnable, prompt | model)
     output = cast(
@@ -107,26 +113,26 @@ def generate_context(
                 "raw_job_posting": state.raw_job_posting,
                 "web_context": state.web_context,
                 "human_context": state.human_context,
-                "scorecard_criteria": scorecard_criteria,
+                "scorecard_criteria": criteria_without_context,
             }
         ),
     )
 
-    # Create a dictionary for easier lookup
-    context_dict = {c.criterion_id: c.criterion_context for c in output.criteria}
+    # Create a dictionary for easier lookup, using empty string as default
+    context_dict = {
+        c.criterion_id: c.criterion_context or "No context provided"
+        for c in output.criteria
+    }
 
     new_scorecard = state.scorecard.model_copy()
-    # Update output with context for each criterion
+    # Update output with context for each criterion without existing context
     for criterion in (
         new_scorecard.must_have_criteria
         + new_scorecard.important_criteria
         + new_scorecard.nice_to_have_criteria
     ):
-        if criterion.id in context_dict:
-            criterion.context = context_dict[criterion.id]
-        else:
-            # No context found for criterion with id
-            criterion.context = ""
+        if not criterion.context:
+            criterion.context = context_dict.get(criterion.id, "No context provided")
 
     return {"scorecard": new_scorecard}
 
@@ -162,7 +168,7 @@ def generate_questions(
 def generate_scoring_distribution(
     state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
 ) -> ScorecardGraphState:
-    """Generate scoring distribution for the scorecard criteria."""
+    """Generate scoring distribution for the scorecard criteria without existing distributions."""
     prompt = hub.pull("generate-scorecard-scoring-distribution")
 
     configuration = Configuration.from_runnable_config(config)
@@ -171,16 +177,38 @@ def generate_scoring_distribution(
         ListCriterionScoringDistributions
     )
 
+    # Filter criteria without scoring distribution
+    criteria_without_distribution = [
+        criterion.model_dump()
+        for criterion in state.scorecard.must_have_criteria
+        + state.scorecard.important_criteria
+        + state.scorecard.nice_to_have_criteria
+        if not criterion.scoring_distribution
+    ]
+
+    # If all criteria have scoring distributions, return the current state
+    if not criteria_without_distribution:
+        return {
+            "scorecard": state.scorecard,
+            "human_feedback": state.human_feedback,
+            "human_context": state.human_context,
+        }
+
     chain = cast(Runnable, prompt | model)
 
     res = cast(
         ListCriterionScoringDistributions,
         chain.invoke(
             {
-                "scorecard": state.scorecard,
+                "scorecard_criteria": criteria_without_distribution,
             }
         ),
     )
+
+    # Create a dictionary for easier lookup
+    distribution_dict = {
+        d.criterion_id: d.scoring_distribution for d in res.distributions
+    }
 
     # Update the scorecard with the new scoring distributions
     new_scorecard = state.scorecard.model_copy()
@@ -189,10 +217,8 @@ def generate_scoring_distribution(
         + new_scorecard.important_criteria
         + new_scorecard.nice_to_have_criteria
     ):
-        for dist in res.distributions:
-            if criterion.id == dist.criterion_id:
-                criterion.scoring_distribution = dist.scoring_distribution
-                break
+        if not criterion.scoring_distribution and criterion.id in distribution_dict:
+            criterion.scoring_distribution = distribution_dict[criterion.id]
 
     return {
         "scorecard": new_scorecard,

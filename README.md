@@ -66,7 +66,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Arth Berman - [@arthberman](https://twitter.com/arthberman) - arthberman@gmail.com
 
-Project Link: [https://github.com/arthberman/repio-intelligence](https://github.com/arthberman/repio-intelligence)
+Project Link: [https://github.com/arthberman/repio-ai](https://github.com/arthberman/repio-ai)
 
 ## Acknowledgements
 

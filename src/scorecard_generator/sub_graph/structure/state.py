@@ -1,4 +1,5 @@
-from typing import List, Optional
+import operator
+from typing import Annotated, List, Optional
 
 from pydantic import Field
 
@@ -9,7 +10,10 @@ from scorecard_generator.sub_graph.structure.models import StructureAction
 class StructureGraphState(ScorecardGraphState):
     """State for the structure graph."""
 
-    structure_actions: Optional[List[StructureAction]] = Field(
+    precedent_actions: Annotated[List[StructureAction], operator.add] = Field(
+        None, description="The last action taken to structure the scorecard"
+    )
+    next_actions: Optional[List[StructureAction]] = Field(
         None, description="List of actions to be taken to structure the scorecard"
     )
     is_structure_valid: Optional[bool] = Field(

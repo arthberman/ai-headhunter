@@ -1,5 +1,5 @@
 [project]
-name = "repio-intelligence"
+name = "repio-ai"
 version = "0.0.1"
 description = "AI Agents for repio.co"
 readme = "README.md"
@@ -11,7 +11,7 @@ dependencies = ["python-dotenv>=1.0.1",
   "langchain-anthropic>=0.2.3",
   "langchain-groq>=0.2.0",
   "langchain-core>=0.3.10",
-  "langgraph>=0.2.34",
+  "langgraph>=0.2.35",
   "langchain-openai>=0.2.2",
   "pydantic>=2.9.2",
   "toml>=0.10.2",

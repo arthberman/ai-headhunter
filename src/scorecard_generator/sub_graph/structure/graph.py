@@ -27,15 +27,19 @@ def create_structure_graph() -> StateGraph:
     )
     workflow.add_edge("generate_scorecard_structure", "judge_scorecard_structure")
     workflow.add_edge("iterate_scorecard_structure", "apply_structure_replacements")
-    workflow.add_edge("apply_structure_replacements", "judge_scorecard_structure")
 
-    workflow.add_conditional_edges(
+    workflow.add_edge("judge_scorecard_structure", "apply_structure_replacements")
+
+    # workflow.add_edge("apply_structure_replacements", "judge_scorecard_structure")
+    workflow.add_edge("apply_structure_replacements", END)
+
+    """ workflow.add_conditional_edges(
         "judge_scorecard_structure",
         lambda x: x.is_structure_valid or x.recursion_count >= 3,
         {True: END, False: "apply_structure_replacements"},
-    )
+    ) """
 
-    workflow.add_edge("apply_structure_replacements", "judge_scorecard_structure")
+    # workflow.add_edge("apply_structure_replacements", "judge_scorecard_structure")
 
     graph = workflow.compile()
     graph.name = "StructureSubGraph"
