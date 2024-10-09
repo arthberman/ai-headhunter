@@ -60,7 +60,7 @@ def iterate_scorecard_structure(state: StructureGraphState) -> StructureGraphSta
     )
 
     return {
-        "structure_actions": output.structure_actions,
+        "next_actions": output.next_actions,
         "human_context": (state.human_context or []) + (state.human_feedback or []),
         "human_feedback": [],
     }
@@ -77,10 +77,20 @@ def judge_scorecard_structure(state: StructureGraphState) -> StructureGraphState
     prompt = hub.pull("judge-scorecard-structure")
 
     chain = cast(Runnable, prompt | structured_model)
-    output: StructureJudgeOutput = chain.invoke({"scorecard": state.scorecard})
+    output: StructureJudgeOutput = chain.invoke(
+        {
+            "scorecard": state.scorecard.model_dump() if state.scorecard else None,
+            "precedent_actions": [
+                action.model_dump() for action in state.precedent_actions
+            ]
+            if state.precedent_actions
+            else [],
+        }
+    )
 
     return {
-        "structure_actions": output.structure_actions,
+        "precedent_actions": output.next_actions,
+        "next_actions": output.next_actions,
         "is_structure_valid": output.is_structure_valid,
         "recursion_count": state.recursion_count + 1,
     }
@@ -89,7 +99,7 @@ def judge_scorecard_structure(state: StructureGraphState) -> StructureGraphState
 def apply_replacements(state: StructureGraphState) -> StructureGraphState:
     """Apply the replacements to the scorecard."""
     scorecard: Scorecard = state.scorecard
-    actions: List[StructureAction] = state.structure_actions
+    actions: List[StructureAction] = state.next_actions
 
     if isinstance(scorecard, dict):
         scorecard = Scorecard(**scorecard)
@@ -125,7 +135,7 @@ def apply_replacements(state: StructureGraphState) -> StructureGraphState:
                     if c.description != action.description
                 ]
 
-    return {"scorecard": scorecard, "structure_actions": [], "is_structure_valid": True}
+    return {"scorecard": scorecard, "next_actions": [], "is_structure_valid": True}
 
 
 def create_criterion(action: StructureAction) -> BaseCriterion:

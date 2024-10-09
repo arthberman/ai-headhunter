@@ -75,11 +75,16 @@ def get_candidate_info(
 def search_web(
     query: str, *, config: Optional[RunnableConfig] = None
 ) -> Optional[list[dict[str, Any]]]:
-    """Query a search engine.
+    """Query a search engine for general information not related to specific candidates.
 
-    This function queries the web to fetch comprehensive, accurate, and trusted results. It's particularly useful
-    for answering questions about current events. Provide as much context in the query as needed to ensure high recall.
-    Don't use this tool to answer questions about the candidate or the scorecard, as this tool is only for searching the web.
+    This function queries the web to fetch comprehensive, accurate, and trusted results about general topics.
+    It's particularly useful for answering questions about current events, general knowledge, or industry trends.
+
+    Important:
+    - Do NOT use this tool for any candidate-specific information or queries.
+    - Do NOT use this tool for information about job requirements, scorecards, or the hiring process.
+    - Instead, use the `get_candidate_info` tool for candidate-specific data.
+    - For scorecard or job requirement information, refer to the provided context or use appropriate tools.
     """
     configuration = Configuration.from_runnable_config(config)
     wrapped = TavilySearchResults(max_results=configuration.max_search_results)

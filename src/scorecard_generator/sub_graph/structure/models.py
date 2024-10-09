@@ -32,7 +32,7 @@ class StructureJudgeOutput(BaseModel):
     """The output of the structure judge."""
 
     is_structure_valid: bool
-    structure_actions: Optional[List[StructureAction]]
+    next_actions: Optional[List[StructureAction]]
 
 
 # New class to represent a criterion with its importance level
