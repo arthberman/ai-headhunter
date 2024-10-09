@@ -8,8 +8,6 @@ from iterate_analysis.models.company import CompanyInfo
 from iterate_analysis.models.language import LanguageProficiency
 from iterate_analysis.models.profile import (
     Profile,
-    ProfileEducation,
-    ProfileExperience,
 )
 from iterate_analysis.models.school import SchoolInfo
 from iterate_analysis.synthesis.models import Synthesis
@@ -40,15 +38,3 @@ class InputGraphState(BaseModel):
     education_enrichment: List[SchoolInfo] = Field(...)
     experience_enrichment: List[CompanyInfo] = Field(...)
     language_enrichment: List[LanguageProficiency] = Field(...)
-
-
-class EducationState(BaseModel):
-    """State of the education graph."""
-
-    education: ProfileEducation = Field(...)
-
-
-class ExperienceState(BaseModel):
-    """State of the experience graph."""
-
-    experience: ProfileExperience = Field(...)
