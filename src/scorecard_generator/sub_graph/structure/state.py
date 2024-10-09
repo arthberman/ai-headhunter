@@ -11,10 +11,10 @@ class StructureGraphState(ScorecardGraphState):
     """State for the structure graph."""
 
     precedent_actions: Annotated[List[StructureAction], operator.add] = Field(
-        None, description="The last action taken to structure the scorecard"
+        [], description="The last action taken to structure the scorecard"
     )
     next_actions: Optional[List[StructureAction]] = Field(
-        None, description="List of actions to be taken to structure the scorecard"
+        [], description="List of actions to be taken to structure the scorecard"
     )
     is_structure_valid: Optional[bool] = Field(
         None, description="Whether the scorecard is valid"
