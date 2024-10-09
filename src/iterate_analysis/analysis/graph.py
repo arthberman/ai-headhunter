@@ -7,10 +7,10 @@ from iterate_analysis.analysis.nodes import (
     respond,
     should_continue,
 )
+from iterate_analysis.analysis.state import AnalysisMainState
 from iterate_analysis.analysis.tools import get_tools
 from iterate_analysis.configuration import Configuration
 from iterate_analysis.state import (
-    InputGraphState,
     MainGraphState,
 )
 
@@ -18,8 +18,8 @@ from iterate_analysis.state import (
 def get_iterate_analysis_graph():
     """Get the analysis graph."""
     workflow = StateGraph(
-        MainGraphState,
-        input=InputGraphState,
+        AnalysisMainState,
+        input=AnalysisMainState,
         output=MainGraphState,
         config_schema=Configuration,
     )

@@ -3,17 +3,13 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.graph.graph import CompiledGraph
 
 from iterate_analysis.analysis.graph import get_iterate_analysis_graph
+from iterate_analysis.analysis.state import AnalysisMainState
 from iterate_analysis.configuration import Configuration
 from iterate_analysis.state import InputGraphState, MainGraphState
 from iterate_analysis.synthesis.node import node_synthesis
 
 
-def init_node(state: MainGraphState) -> MainGraphState:
-    """Initialize the node."""
-    return state
-
-
-def continue_to_analysis(state: InputGraphState):
+def continue_to_analysis(state: MainGraphState):
     """Continue to the analysis graph."""
     all_criteria = (
         state.scorecard.must_have_criteria
@@ -21,19 +17,16 @@ def continue_to_analysis(state: InputGraphState):
         + state.scorecard.nice_to_have_criteria
     )
 
-    print("ALL CRITERIA")
-    print(all_criteria)
-
     return [
         Send(
             "node_analysis",
-            {"main_state": state, "messages": [], "criterion": criterion},
+            AnalysisMainState(main_state=state, messages=[], criterion=criterion),
         )
         for criterion in all_criteria
     ]
 
 
-def init_analysis(state: InputGraphState) -> InputGraphState:
+def init_analysis(state: MainGraphState) -> MainGraphState:
     """BLANK : Initialize the analysis graph."""
     return state
 
@@ -46,9 +39,7 @@ def compile_iterate_analysis_graph() -> CompiledGraph:
 
     workflow.add_node("init_analysis", init_analysis)
     workflow.add_node(
-        "node_analysis",
-        init_node,
-        input=InputGraphState,
+        "node_analysis", get_iterate_analysis_graph(), input=AnalysisMainState
     )
     workflow.add_node("node_synthesis", node_synthesis)
 

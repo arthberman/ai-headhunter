@@ -18,7 +18,6 @@ def init_agent(
     state: AnalysisMainState, *, config: Optional[RunnableConfig] = None
 ) -> AnalysisMainState:
     """Initialize the agent with the provided state."""
-    print("INIT AGENT")
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
