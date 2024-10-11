@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 
 
 class CompanyStage(str, Enum):
+    """Stage of the company in startup, sme, large corporation or multinational."""
+
     STARTUP = "startup"
     SME = "sme"
     LARGE_CORPORATION = "large corporation"

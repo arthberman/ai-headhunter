@@ -7,6 +7,7 @@ from iterate_analysis.analysis.state import AnalysisMainState
 from iterate_analysis.configuration import Configuration
 from iterate_analysis.state import InputGraphState, MainGraphState
 from iterate_analysis.synthesis.node import node_synthesis
+from iterate_analysis.utils import get_retry_policy
 
 
 def continue_to_analysis(state: MainGraphState):
@@ -41,7 +42,7 @@ def compile_iterate_analysis_graph() -> CompiledGraph:
     workflow.add_node(
         "node_analysis", get_iterate_analysis_graph(), input=AnalysisMainState
     )
-    workflow.add_node("node_synthesis", node_synthesis)
+    workflow.add_node("node_synthesis", node_synthesis, retry=get_retry_policy())
 
     workflow.add_edge(START, "init_analysis")
 

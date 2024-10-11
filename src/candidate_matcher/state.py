@@ -5,16 +5,16 @@ from pydantic import BaseModel, Field
 
 from candidate_matcher.analysis.models import ScoredCriterion
 from candidate_matcher.career_path.models import CareerPathOutput
-from candidate_matcher.models.company import CompanyInfo
-from candidate_matcher.models.language import LanguageProficiency
-from candidate_matcher.models.profile import (
+from models.analysis.company import CompanyInfo
+from models.analysis.language import LanguageProficiency
+from models.analysis.profile import (
     Profile,
     ProfileEducation,
     ProfileExperience,
 )
-from candidate_matcher.models.school import SchoolInfo
+from models.analysis.school import SchoolInfo
 from candidate_matcher.synthesis.models import Synthesis
-from scorecard_generator.models.scorecard import Scorecard
+from models.scorecard.scorecard import Scorecard
 
 
 class MainGraphState(BaseModel):

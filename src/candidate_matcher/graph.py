@@ -12,6 +12,7 @@ from candidate_matcher.enrichment.experience import node_experience_enrichment
 from candidate_matcher.enrichment.language import node_language_enrichment
 from candidate_matcher.state import InputGraphState, MainGraphState
 from candidate_matcher.synthesis.node import node_synthesis
+from candidate_matcher.utils import get_retry_policy
 
 
 def continue_to_school_enrichment(state: MainGraphState):
@@ -94,16 +95,24 @@ def compile_candidate_matcher_graph() -> CompiledGraph:
     )
 
     workflow.add_node("init_node", init_node)
-    workflow.add_node("node_language_enrichment", node_language_enrichment)
-    workflow.add_node("node_education_enrichment", node_education_enrichment)
-    workflow.add_node("node_experience_enrichment", node_experience_enrichment)
+    workflow.add_node(
+        "node_language_enrichment", node_language_enrichment, retry=get_retry_policy()
+    )
+    workflow.add_node(
+        "node_education_enrichment", node_education_enrichment, retry=get_retry_policy()
+    )
+    workflow.add_node(
+        "node_experience_enrichment",
+        node_experience_enrichment,
+        retry=get_retry_policy(),
+    )
     workflow.add_node(
         "node_analysis",
         get_analysis_graph(),
     )
-    workflow.add_node("node_career_path", node_career_path)
+    workflow.add_node("node_career_path", node_career_path, retry=get_retry_policy())
     workflow.add_node("init_analysis", init_analysis)
-    workflow.add_node("node_synthesis", node_synthesis)
+    workflow.add_node("node_synthesis", node_synthesis, retry=get_retry_policy())
 
     workflow.add_edge(START, "init_node")
 

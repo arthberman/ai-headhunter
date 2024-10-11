@@ -4,7 +4,7 @@ from langchain import hub
 from langchain.chat_models import init_chat_model
 from langchain_core.runnables import Runnable
 
-from scorecard_generator.models.scorecard import (
+from models.scorecard.scorecard import (
     BaseCriterion,
     ImportanceLevel,
     Scorecard,
@@ -60,7 +60,7 @@ def iterate_scorecard_structure(state: StructureGraphState) -> StructureGraphSta
     )
 
     return {
-        "next_actions": output.next_actions,
+        "next_actions": output.next_actions or [],
         "human_context": (state.human_context or []) + (state.human_feedback or []),
         "human_feedback": [],
     }
@@ -89,8 +89,8 @@ def judge_scorecard_structure(state: StructureGraphState) -> StructureGraphState
     )
 
     return {
-        "precedent_actions": output.next_actions,
-        "next_actions": output.next_actions,
+        "precedent_actions": output.next_actions or [],
+        "next_actions": output.next_actions or [],
         "is_structure_valid": output.is_structure_valid,
         "recursion_count": state.recursion_count + 1,
     }

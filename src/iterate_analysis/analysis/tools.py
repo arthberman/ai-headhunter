@@ -14,12 +14,12 @@ from typing_extensions import Annotated
 from iterate_analysis.analysis.models import ScoredCriterion
 from iterate_analysis.analysis.state import AnalysisMainState
 from iterate_analysis.configuration import Configuration
-from iterate_analysis.models.knowledge_point import (
+from models.analysis.knowledge_point import (
     KnowledgePoint,
     KnowledgePointDB,
 )
 from iterate_analysis.utils import format_data
-from scorecard_generator.models.scorecard import CriterionType
+from models.scorecard.scorecard import CriterionType
 
 
 class CandidateInfoType(Enum):

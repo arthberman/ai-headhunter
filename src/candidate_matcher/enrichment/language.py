@@ -5,7 +5,7 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
 from candidate_matcher.configuration import Configuration
-from candidate_matcher.models.language import LanguageProficiency
+from models.analysis.language import LanguageProficiency
 from candidate_matcher.state import MainGraphState
 from candidate_matcher.utils import format_data, init_model, log_cancelled_error
 

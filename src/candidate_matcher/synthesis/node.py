@@ -8,7 +8,7 @@ from candidate_matcher.configuration import Configuration
 from candidate_matcher.state import MainGraphState
 from candidate_matcher.synthesis.models import ExtendedScoredCriterion, Synthesis
 from candidate_matcher.utils import format_data, init_model, log_cancelled_error
-from scorecard_generator.models.scorecard import ImportanceLevel, Scorecard
+from models.scorecard.scorecard import ImportanceLevel, Scorecard
 
 
 def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorecard):

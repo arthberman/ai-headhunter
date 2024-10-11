@@ -14,12 +14,12 @@ from typing_extensions import Annotated
 from candidate_matcher.analysis.models import ScoredCriterion
 from candidate_matcher.analysis.state import AnalysisMainState
 from candidate_matcher.configuration import Configuration
-from candidate_matcher.models.knowledge_point import (
+from models.analysis.knowledge_point import (
     KnowledgePoint,
     KnowledgePointDB,
 )
 from candidate_matcher.utils import format_data
-from scorecard_generator.models.scorecard import CriterionType
+from models.scorecard.scorecard import CriterionType
 
 
 class CandidateInfoType(Enum):

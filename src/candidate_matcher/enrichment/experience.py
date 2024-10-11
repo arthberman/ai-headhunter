@@ -20,8 +20,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from candidate_matcher.configuration import Configuration
-from candidate_matcher.models.company import CompanyInfo
-from candidate_matcher.models.profile import ProfileExperience
+from models.analysis.company import CompanyInfo
+from models.analysis.profile import ProfileExperience
 from candidate_matcher.state import ExperienceState, MainGraphState
 from candidate_matcher.utils import init_model, log_cancelled_error
 

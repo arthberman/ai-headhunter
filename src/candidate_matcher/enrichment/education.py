@@ -20,10 +20,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from candidate_matcher.configuration import Configuration
-from candidate_matcher.models.profile import ProfileEducation
-from candidate_matcher.models.school import SchoolInfo
 from candidate_matcher.state import EducationState, MainGraphState
 from candidate_matcher.utils import init_model, log_cancelled_error
+from models.analysis.profile import ProfileEducation
+from models.analysis.school import SchoolInfo
 
 Base = declarative_base()
 

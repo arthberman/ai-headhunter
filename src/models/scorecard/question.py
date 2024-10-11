@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-from scorecard_generator.models.scorecard import CriterionType
+from models.scorecard.scorecard import CriterionType
 
 
 class Question(BaseModel):

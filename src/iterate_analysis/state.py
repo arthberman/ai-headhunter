@@ -4,14 +4,14 @@ from typing import Annotated, List, Optional
 from pydantic import BaseModel, Field
 
 from iterate_analysis.analysis.models import ScoredCriterion
-from iterate_analysis.models.company import CompanyInfo
-from iterate_analysis.models.language import LanguageProficiency
-from iterate_analysis.models.profile import (
+from iterate_analysis.synthesis.models import Synthesis
+from models.analysis.company import CompanyInfo
+from models.analysis.language import LanguageProficiency
+from models.analysis.profile import (
     Profile,
 )
-from iterate_analysis.models.school import SchoolInfo
-from iterate_analysis.synthesis.models import Synthesis
-from scorecard_generator.models.scorecard import Scorecard
+from models.analysis.school import SchoolInfo
+from models.scorecard.scorecard import Scorecard
 
 
 class InputGraphState(BaseModel):
