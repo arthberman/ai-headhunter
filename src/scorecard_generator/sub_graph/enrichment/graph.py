@@ -10,6 +10,7 @@ from scorecard_generator.sub_graph.enrichment.nodes import (
 )
 from scorecard_generator.sub_graph.enrichment.state import OutputGraphState
 from scorecard_generator.sub_graph.enrichment.tools import get_tools
+from scorecard_generator.utils import get_retry_policy
 
 
 def get_enrichment_graph():
@@ -19,7 +20,7 @@ def get_enrichment_graph():
 
     # Define the nodes
     workflow.add_node("init_agent", init_agent)
-    workflow.add_node("agent", call_model)
+    workflow.add_node("agent", call_model, retry=get_retry_policy())
     workflow.add_node("respond", respond)
     workflow.add_node("tools", ToolNode(get_tools()))
 

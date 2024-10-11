@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field
 
 
 class CareerPathAnalysis(BaseModel):
+    """Analysis of the candidate's career path."""
+
     explanationSeniority: str = Field(
         ...,
         description="Detailed explanation of the seniority assessment, comparing the candidate's years of relevant experience with the job requirements. Limited to 250 characters.",

@@ -10,6 +10,7 @@ from scorecard_generator.nodes import (
 from scorecard_generator.state import ScorecardGraphState, ScorecardInputGraphState
 from scorecard_generator.sub_graph.enrichment.graph import get_enrichment_graph
 from scorecard_generator.sub_graph.structure.graph import create_structure_graph
+from scorecard_generator.utils import get_retry_policy
 
 
 def compile_scorecard_generator_graph() -> StateGraph:
@@ -18,11 +19,21 @@ def compile_scorecard_generator_graph() -> StateGraph:
 
     # Add nodes to the graph
     workflow.add_node("enrichment", get_enrichment_graph())
-    workflow.add_node("generate_job_posting", generate_job_posting)
-    workflow.add_node("generate_questions", generate_questions)
-    workflow.add_node("generate_context", generate_context)
-    workflow.add_node("generate_scoring_distribution", generate_scoring_distribution)
-    workflow.add_node("generate_synthesis", generate_synthesis)
+    workflow.add_node(
+        "generate_job_posting", generate_job_posting, retry=get_retry_policy()
+    )
+    workflow.add_node(
+        "generate_questions", generate_questions, retry=get_retry_policy()
+    )
+    workflow.add_node("generate_context", generate_context, retry=get_retry_policy())
+    workflow.add_node(
+        "generate_scoring_distribution",
+        generate_scoring_distribution,
+        retry=get_retry_policy(),
+    )
+    workflow.add_node(
+        "generate_synthesis", generate_synthesis, retry=get_retry_policy()
+    )
     workflow.add_node("generate_structure", create_structure_graph())
 
     # Define the edges

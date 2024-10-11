@@ -5,10 +5,10 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
 from scorecard_generator.configuration import Configuration
-from scorecard_generator.models.job_posting import JobPosting
-from scorecard_generator.models.question import ListQuestions
-from scorecard_generator.models.scorecard import ScoringDistribution
-from scorecard_generator.models.synthesis import Synthesis
+from models.scorecard.job_posting import JobPosting
+from models.scorecard.question import ListQuestions
+from models.scorecard.scorecard import ScoringDistribution
+from models.scorecard.synthesis import Synthesis
 from scorecard_generator.state import ScorecardGraphState
 from scorecard_generator.utils import init_model
 

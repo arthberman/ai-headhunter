@@ -6,7 +6,7 @@ from sqlalchemy import Column, DateTime, Enum, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base
 
-from scorecard_generator.models.scorecard import CriterionType
+from models.scorecard.scorecard import CriterionType
 
 
 class KnowledgePoint(BaseModel):

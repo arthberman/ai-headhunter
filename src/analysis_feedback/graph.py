@@ -9,6 +9,7 @@ from analysis_feedback.nodes import (
     node_synthesize_feedback,
 )
 from analysis_feedback.state import InputGraphState, MainGraphState
+from candidate_matcher.utils import get_retry_policy
 
 
 def compile_analysis_feedback_graph() -> CompiledGraph:
@@ -18,16 +19,25 @@ def compile_analysis_feedback_graph() -> CompiledGraph:
     )
 
     workflow.add_node(
-        "node_reformulate_human_feedback", node_reformulate_human_feedback
+        "node_reformulate_human_feedback",
+        node_reformulate_human_feedback,
+        retry=get_retry_policy(),
     )
     workflow.add_node(
-        "node_extract_profile_related_elements", node_extract_profile_related_elements
+        "node_extract_profile_related_elements",
+        node_extract_profile_related_elements,
+        retry=get_retry_policy(),
     )
     workflow.add_node(
         "node_extract_scorecard_related_elements",
         node_extract_scorecard_related_elements,
+        retry=get_retry_policy(),
     )
-    workflow.add_node("node_synthesize_feedback", node_synthesize_feedback)
+    workflow.add_node(
+        "node_synthesize_feedback",
+        node_synthesize_feedback,
+        retry=get_retry_policy(),
+    )
 
     workflow.add_edge(START, "node_reformulate_human_feedback")
     workflow.add_edge(

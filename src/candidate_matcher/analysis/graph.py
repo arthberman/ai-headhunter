@@ -13,6 +13,7 @@ from candidate_matcher.analysis.state import (
 )
 from candidate_matcher.analysis.tools import get_tools
 from candidate_matcher.configuration import Configuration
+from candidate_matcher.utils import get_retry_policy
 
 
 def get_analysis_graph():
@@ -26,7 +27,7 @@ def get_analysis_graph():
 
     # Define the nodes
     workflow.add_node("init_agent", init_agent)
-    workflow.add_node("agent", call_model)
+    workflow.add_node("agent", call_model, retry=get_retry_policy())
     workflow.add_node("respond", respond)
     workflow.add_node("tools", ToolNode(get_tools()))
 

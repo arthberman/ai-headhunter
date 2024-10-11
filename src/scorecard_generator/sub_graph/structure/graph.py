@@ -7,6 +7,7 @@ from scorecard_generator.sub_graph.structure.nodes import (
     judge_scorecard_structure,
 )
 from scorecard_generator.sub_graph.structure.state import StructureGraphState
+from scorecard_generator.utils import get_retry_policy
 
 
 def create_structure_graph() -> StateGraph:
@@ -14,10 +15,20 @@ def create_structure_graph() -> StateGraph:
     workflow = StateGraph(StructureGraphState)
 
     # Add nodes to the graph
-    workflow.add_node("generate_scorecard_structure", generate_scorecard_structure)
-    workflow.add_node("judge_scorecard_structure", judge_scorecard_structure)
+    workflow.add_node(
+        "generate_scorecard_structure",
+        generate_scorecard_structure,
+        retry=get_retry_policy(),
+    )
+    workflow.add_node(
+        "judge_scorecard_structure", judge_scorecard_structure, retry=get_retry_policy()
+    )
     workflow.add_node("apply_structure_replacements", apply_replacements)
-    workflow.add_node("iterate_scorecard_structure", iterate_scorecard_structure)
+    workflow.add_node(
+        "iterate_scorecard_structure",
+        iterate_scorecard_structure,
+        retry=get_retry_policy(),
+    )
 
     # Define the edges
     workflow.add_conditional_edges(

@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from scorecard_generator.models.scorecard import (
+from models.scorecard.scorecard import (
     BaseCriterion,
     CriterionType,
     ImportanceLevel,

@@ -4,12 +4,16 @@ from pydantic import BaseModel, Field
 
 
 class ProficiencyEnum(str, Enum):
-    native = "native"
-    profesionnal = "profesionnal"
-    fluent = "fluent"
+    """Proficiency level of the language."""
+
+    NATIVE = "native"
+    PROFESIONNAL = "profesionnal"
+    FLUENT = "fluent"
 
 
 class LanguageProficiency(BaseModel):
+    """Language proficiency of the candidate."""
+
     language: str = Field(
         description="The language in ISO 639-1 code (e.g. 'en' for English, 'fr' for French)"
     )

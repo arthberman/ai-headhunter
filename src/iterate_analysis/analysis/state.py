@@ -5,7 +5,7 @@ from langchain_core.messages import BaseMessage
 from pydantic import BaseModel, Field
 
 from iterate_analysis.state import MainGraphState
-from scorecard_generator.models.scorecard import BaseCriterion
+from models.scorecard.scorecard import BaseCriterion
 
 
 class AnalysisMainState(BaseModel):

@@ -7,7 +7,7 @@ from analysis_feedback.models import (
     ScorecardRelatedElement,
     ScoredCriterion,
 )
-from candidate_matcher.models.profile import Profile
+from models.analysis.profile import Profile
 
 
 class MainGraphState(BaseModel):

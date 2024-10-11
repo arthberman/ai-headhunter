@@ -8,7 +8,7 @@ from iterate_analysis.configuration import Configuration
 from iterate_analysis.state import MainGraphState
 from iterate_analysis.synthesis.models import ExtendedScoredCriterion, Synthesis
 from iterate_analysis.utils import format_data, init_model, log_cancelled_error
-from scorecard_generator.models.scorecard import ImportanceLevel, Scorecard
+from models.scorecard.scorecard import ImportanceLevel, Scorecard
 
 
 def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorecard):

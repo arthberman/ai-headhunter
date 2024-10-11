@@ -1,10 +1,10 @@
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel, Field
 
 
 class SchoolInfo(BaseModel):
-    """Information about a school"""
+    """Information about a school."""
 
     linkedin_url: str = Field(..., description="LinkedIn URL of the school")
     name: str = Field(..., description="The name of the school")
