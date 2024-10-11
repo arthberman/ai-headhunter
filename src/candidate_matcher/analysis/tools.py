@@ -38,7 +38,7 @@ class CandidateInfoType(Enum):
 def get_candidate_info(
     info_type: CandidateInfoType,
     state: Annotated[AnalysisMainState, InjectedState],
-) -> Union[List[Dict[str, Any]], List[str], Dict[str, Any]]:
+) -> Union[List[Dict[str, Any]], List[str], Dict[str, Any], str]:
     """Get specific information about the candidate."""
     info_map = {
         CandidateInfoType.EXPERIENCES: {
@@ -90,7 +90,12 @@ def get_candidate_info(
     if info_type not in info_map:
         raise ValueError(f"Invalid info_type: {info_type}")
 
-    return format_data(info_map[info_type])
+    data = info_map[info_type]
+
+    if not data:
+        return f"No information available for {info_type.value.upper()}. The candidate's profile does not contain any data for this category."
+
+    return format_data(data)
 
 
 def search_web(
