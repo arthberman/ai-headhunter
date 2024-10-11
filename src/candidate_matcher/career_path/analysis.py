@@ -34,7 +34,7 @@ def node_career_path(
         CareerPathOutput,
         chain.invoke(
             {
-                "profile": state.profile,
+                "profile": state.profile.model_dump() if state.profile else None,
                 "job_synthesis": state.job_synthesis,
             }
         ),

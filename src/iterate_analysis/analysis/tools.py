@@ -14,11 +14,11 @@ from typing_extensions import Annotated
 from iterate_analysis.analysis.models import ScoredCriterion
 from iterate_analysis.analysis.state import AnalysisMainState
 from iterate_analysis.configuration import Configuration
+from iterate_analysis.utils import format_data
 from models.analysis.knowledge_point import (
     KnowledgePoint,
     KnowledgePointDB,
 )
-from iterate_analysis.utils import format_data
 from models.scorecard.scorecard import CriterionType
 
 
@@ -33,9 +33,6 @@ class CandidateInfoType(Enum):
     LANGUAGES = "languages"
     PROJECTS = "projects"
     VOLUNTEERINGS = "volunteerings"
-    EDUCATION_ENRICHMENT = "education_enrichment"
-    EXPERIENCE_ENRICHMENT = "experience_enrichment"
-    LANGUAGE_ENRICHMENT = "language_enrichment"
 
 
 def get_candidate_info(
@@ -45,25 +42,49 @@ def get_candidate_info(
     """Get specific information about the candidate."""
     info_map = {
         CandidateInfoType.EXPERIENCES: {
-            "experiences": state.main_state.profile.experiences,
-            "experience_enrichment": state.main_state.experience_enrichment,
+            "experiences": [
+                experience.model_dump()
+                for experience in state.main_state.profile.experiences
+            ],
+            "experience_enrichment": [
+                experience_enrichment.model_dump()
+                for experience_enrichment in state.main_state.experience_enrichment
+            ],
         },
         CandidateInfoType.SKILLS: state.main_state.profile.skills,
-        CandidateInfoType.CERTIFICATIONS: state.main_state.profile.certifications,
+        CandidateInfoType.CERTIFICATIONS: [
+            certification.model_dump()
+            for certification in state.main_state.profile.certifications
+        ],
         CandidateInfoType.EDUCATIONS: {
-            "educations": state.main_state.profile.educations,
-            "education_enrichment": state.main_state.education_enrichment,
+            "educations": [
+                education.model_dump()
+                for education in state.main_state.profile.educations
+            ],
+            "education_enrichment": [
+                education_enrichment.model_dump()
+                for education_enrichment in state.main_state.education_enrichment
+            ],
         },
-        CandidateInfoType.HONORS: state.main_state.profile.honors,
+        CandidateInfoType.HONORS: [
+            honor.model_dump() for honor in state.main_state.profile.honors
+        ],
         CandidateInfoType.LANGUAGES: {
-            "languages": state.main_state.profile.languages,
-            "language_enrichment": state.main_state.language_enrichment,
+            "languages": [
+                language.model_dump() for language in state.main_state.profile.languages
+            ],
+            "language_enrichment": [
+                language_enrichment.model_dump()
+                for language_enrichment in state.main_state.language_enrichment
+            ],
         },
-        CandidateInfoType.PROJECTS: state.main_state.profile.projects,
-        CandidateInfoType.VOLUNTEERINGS: state.main_state.profile.volunteerings,
-        CandidateInfoType.EDUCATION_ENRICHMENT: state.main_state.education_enrichment,
-        CandidateInfoType.EXPERIENCE_ENRICHMENT: state.main_state.experience_enrichment,
-        CandidateInfoType.LANGUAGE_ENRICHMENT: state.main_state.language_enrichment,
+        CandidateInfoType.PROJECTS: [
+            project.model_dump() for project in state.main_state.profile.projects
+        ],
+        CandidateInfoType.VOLUNTEERINGS: [
+            volunteering.model_dump()
+            for volunteering in state.main_state.profile.volunteerings
+        ],
     }
 
     if info_type not in info_map:
@@ -75,11 +96,16 @@ def get_candidate_info(
 def search_web(
     query: str, *, config: Optional[RunnableConfig] = None
 ) -> Optional[list[dict[str, Any]]]:
-    """Query a search engine.
+    """Query a search engine for general information not related to specific candidates.
 
-    This function queries the web to fetch comprehensive, accurate, and trusted results. It's particularly useful
-    for answering questions about current events. Provide as much context in the query as needed to ensure high recall.
-    Don't use this tool to answer questions about the candidate or the scorecard, as this tool is only for searching the web.
+    This function queries the web to fetch comprehensive, accurate, and trusted results about general topics.
+    It's particularly useful for answering questions about current events, general knowledge, or industry trends.
+
+    Important:
+    - Do NOT use this tool for any candidate-specific information or queries.
+    - Do NOT use this tool for information about job requirements, scorecards, or the hiring process.
+    - Instead, use the `get_candidate_info` tool for candidate-specific data.
+    - For scorecard or job requirement information, refer to the provided context or use appropriate tools.
     """
     configuration = Configuration.from_runnable_config(config)
     wrapped = TavilySearchResults(max_results=configuration.max_search_results)
