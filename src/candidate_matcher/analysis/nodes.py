@@ -10,7 +10,11 @@ from candidate_matcher.analysis.state import AnalysisMainState
 from candidate_matcher.analysis.tools import ScoredCriterion, get_tools
 from candidate_matcher.configuration import Configuration
 from candidate_matcher.state import MainGraphState
-from candidate_matcher.utils import init_model, log_cancelled_error
+from candidate_matcher.utils import (
+    init_model,
+    log_cancelled_error,
+    prepare_scoring_instructions,
+)
 
 
 @log_cancelled_error
@@ -20,14 +24,20 @@ def init_agent(
     """Initialize the agent with the provided state."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
-
     hub_prompt = hub.pull("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
+
+    instructions, importance = prepare_scoring_instructions(
+        state.criterion.id, state.main_state.scorecard
+    )
+
     formatted_messages = chat_prompt.format_messages(
         id=state.criterion.id,
         description=state.criterion.description,
-        context=state.criterion.context,
+        importance=importance,
         scoring_distribution=state.criterion.scoring_distribution,
+        context=state.criterion.context,
+        scoring_instructions=instructions,
         current_date=datetime.now().strftime("%Y-%m-%d"),
     )
 

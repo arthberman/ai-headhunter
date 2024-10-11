@@ -69,7 +69,9 @@ def node_extract_profile_related_elements(
         chain.invoke(
             {
                 "human_feedback": state.human_feedback,
-                "candidate_profile": state.candidate_profile,
+                "candidate_profile": state.candidate_profile.model_dump()
+                if state.candidate_profile
+                else None,
             }
         ),
     )
@@ -103,7 +105,9 @@ def node_extract_scorecard_related_elements(
         chain.invoke(
             {
                 "human_feedback": state.human_feedback,
-                "scored_criteria": state.scored_criteria,
+                "scored_criteria": state.scored_criteria.model_dump()
+                if state.scored_criteria
+                else [],
             }
         ),
     )
@@ -136,8 +140,12 @@ def node_synthesize_feedback(
         chain.invoke(
             {
                 "human_feedback": state.human_feedback,
-                "scorecard_related_elements": state.scorecard_related_elements,
-                "profile_related_elements": state.profile_related_elements,
+                "scorecard_related_elements": state.scorecard_related_elements.model_dump()
+                if state.scorecard_related_elements
+                else None,
+                "profile_related_elements": state.profile_related_elements.model_dump()
+                if state.profile_related_elements
+                else None,
             }
         ),
     )
