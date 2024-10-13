@@ -33,6 +33,7 @@ class ProfileExperience(BaseModel):
     title: Annotated[Optional[str], Field(description="Job title")]
     location: Annotated[Optional[str], Field(description="Job location")]
     linkedin_url: Annotated[str, Field(description="LinkedIn URL of the company")]
+    employment_type: Annotated[Optional[str], Field(description="Employment type")]
 
 
 class ProfileVolunteering(BaseModel):
