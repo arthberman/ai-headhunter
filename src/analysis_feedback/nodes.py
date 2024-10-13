@@ -105,7 +105,9 @@ def node_extract_scorecard_related_elements(
         chain.invoke(
             {
                 "human_feedback": state.human_feedback,
-                "scored_criteria": state.scored_criteria.model_dump()
+                "scored_criteria": [
+                    criterion.model_dump() for criterion in state.scored_criteria
+                ]
                 if state.scored_criteria
                 else [],
             }
