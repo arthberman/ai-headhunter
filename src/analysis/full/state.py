@@ -3,8 +3,6 @@ from typing import Annotated, List, Optional
 
 from pydantic import BaseModel, Field
 
-from candidate_matcher.analysis.models import ScoredCriterion
-from candidate_matcher.career_path.models import CareerPathOutput
 from analysis.models.company import CompanyInfo
 from analysis.models.language import LanguageProficiency
 from analysis.models.profile import (
@@ -13,7 +11,9 @@ from analysis.models.profile import (
     ProfileExperience,
 )
 from analysis.models.school import SchoolInfo
-from candidate_matcher.synthesis.models import Synthesis
+from analysis.models.synthesis import Synthesis
+from analysis.nodes.analysis_subgraph.models import ScoredCriterion
+from analysis.nodes.career_path.models import CareerPathOutput
 from scorecard.models.scorecard import Scorecard
 
 

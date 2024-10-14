@@ -1,20 +1,20 @@
 from langgraph.graph import END, START, StateGraph
 
-from scorecard_generator.nodes import (
+from scorecard.full.nodes import (
     generate_context,
     generate_job_posting,
     generate_questions,
     generate_scoring_distribution,
     generate_synthesis,
 )
-from scorecard_generator.state import ScorecardGraphState, ScorecardInputGraphState
-from scorecard_generator.sub_graph.enrichment.graph import get_enrichment_graph
-from scorecard_generator.sub_graph.structure.graph import create_structure_graph
-from scorecard_generator.utils import get_retry_policy
+from scorecard.full.state import ScorecardGraphState, ScorecardInputGraphState
+from scorecard.full.utils import get_retry_policy
+from scorecard.nodes.enrichment_subgraph.graph import get_enrichment_graph
+from scorecard.nodes.structure_subgraph.graph import create_structure_graph
 
 
-def compile_scorecard_generator_graph() -> StateGraph:
-    """Compile the scorecard generator graph."""
+def compile_scorecard_full_graph() -> StateGraph:
+    """Compile the scorecard full graph."""
     workflow = StateGraph(ScorecardGraphState, input=ScorecardInputGraphState)
 
     # Add nodes to the graph
@@ -47,5 +47,5 @@ def compile_scorecard_generator_graph() -> StateGraph:
     workflow.add_edge("generate_scoring_distribution", END)
 
     graph = workflow.compile()
-    graph.name = "ScorecardGeneratorGraph"
+    graph.name = "ScorecardFullGraph"
     return graph

@@ -1,13 +1,13 @@
 from langgraph.graph import END, START, StateGraph
 
-from scorecard_generator.sub_graph.structure.nodes import (
+from scorecard.full.utils import get_retry_policy
+from scorecard.nodes.structure_subgraph.nodes import (
     apply_replacements,
     generate_scorecard_structure,
     iterate_scorecard_structure,
     judge_scorecard_structure,
 )
-from scorecard_generator.sub_graph.structure.state import StructureGraphState
-from scorecard_generator.utils import get_retry_policy
+from scorecard.nodes.structure_subgraph.state import StructureGraphState
 
 
 def create_structure_graph() -> StateGraph:

@@ -9,12 +9,12 @@ from models.scorecard.scorecard import (
     ImportanceLevel,
     Scorecard,
 )
-from scorecard_generator.sub_graph.structure.models import (
+from scorecard.nodes.structure_subgraph.models import (
     ActionType,
     StructureAction,
     StructureJudgeOutput,
 )
-from scorecard_generator.sub_graph.structure.state import StructureGraphState
+from scorecard.nodes.structure_subgraph.state import StructureGraphState
 
 
 def generate_scorecard_structure(state: StructureGraphState) -> StructureGraphState:

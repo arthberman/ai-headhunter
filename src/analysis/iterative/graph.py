@@ -5,7 +5,7 @@ from langgraph.graph.graph import CompiledGraph
 from analysis.iterative.configuration import Configuration
 from analysis.iterative.state import InputGraphState, MainGraphState
 from analysis.iterative.utils import get_retry_policy
-from analysis.nodes.analysis_subgraph.graph import get_iterate_analysis_graph
+from analysis.nodes.analysis_subgraph.graph import get_analysis_subgraph
 from analysis.nodes.analysis_subgraph.state import AnalysisMainState
 from analysis.nodes.synthesis.node import node_synthesis
 
@@ -39,9 +39,7 @@ def compile_analysis_iterative_graph() -> CompiledGraph:
     )
 
     workflow.add_node("init_analysis", init_analysis)
-    workflow.add_node(
-        "node_analysis", get_iterate_analysis_graph(), input=AnalysisMainState
-    )
+    workflow.add_node("node_analysis", get_analysis_subgraph(), input=AnalysisMainState)
     workflow.add_node("node_synthesis", node_synthesis, retry=get_retry_policy())
 
     workflow.add_edge(START, "init_analysis")

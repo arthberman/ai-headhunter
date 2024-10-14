@@ -1,11 +1,9 @@
 from langgraph.graph import END, START, StateGraph
 from langgraph.prebuilt import ToolNode
 
-from analysis.iterative.configuration import Configuration
-from analysis.iterative.state import (
-    MainGraphState,
-)
-from analysis.iterative.utils import get_retry_policy
+from analysis.full.configuration import Configuration
+from analysis.full.state import MainGraphState
+from analysis.full.utils import get_retry_policy
 from analysis.nodes.analysis_subgraph.nodes import (
     call_model,
     init_agent,
@@ -16,8 +14,8 @@ from analysis.nodes.analysis_subgraph.state import AnalysisMainState
 from analysis.nodes.analysis_subgraph.tools import get_tools
 
 
-def get_iterate_analysis_graph():
-    """Get the analysis graph."""
+def get_analysis_subgraph():
+    """Get the analysis subgraph."""
     workflow = StateGraph(
         AnalysisMainState,
         input=AnalysisMainState,
@@ -50,5 +48,5 @@ def get_iterate_analysis_graph():
 
     # Compile the graph
     graph = workflow.compile()
-    graph.name = "IterateAnalysisSubGraph"
+    graph.name = "AnalysisSubGraph"
     return graph

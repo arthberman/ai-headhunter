@@ -1,7 +1,9 @@
 {
   "graphs": {
     "analysis_full": "./src/analysis/full/graph.py:compile_analysis_full_graph",
-    "analysis_iterative": "./src/analysis/iterative/graph.py:compile_analysis_iterative_graph"
+    "analysis_iterative": "./src/analysis/iterative/graph.py:compile_analysis_iterative_graph",
+    "analysis_feedback": "./src/analysis/feedback/graph.py:compile_analysis_feedback_graph",
+    "scorecard_full": "./src/scorecard/full/graph.py:compile_scorecard_full_graph"
   },
   "env": ".env.studio",
   "python_version": "3.12",
