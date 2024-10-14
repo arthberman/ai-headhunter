@@ -7,7 +7,7 @@ from analysis.feedback.models import (
     ScorecardRelatedElement,
     ScoredCriterion,
 )
-from models.analysis.profile import Profile
+from analysis.models.profile import Profile
 
 
 class MainGraphState(BaseModel):

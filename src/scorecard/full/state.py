@@ -2,10 +2,10 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-from models.scorecard.job_posting import JobPosting
-from models.scorecard.question import Question
-from models.scorecard.scorecard import Scorecard
-from models.scorecard.synthesis import Synthesis
+from scorecard.models.job_posting import JobPosting
+from scorecard.models.question import Question
+from scorecard.models.scorecard import Scorecard
+from scorecard.models.synthesis import Synthesis
 
 
 class ScorecardGraphState(BaseModel):
