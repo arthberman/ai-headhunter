@@ -4,7 +4,7 @@ from langchain import hub
 from langchain.chat_models import init_chat_model
 from langchain_core.runnables import Runnable
 
-from models.scorecard.scorecard import (
+from scorecard.models.scorecard import (
     BaseCriterion,
     ImportanceLevel,
     Scorecard,

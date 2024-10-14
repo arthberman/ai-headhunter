@@ -10,14 +10,25 @@ class ProfileEducation(BaseModel):
     startsAt: Annotated[
         Optional[datetime], Field(description="Start date of education")
     ]
-    endsAt: Annotated[Optional[datetime], Field(description="End date of education")]
-    duration: Annotated[Optional[str], Field(description="Education duration")]
+    endsAt: Annotated[
+        Optional[datetime], Field(default=None, description="End date of education")
+    ]
     school: Annotated[str, Field(description="School name")]
-    fieldOfStudy: Annotated[Optional[str], Field(description="Field of study")]
-    description: Annotated[Optional[str], Field(description="Education description")]
-    grade: Annotated[Optional[str], Field(description="Grade obtained")]
-    degree: Annotated[Optional[str], Field(description="Degree obtained")]
+    fieldOfStudy: Annotated[
+        Optional[str], Field(default=None, description="Field of study")
+    ]
+    description: Annotated[
+        Optional[str], Field(default=None, description="Education description")
+    ]
+    grade: Annotated[Optional[str], Field(default=None, description="Grade obtained")]
+    degree: Annotated[Optional[str], Field(default=None, description="Degree obtained")]
     linkedin_url: Annotated[str, Field(description="LinkedIn URL of the school")]
+    metadata_duration: Annotated[
+        Optional[str], Field(default=None, description="Education duration")
+    ]
+    metadata_status: Annotated[
+        Optional[str], Field(default=None, description="Education status")
+    ]
 
 
 class ProfileExperience(BaseModel):
@@ -26,14 +37,25 @@ class ProfileExperience(BaseModel):
     startsAt: Annotated[
         Optional[datetime], Field(description="Start date of experience")
     ]
-    endsAt: Annotated[Optional[datetime], Field(description="End date of experience")]
-    duration: Annotated[Optional[str], Field(description="Experience duration")]
+    endsAt: Annotated[
+        Optional[datetime], Field(default=None, description="End date of experience")
+    ]
     company: Annotated[str, Field(description="Company name")]
-    description: Annotated[Optional[str], Field(description="Experience description")]
-    title: Annotated[Optional[str], Field(description="Job title")]
-    location: Annotated[Optional[str], Field(description="Job location")]
+    description: Annotated[
+        Optional[str], Field(default=None, description="Experience description")
+    ]
+    title: Annotated[Optional[str], Field(default=None, description="Job title")]
+    location: Annotated[Optional[str], Field(default=None, description="Job location")]
     linkedin_url: Annotated[str, Field(description="LinkedIn URL of the company")]
-    employment_type: Annotated[Optional[str], Field(description="Employment type")]
+    employment_type: Annotated[
+        Optional[str], Field(default=None, description="Employment type")
+    ]
+    metadata_duration: Annotated[
+        Optional[str], Field(default=None, description="Education duration")
+    ]
+    metadata_status: Annotated[
+        Optional[str], Field(default=None, description="Education status")
+    ]
 
 
 class ProfileVolunteering(BaseModel):
@@ -42,11 +64,24 @@ class ProfileVolunteering(BaseModel):
     startsAt: Annotated[
         Optional[datetime], Field(description="Start date of volunteering")
     ]
-    endsAt: Annotated[Optional[datetime], Field(description="End date of volunteering")]
-    duration: Annotated[Optional[str], Field(description="Volunteering duration")]
-    title: Annotated[Optional[str], Field(description="Volunteering title")]
-    description: Annotated[Optional[str], Field(description="Volunteering description")]
-    location: Annotated[Optional[str], Field(description="Volunteering location")]
+    endsAt: Annotated[
+        Optional[datetime], Field(default=None, description="End date of volunteering")
+    ]
+    title: Annotated[
+        Optional[str], Field(default=None, description="Volunteering title")
+    ]
+    description: Annotated[
+        Optional[str], Field(default=None, description="Volunteering description")
+    ]
+    location: Annotated[
+        Optional[str], Field(default=None, description="Volunteering location")
+    ]
+    metadata_duration: Annotated[
+        Optional[str], Field(default=None, description="Education duration")
+    ]
+    metadata_status: Annotated[
+        Optional[str], Field(default=None, description="Education status")
+    ]
 
 
 class ProfileHonor(BaseModel):
@@ -65,7 +100,12 @@ class ProfileProject(BaseModel):
     description: Annotated[Optional[str], Field(description="Project description")]
     endsAt: Annotated[Optional[datetime], Field(description="Project end date")]
     startsAt: Annotated[Optional[datetime], Field(description="Project start date")]
-    duration: Annotated[Optional[str], Field(description="Project duration")]
+    metadata_duration: Annotated[
+        Optional[str], Field(default=None, description="Education duration")
+    ]
+    metadata_status: Annotated[
+        Optional[str], Field(default=None, description="Education status")
+    ]
 
 
 class ProfileCertification(BaseModel):
@@ -86,6 +126,17 @@ class ProfileLanguage(BaseModel):
 
     language: Annotated[str, Field(description="Language name")]
     level: Annotated[str, Field(description="Language proficiency level")]
+
+
+class ProfileAge(BaseModel):
+    """Profile age."""
+
+    range_lower_bound: Annotated[int, Field(description="Lower bound of the age range")]
+    range_upper_bound: Annotated[int, Field(description="Upper bound of the age range")]
+    explanation: Annotated[str, Field(description="Explanation for the age range")]
+    confidence_score: Annotated[
+        float, Field(description="Confidence score for the age range")
+    ]
 
 
 class Profile(BaseModel):
@@ -122,4 +173,8 @@ class Profile(BaseModel):
     projects: Annotated[List[ProfileProject], Field(description="List of projects")]
     volunteerings: Annotated[
         List[ProfileVolunteering], Field(description="List of volunteering experiences")
+    ]
+    age_range: Annotated[
+        Optional[ProfileAge],
+        Field(default=None, description="Age range of the profile"),
     ]

@@ -10,13 +10,16 @@ from analysis.full.utils import get_retry_policy
 from analysis.nodes.analysis_subgraph.graph import get_analysis_subgraph
 from analysis.nodes.career_path.analysis import node_career_path
 from analysis.nodes.enrichment.education import node_education_enrichment
+from analysis.nodes.enrichment.employment_type import node_find_employment_type
 from analysis.nodes.enrichment.experience import node_experience_enrichment
 from analysis.nodes.enrichment.language import node_language_enrichment
+from analysis.nodes.enrichment.profile_age import node_estimate_profile_age
+from analysis.nodes.enrichment.profile_metadata import get_profile_metadata
 from analysis.nodes.synthesis.node import node_synthesis
 
 
-def continue_to_school_enrichment(state: MainGraphState):
-    """Continue to school enrichment."""
+def continue_to_education_enrichment(state: MainGraphState):
+    """Continue to education enrichment."""
     if state.profile.educations:
         # Use a set to keep track of unique (school, linkedin_url) pairs
         unique_schools: Set[tuple] = set()
@@ -38,8 +41,8 @@ def continue_to_school_enrichment(state: MainGraphState):
         return "init_analysis"
 
 
-def continue_to_company_enrichment(state: MainGraphState):
-    """Continue to company enrichment."""
+def continue_to_experience_enrichment(state: MainGraphState):
+    """Continue to experience enrichment."""
     if state.profile.experiences:
         # Use a set to keep track of unique (company, linkedin_url) pairs
         unique_companies: Set[tuple] = set()
@@ -62,8 +65,9 @@ def continue_to_company_enrichment(state: MainGraphState):
 
 
 def init_node(state: MainGraphState) -> MainGraphState:
-    """Initialize the node."""
-    return {"profile": state.profile}
+    """Initialize the graph."""
+    profile = get_profile_metadata(state.profile)
+    return {"profile": profile}
 
 
 def continue_to_analysis(state: MainGraphState):
@@ -107,6 +111,16 @@ def compile_analysis_full_graph() -> CompiledGraph:
         retry=get_retry_policy(),
     )
     workflow.add_node(
+        "node_find_employment_type",
+        node_find_employment_type,
+        retry=get_retry_policy(),
+    )
+    workflow.add_node(
+        "node_estimate_profile_age",
+        node_estimate_profile_age,
+        retry=get_retry_policy(),
+    )
+    workflow.add_node(
         "node_analysis",
         get_analysis_subgraph(),
     )
@@ -118,22 +132,25 @@ def compile_analysis_full_graph() -> CompiledGraph:
 
     workflow.add_conditional_edges(
         "init_node",
-        continue_to_school_enrichment,
+        continue_to_education_enrichment,
         ["node_education_enrichment", "init_analysis"],
     )
     workflow.add_conditional_edges(
         "init_node",
-        continue_to_company_enrichment,
+        continue_to_experience_enrichment,
         ["node_experience_enrichment", "init_analysis"],
     )
     workflow.add_edge("init_node", "node_language_enrichment")
+    workflow.add_edge("init_node", "node_find_employment_type")
     workflow.add_edge("init_node", "node_career_path")
+    workflow.add_edge("node_find_employment_type", "node_estimate_profile_age")
     workflow.add_edge(
         [
             "node_experience_enrichment",
             "node_education_enrichment",
             "node_language_enrichment",
             "node_career_path",
+            "node_estimate_profile_age",
         ],
         "init_analysis",
     )

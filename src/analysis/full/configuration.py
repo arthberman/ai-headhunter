@@ -7,6 +7,12 @@ from pydantic import BaseModel, Field
 class Configuration(BaseModel):
     """The configuration for the matcher."""
 
+    default_model: str = Field(
+        default="bedrock_converse/anthropic.claude-3-5-sonnet-20240620-v1:0",
+        description="The name of the language model to use for the analysis. "
+        "Should be in the form: provider/model-name.",
+    )
+
     analysis_model: str = Field(
         default="openai/gpt-4o-2024-08-06",
         description="The name of the language model to use for the analysis. "

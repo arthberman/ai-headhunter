@@ -46,10 +46,4 @@ ignore = ["UP006", "UP007", "UP035", "D417", "E501", "D100"]
 convention = "google"
 
 [tool.hatch.build.targets.wheel]
-packages = [
-  "src/candidate_matcher",
-  "src/scorecard_generator",
-  "src/analysis_feedback",
-  "src/iterate_analysis",
-  "src/models",
-]
+packages = ["src/analysis", "src/scorecard"]

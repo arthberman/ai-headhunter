@@ -38,7 +38,7 @@ def init_agent(
         scoring_distribution=state.criterion.scoring_distribution,
         context=state.criterion.context,
         scoring_instructions=instructions,
-        current_date=datetime.now().strftime("%Y-%m-%d"),
+        system_time=datetime.now().isoformat(),
     )
 
     # if it's a bedrock_converse model
