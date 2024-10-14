@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-from analysis_feedback.models import (
+from analysis.feedback.models import (
     ProfileRelatedElement,
     ScorecardRelatedElement,
     ScoredCriterion,

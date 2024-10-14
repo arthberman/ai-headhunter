@@ -3,8 +3,8 @@ from typing import Annotated, List, Optional
 
 from pydantic import Field
 
-from scorecard_generator.state import ScorecardGraphState
-from scorecard_generator.sub_graph.structure.models import StructureAction
+from scorecard.full.state import ScorecardGraphState
+from scorecard.nodes.structure_subgraph.models import StructureAction
 
 
 class StructureGraphState(ScorecardGraphState):

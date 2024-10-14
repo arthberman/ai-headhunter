@@ -3,9 +3,9 @@ from typing import Optional, cast
 from langchain import hub
 from langchain_core.runnables import Runnable, RunnableConfig
 
-from analysis.iterative.configuration import Configuration
-from analysis.iterative.state import MainGraphState
-from analysis.iterative.utils import init_model, log_cancelled_error
+from analysis.full.configuration import Configuration
+from analysis.full.state import MainGraphState
+from analysis.full.utils import init_model, log_cancelled_error
 from analysis.nodes.career_path.models import CareerPathOutput
 
 

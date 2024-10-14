@@ -3,15 +3,15 @@ from typing import Optional, cast
 from langchain import hub
 from langchain_core.runnables import Runnable, RunnableConfig
 
-from analysis_feedback.configuration import Configuration
-from analysis_feedback.models import (
+from analysis.feedback.configuration import Configuration
+from analysis.feedback.models import (
     ProfileRelatedElement,
     ReformedHumanFeedback,
     ScorecardRelatedElement,
     SynthesizedFeedback,
 )
-from analysis_feedback.state import MainGraphState
-from analysis_feedback.utils import init_model, log_cancelled_error
+from analysis.feedback.state import MainGraphState
+from analysis.feedback.utils import init_model, log_cancelled_error
 
 
 @log_cancelled_error

@@ -4,13 +4,13 @@ from langchain import hub
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
-from scorecard_generator.configuration import Configuration
 from models.scorecard.job_posting import JobPosting
 from models.scorecard.question import ListQuestions
 from models.scorecard.scorecard import ScoringDistribution
 from models.scorecard.synthesis import Synthesis
-from scorecard_generator.state import ScorecardGraphState
-from scorecard_generator.utils import init_model
+from scorecard.full.configuration import Configuration
+from scorecard.full.state import ScorecardGraphState
+from scorecard.full.utils import init_model
 
 
 class CriterionScoringDistribution(BaseModel):

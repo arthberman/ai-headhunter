@@ -1,15 +1,15 @@
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.graph import CompiledGraph
 
-from analysis_feedback.configuration import Configuration
-from analysis_feedback.nodes import (
+from analysis.feedback.configuration import Configuration
+from analysis.feedback.nodes import (
     node_extract_profile_related_elements,
     node_extract_scorecard_related_elements,
     node_reformulate_human_feedback,
     node_synthesize_feedback,
 )
-from analysis_feedback.state import InputGraphState, MainGraphState
-from candidate_matcher.utils import get_retry_policy
+from analysis.feedback.state import InputGraphState, MainGraphState
+from analysis.full.utils import get_retry_policy
 
 
 def compile_analysis_feedback_graph() -> CompiledGraph:

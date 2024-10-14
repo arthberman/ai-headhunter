@@ -4,15 +4,15 @@ from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.graph import CompiledGraph
 
-from candidate_matcher.analysis.graph import get_analysis_graph
-from candidate_matcher.career_path.analysis import node_career_path
-from candidate_matcher.configuration import Configuration
-from candidate_matcher.enrichment.education import node_education_enrichment
-from candidate_matcher.enrichment.experience import node_experience_enrichment
-from candidate_matcher.enrichment.language import node_language_enrichment
-from candidate_matcher.state import InputGraphState, MainGraphState
-from candidate_matcher.synthesis.node import node_synthesis
-from candidate_matcher.utils import get_retry_policy
+from analysis.full.configuration import Configuration
+from analysis.full.state import InputGraphState, MainGraphState
+from analysis.full.utils import get_retry_policy
+from analysis.nodes.analysis_subgraph.graph import get_analysis_subgraph
+from analysis.nodes.career_path.analysis import node_career_path
+from analysis.nodes.enrichment.education import node_education_enrichment
+from analysis.nodes.enrichment.experience import node_experience_enrichment
+from analysis.nodes.enrichment.language import node_language_enrichment
+from analysis.nodes.synthesis.node import node_synthesis
 
 
 def continue_to_school_enrichment(state: MainGraphState):
@@ -108,7 +108,7 @@ def compile_analysis_full_graph() -> CompiledGraph:
     )
     workflow.add_node(
         "node_analysis",
-        get_analysis_graph(),
+        get_analysis_subgraph(),
     )
     workflow.add_node("node_career_path", node_career_path, retry=get_retry_policy())
     workflow.add_node("init_analysis", init_analysis)
