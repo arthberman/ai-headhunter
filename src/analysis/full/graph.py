@@ -63,7 +63,7 @@ def continue_to_company_enrichment(state: MainGraphState):
 
 def init_node(state: MainGraphState) -> MainGraphState:
     """Initialize the node."""
-    return state
+    return {"profile": state.profile}
 
 
 def continue_to_analysis(state: MainGraphState):
@@ -85,7 +85,7 @@ def continue_to_analysis(state: MainGraphState):
 
 def init_analysis(state: MainGraphState) -> MainGraphState:
     """BLANK : Initialize the analysis graph."""
-    return state
+    return {"profile": state.profile}
 
 
 def compile_analysis_full_graph() -> CompiledGraph:

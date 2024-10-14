@@ -26,7 +26,7 @@ class MainGraphState(BaseModel):
 
     education_enrichment: Annotated[List[SchoolInfo], operator.add]
     experience_enrichment: Annotated[List[CompanyInfo], operator.add]
-    language_enrichment: Annotated[List[LanguageProficiency], operator.add]
+    language_enrichment: Optional[List[LanguageProficiency]] = Field(default=None)
 
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
     career_path: Optional[CareerPathOutput] = Field(default=None)
