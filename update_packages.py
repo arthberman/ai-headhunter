@@ -1,10 +1,12 @@
-import subprocess
-import toml
-import re
 import os
+import re
+import subprocess
+
+import toml
 
 
 def run_command(command):
+    """Run a command and return the output."""
     process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
     )
@@ -16,6 +18,8 @@ def run_command(command):
 
 
 class CustomTOMLEncoder(toml.TomlEncoder):
+    """Custom TOML encoder for the pyproject.toml file."""
+
     def __init__(self, _dict=dict, preserve=False):
         super().__init__(_dict, preserve)
         self.dump_funcs[list] = self._dump_list
@@ -25,6 +29,7 @@ class CustomTOMLEncoder(toml.TomlEncoder):
 
 
 def update_packages():
+    """Update the packages in the pyproject.toml file."""
     # Read the current pyproject.toml before updates
     with open("pyproject.toml", "r") as f:
         original_pyproject = toml.load(f)

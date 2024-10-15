@@ -1,15 +1,17 @@
 from typing import List, Optional, cast
 
 from langchain import hub
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
+from trustcall import create_extractor
 
-from scorecard.full.configuration import Configuration
-from scorecard.full.state import ScorecardGraphState
-from scorecard.full.utils import init_model
+from scorecard.configuration import Configuration
+from scorecard.state import ScorecardGraphState
+from utils import init_model
 from scorecard.models.job_posting import JobPosting
 from scorecard.models.question import ListQuestions
-from scorecard.models.scorecard import ScoringDistribution
+from scorecard.models.scorecard import Scorecard, ScoringDistribution
 from scorecard.models.synthesis import Synthesis
 
 
@@ -95,9 +97,7 @@ def generate_context(
     # Filter criteria without context
     criteria_without_context = [
         {"id": criterion.id, "description": criterion.description}
-        for criterion in state.scorecard.must_have_criteria
-        + state.scorecard.important_criteria
-        + state.scorecard.nice_to_have_criteria
+        for criterion in state.scorecard.criteria
         if not criterion.context
     ]
 
@@ -126,11 +126,7 @@ def generate_context(
 
     new_scorecard = state.scorecard.model_copy()
     # Update output with context for each criterion without existing context
-    for criterion in (
-        new_scorecard.must_have_criteria
-        + new_scorecard.important_criteria
-        + new_scorecard.nice_to_have_criteria
-    ):
+    for criterion in new_scorecard.criteria:
         if not criterion.context:
             criterion.context = context_dict.get(criterion.id, "No context provided")
 
@@ -145,24 +141,28 @@ def generate_questions(
     configuration = Configuration.from_runnable_config(config)
 
     prompt = hub.pull("generate-scorecard-questions")
+    chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
-    model = init_model(configuration.default_model).with_structured_output(
-        ListQuestions
+    formatted_messages = chat_prompt.format_messages(
+        raw_job_posting=state.raw_job_posting,
+        web_context=state.web_context,
     )
 
-    chain = cast(Runnable, prompt | model)
+    raw_model = init_model(configuration.structure_model)
+
+    extractor = create_extractor(raw_model, tools=[ListQuestions])
 
     res = cast(
         ListQuestions,
-        chain.invoke(
+        extractor.invoke(
             {
-                "raw_job_posting": state.raw_job_posting,
-                "web_context": state.web_context,
+                "messages": formatted_messages,
+                # "existing": {"ListQuestions": existing_questions.model_dump()},
             }
-        ),
+        )["responses"][0],
     )
 
-    return {"generated_questions": res.questions}
+    return {"generated_questions": res}
 
 
 def generate_scoring_distribution(
@@ -180,9 +180,7 @@ def generate_scoring_distribution(
     # Filter criteria without scoring distribution
     criteria_without_distribution = [
         criterion.model_dump()
-        for criterion in state.scorecard.must_have_criteria
-        + state.scorecard.important_criteria
-        + state.scorecard.nice_to_have_criteria
+        for criterion in state.scorecard.criteria
         if not criterion.scoring_distribution
     ]
 
@@ -212,11 +210,7 @@ def generate_scoring_distribution(
 
     # Update the scorecard with the new scoring distributions
     new_scorecard = state.scorecard.model_copy()
-    for criterion in (
-        new_scorecard.must_have_criteria
-        + new_scorecard.important_criteria
-        + new_scorecard.nice_to_have_criteria
-    ):
+    for criterion in new_scorecard.criteria:
         if not criterion.scoring_distribution and criterion.id in distribution_dict:
             criterion.scoring_distribution = distribution_dict[criterion.id]
 
@@ -252,3 +246,57 @@ def generate_synthesis(
         ),
     )
     return {"synthesis": synthesis}
+
+
+def generate_scorecard_structure(
+    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+) -> ScorecardGraphState:
+    """Generate a scorecard structure based on the given state."""
+    # Load configuration from the provided RunnableConfig
+    configuration = Configuration.from_runnable_config(config)
+    # Initialize the chat model with the provided configuration
+    raw_model = init_model(configuration.structure_model)
+
+    extractor = create_extractor(raw_model, tools=[Scorecard])
+
+    hub_prompt = hub.pull("generate-scorecard-structure")
+    chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
+
+    formatted_messages = chat_prompt.format_messages(
+        raw_job_posting=state.raw_job_posting,
+        web_context=state.web_context,
+        generated_questions=state.generated_questions,
+    )
+
+    res = cast(Scorecard, extractor.invoke(formatted_messages)["responses"][0])
+
+    return {"scorecard": res}
+
+
+def judge_scorecard_structure(
+    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+) -> ScorecardGraphState:
+    """Generate a scorecard structure based on the given state."""
+    # Load configuration from the provided RunnableConfig
+    configuration = Configuration.from_runnable_config(config)
+    # Initialize the chat model with the provided configuration
+    raw_model = init_model(configuration.structure_model)
+
+    extractor = create_extractor(raw_model, tools=[Scorecard])
+
+    prompt = hub.pull("judge-scorecard-structure")
+    chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
+
+    formatted_messages = chat_prompt.format_messages()
+
+    res = cast(
+        Scorecard,
+        extractor.invoke(
+            {
+                "messages": formatted_messages,
+                "existing": {"Scorecard": state.scorecard.model_dump()},
+            }
+        )["responses"][0],
+    )
+
+    return {"scorecard": res}

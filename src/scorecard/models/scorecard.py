@@ -1,8 +1,7 @@
 from enum import Enum
 from typing import List, Optional
-from uuid import uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ImportanceLevel(str, Enum):
@@ -36,14 +35,14 @@ class ScoringDistribution(str, Enum):
 class BaseCriterion(BaseModel):
     """Base criterion."""
 
-    id: str = Field(
-        default_factory=lambda: str(uuid4()),
-        description="Unique identifier for the criterion",
-    )
     description: str = Field(..., description="Detailed description of the criterion")
     type: CriterionType = Field(
         ...,
         description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION)",
+    )
+    importance_level: ImportanceLevel = Field(
+        ...,
+        description="Importance level of the criterion (MUST_HAVE, IMPORTANT, NICE_TO_HAVE)",
     )
     context: Optional[str] = Field(
         None,
@@ -58,12 +57,30 @@ class BaseCriterion(BaseModel):
 class Scorecard(BaseModel):
     """Scorecard structure."""
 
-    must_have_criteria: List[BaseCriterion] = Field(
-        ..., description="MUST_HAVE criteria"
+    criteria: List[BaseCriterion] = Field(
+        default_factory=list, description="List of criteria in the scorecard"
     )
-    important_criteria: List[BaseCriterion] = Field(
-        ..., description="IMPORTANT criteria"
-    )
-    nice_to_have_criteria: List[BaseCriterion] = Field(
-        ..., description="NICE_TO_HAVE criteria"
-    )
+
+    @model_validator(mode="after")
+    def validate_importance_levels(self) -> "Scorecard":
+        """Validate the importance levels."""
+        must_have_count = sum(
+            1 for c in self.criteria if c.importance_level == ImportanceLevel.MUST_HAVE
+        )
+        important_count = sum(
+            1 for c in self.criteria if c.importance_level == ImportanceLevel.IMPORTANT
+        )
+        nice_to_have_count = sum(
+            1
+            for c in self.criteria
+            if c.importance_level == ImportanceLevel.NICE_TO_HAVE
+        )
+
+        if must_have_count < 2:
+            raise ValueError("There must be at least 2 MUST_HAVE criteria")
+        if important_count < 2:
+            raise ValueError("There must be at least 2 IMPORTANT criteria")
+        if nice_to_have_count < 2:
+            raise ValueError("There must be at least 2 NICE_TO_HAVE criteria")
+
+        return self
