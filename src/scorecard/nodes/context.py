@@ -7,8 +7,8 @@ from pydantic import model_validator
 from trustcall import create_extractor
 
 from scorecard.configuration import Configuration
-from scorecard.state import ScorecardGraphState
 from scorecard.models.scorecard import Scorecard
+from scorecard.state import ScorecardGraphState
 from utils import init_model
 
 
