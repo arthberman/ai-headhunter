@@ -61,4 +61,8 @@ def node_scorecard_structure(
         )["responses"][0],
     )
 
-    return {"scorecard": res}
+    return {
+        "scorecard": res,
+        "human_context": (state.human_context or []) + (state.human_feedback or []),
+        "human_feedback": [],
+    }
