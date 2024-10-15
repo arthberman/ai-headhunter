@@ -19,9 +19,9 @@ class ScorecardWithContextValidation(Scorecard):
     def validate_context_length(self) -> "ScorecardWithContextValidation":
         """Validate the context length."""
         for criterion in self.criteria:
-            if criterion.context is None or len(criterion.context) < 200:
+            if criterion.context is None or len(criterion.context) < 100:
                 raise ValueError(
-                    "Context for criterion must be at least 200 characters long."
+                    "Context for criterion must be at least 100 characters long."
                 )
             if len(criterion.context) > 400:
                 raise ValueError(
