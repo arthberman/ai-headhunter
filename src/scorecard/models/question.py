@@ -1,23 +1,82 @@
-from typing import List, Optional
+from enum import Enum
+from typing import List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
 
-from scorecard.models.scorecard import CriterionType
+
+class ExtendedCriterionType(str, Enum):
+    """Extended criterion type for questions."""
+
+    # Base criteria
+    EDUCATION = "EDUCATION"
+    EXPERIENCE = "EXPERIENCE"
+    LANGUAGE = "LANGUAGE"
+    HARD_SKILL = "HARD_SKILL"
+    SOFT_SKILL = "SOFT_SKILL"
+    INDUSTRY_KNOWLEDGE = "INDUSTRY_KNOWLEDGE"
+    ADDITIONAL_QUALIFICATION = "ADDITIONAL_QUALIFICATION"
+
+    # Additional criteria
+    JOB_LOCATION_REMOTE_POLICY = "JOB_LOCATION_REMOTE_POLICY"
+    CANDIDATE_AGE_RANGE = "CANDIDATE_AGE_RANGE"
+    SALARY_RANGE = "SALARY_RANGE"
 
 
 class Question(BaseModel):
-    """Question to ask the user."""
+    """Question about uncertainty in the job posting."""
 
-    question: str = Field(..., description="Question to ask the user")
-    criteria_type: CriterionType = Field(
+    question: str = Field(
+        ...,
+        description="Question about uncertainty in the job posting, max 130 characters",
+        max_length=130,
+    )
+    prefill_answer: List[str] = Field(
+        ..., description="Answers to prefill in the question, max 60 characters each"
+    )
+    criteria_type: ExtendedCriterionType = Field(
         ..., description="Criteria type that the question is about"
     )
-    answer: Optional[str] = Field(None, description="Answer to the question")
+
+    @field_validator("prefill_answer")
+    def validate_prefill_answer(cls, v):
+        """Validate that there are at least 1 prefill answers per question, and that each prefill answer is not more than 60 characters."""
+        if len(v) < 1:
+            raise ValueError("There must be at least 1 prefill answer per question")
+        for answer in v:
+            if len(answer) > 60:
+                raise ValueError("Each prefill answer must not exceed 60 characters")
+        return v
 
 
 class ListQuestions(BaseModel):
-    """List of questions to ask the user."""
+    """List of questions about uncertainty in the job posting (min 10 questions)."""
 
     questions: List[Question] = Field(
-        ..., description="List of questions to ask the user"
+        ...,
+        description="List of questions about uncertainty in the job posting (min 10 questions)",
+        min_length=10,
     )
+
+    @model_validator(mode="after")
+    def validate_questions(self) -> "ListQuestions":
+        """Validate that there is at least one question for Language, Education, and Experience, and that there are at least 10 questions in total."""
+        if len(self.questions) < 10:
+            raise ValueError("There must be at least 10 questions")
+
+        criteria_types = [q.criteria_type for q in self.questions]
+        required_types = [
+            ExtendedCriterionType.LANGUAGE,
+            ExtendedCriterionType.EDUCATION,
+            ExtendedCriterionType.EXPERIENCE,
+            ExtendedCriterionType.JOB_LOCATION_REMOTE_POLICY,
+            ExtendedCriterionType.CANDIDATE_AGE_RANGE,
+            ExtendedCriterionType.SALARY_RANGE,
+        ]
+
+        for required_type in required_types:
+            if required_type not in criteria_types:
+                raise ValueError(
+                    f"There must be at least 1 question about {required_type}"
+                )
+
+        return self

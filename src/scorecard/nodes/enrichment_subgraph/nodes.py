@@ -8,9 +8,9 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.errors import NodeInterrupt
 from pydantic import BaseModel, Field
 
-from scorecard.full.configuration import Configuration
-from scorecard.full.utils import init_model
+from scorecard.configuration import Configuration
 from scorecard.nodes.enrichment_subgraph.tools import WebContext, get_tools
+from utils import init_model
 
 
 class AgentState(BaseModel):

@@ -1,7 +1,6 @@
 from langgraph.graph import END, START, StateGraph
 from langgraph.prebuilt import ToolNode
 
-from scorecard.full.utils import get_retry_policy
 from scorecard.nodes.enrichment_subgraph.nodes import (
     AgentState,
     call_model,
@@ -11,6 +10,7 @@ from scorecard.nodes.enrichment_subgraph.nodes import (
 )
 from scorecard.nodes.enrichment_subgraph.state import OutputGraphState
 from scorecard.nodes.enrichment_subgraph.tools import get_tools
+from utils import get_retry_policy
 
 
 def get_enrichment_graph():

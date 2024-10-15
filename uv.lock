@@ -314,6 +314,18 @@ wheels = [
 ]
 
 [[package]]
+name = "dydantic"
+version = "0.0.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/49/29/df1a474a102c48adb40b5365c6b28632677c455b958382119b3b11d3906e/dydantic-0.0.7.tar.gz", hash = "sha256:6430f038fd32b72782722ef1ddf39837ba251fbf7a183ced3e1597fac4e4862e", size = 8112 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/62/d9/6d1d8956e5356c77cc37c815b9c3156939ce07ac3218dde047fbce67194f/dydantic-0.0.7-py3-none-any.whl", hash = "sha256:5531220d876b77451bb045155f83534c69d13bf76d4d628dcaa920d933a7ae89", size = 8634 },
+]
+
+[[package]]
 name = "executing"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -801,15 +813,16 @@ wheels = [
 
 [[package]]
 name = "langgraph"
-version = "0.2.35"
+version = "0.2.37"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "langgraph-checkpoint" },
+    { name = "langgraph-sdk" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3a/ea/7c40c95000bb8f416568ea9e4fc2187d854d78b4892a074af7e917b7c077/langgraph-0.2.35.tar.gz", hash = "sha256:707752f99c887570a797373584c7412f8c1d23dc6980b3e43e3341aa6122aca9", size = 90726 }
+sdist = { url = "https://files.pythonhosted.org/packages/f8/f9/50c0615723cb2850b0f97ae686fc2b7deea3dbd5d94fcf7b25d56f45edc4/langgraph-0.2.37.tar.gz", hash = "sha256:ddccc7902f5608351b19fe56eb644d83e569fc72d18433338aedefe5f7c5ddbc", size = 93726 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/05/b817db973861da51b92191e74ecf307a33c5ed970fa9b7b9eeb4c9a591ae/langgraph-0.2.35-py3-none-any.whl", hash = "sha256:e9dfa85f05bee25b732f7e9ee26f8fc127e937d531762042c83d6c13f39898a3", size = 108658 },
+    { url = "https://files.pythonhosted.org/packages/35/22/36e97b98609ac9f0191106a9e2dffe337f05ae9952cf2d013246448ed560/langgraph-0.2.37-py3-none-any.whl", hash = "sha256:b61d687ab89b4a33f4d387ff409cafec9e44733b5bcecc8c78b4b9c6837ee7b8", size = 112729 },
 ]
 
 [[package]]
@@ -823,6 +836,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c2/eb/09d7a63fa0fd371940f21a2e8894aa7aefc3724971911e1ad1f4456b92a7/langgraph_checkpoint-2.0.0.tar.gz", hash = "sha256:884ea7fd7c06904865e8fdcae01233e469ad4bc22871d5376b76f8eeab33464c", size = 20139 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7e/a0/a649b910f0d221ac7d281d80d5cd0484daf4aff2d0adfaf04de99cc33f43/langgraph_checkpoint-2.0.0-py3-none-any.whl", hash = "sha256:a8d7dbfb86fc381ad9619e15de47eb37451b6051b2ce2749ee25cbb41935ef30", size = 22679 },
+]
+
+[[package]]
+name = "langgraph-sdk"
+version = "0.1.33"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "httpx-sse" },
+    { name = "orjson" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bc/34/82d44ed9ac501ce891474afe6e1bd75a586010ac35ee865bade0df384cde/langgraph_sdk-0.1.33.tar.gz", hash = "sha256:addffc33554b690e81525c12fe9b2656cc7b740678e4724bc706d1ca13b3de93", size = 27331 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c2/06/159d619a92019e6c3323526b9ab1776e451dd0a97bc0e21d3da9016cc2dd/langgraph_sdk-0.1.33-py3-none-any.whl", hash = "sha256:fe2311ebfe231219a7ad06c3dad4860a9e2917e780aaa2f228d1a9f5653da686", size = 28186 },
 ]
 
 [[package]]
@@ -1394,6 +1421,7 @@ dependencies = [
     { name = "python-dotenv" },
     { name = "sqlalchemy" },
     { name = "toml" },
+    { name = "trustcall" },
 ]
 
 [package.dev-dependencies]
@@ -1414,13 +1442,14 @@ requires-dist = [
     { name = "langchain-groq", specifier = ">=0.2.0" },
     { name = "langchain-openai", specifier = ">=0.2.2" },
     { name = "langchainhub", specifier = ">=0.1.21" },
-    { name = "langgraph", specifier = ">=0.2.35" },
+    { name = "langgraph", specifier = ">=0.2.37" },
     { name = "packaging", specifier = ">=24.1" },
     { name = "psycopg-binary", specifier = ">=3.2.3" },
     { name = "pydantic", specifier = ">=2.9.2" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "sqlalchemy", specifier = ">=2.0.35" },
     { name = "toml", specifier = ">=0.10.2" },
+    { name = "trustcall", specifier = ">=0.0.22" },
 ]
 
 [package.metadata.requires-dev]
@@ -1631,6 +1660,20 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/eb/79/72064e6a701c2183016abbbfedaba506d81e30e232a68c9f0d6f6fcd1574/traitlets-5.14.3.tar.gz", hash = "sha256:9ed0579d3502c94b4b3732ac120375cda96f923114522847de4b3bb98b96b6b7", size = 161621 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/00/c0/8f5d070730d7836adc9c9b6408dec68c6ced86b304a9b26a14df072a6e8c/traitlets-5.14.3-py3-none-any.whl", hash = "sha256:b74e89e397b1ed28cc831db7aea759ba6640cb3de13090ca145426688ff1ac4f", size = 85359 },
+]
+
+[[package]]
+name = "trustcall"
+version = "0.0.22"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dydantic" },
+    { name = "jsonpatch" },
+    { name = "langgraph" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/03/4b/5f06ed3562b5c49ddbe030a8b71594982df6e5d5a2d203ae48715b5182fe/trustcall-0.0.22.tar.gz", hash = "sha256:d04ac5a9435e1a64e658021ae5ba1981d238481d2a4b7ec3a49f7f57084d2e9b", size = 30023 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9e/c1/a0e88fda46f72c25d5517a9a8adb5742620acc7176559f75e0a62cdd319c/trustcall-0.0.22-py3-none-any.whl", hash = "sha256:0755dc569272d194e532ac187c9e7efe12dad1babe56a7b394e63e3968010032", size = 22319 },
 ]
 
 [[package]]
