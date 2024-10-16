@@ -1,14 +1,40 @@
-from typing import Optional, cast
+from typing import List, Optional, cast
 
 from langchain import hub
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
+from pydantic import Field
+from pydantic.json_schema import SkipJsonSchema
 from trustcall import create_extractor
 
 from scorecard.configuration import Configuration
-from scorecard.models.scorecard import Scorecard
+from scorecard.models.scorecard import BaseCriterion, Scorecard, ScoringDistribution
 from scorecard.state import ScorecardGraphState
 from utils import init_model
+
+
+class LimitedBaseCriterion(BaseCriterion):
+    """Base criterion without context and scoring distribution."""
+
+    context: SkipJsonSchema[Optional[str]] = Field(
+        None,
+        description="This is the context of the job posting that is relevant to the criterion (definition of the scope).",
+        exclude=True,
+    )
+    scoring_distribution: SkipJsonSchema[Optional[ScoringDistribution]] = Field(
+        None,
+        description="The type of scoring distribution for this criterion",
+        exclude=True,
+    )
+
+
+class LimitedScorecard(Scorecard):
+    """Scorecard with limited context and scoring distribution."""
+
+    criteria: List[LimitedBaseCriterion] = Field(
+        default_factory=list, description="List of criteria in the scorecard"
+    )
+
 
 prompt_iterative_instruction = """
 You are in the UPDATE stage of the scorecard design process.
@@ -31,7 +57,12 @@ def node_scorecard_structure(
     # Initialize the chat model with the provided configuration
     raw_model = init_model(configuration.structure_model)
 
-    extractor = create_extractor(raw_model, tools=[Scorecard])
+    if state.scorecard:
+        limited_scorecard = cast(LimitedScorecard, state.scorecard)
+    else:
+        limited_scorecard = LimitedScorecard()
+
+    extractor = create_extractor(raw_model, tools=[LimitedScorecard])
 
     hub_prompt = hub.pull("generate-scorecard-structure")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
@@ -48,12 +79,12 @@ def node_scorecard_structure(
     )
 
     res = cast(
-        Scorecard,
+        LimitedScorecard,
         extractor.invoke(
             {
                 "messages": formatted_messages,
                 "existing": (
-                    {"Scorecard": state.scorecard.model_dump()}
+                    {"LimitedScorecard": limited_scorecard.model_dump()}
                     if state.scorecard
                     else None
                 ),
@@ -61,8 +92,34 @@ def node_scorecard_structure(
         )["responses"][0],
     )
 
+    # Create a dictionary to map descriptions to context and scoring_distribution
+    existing_criteria = {}
+    if state.scorecard:
+        existing_criteria = {
+            criterion.description: (criterion.context, criterion.scoring_distribution)
+            for criterion in state.scorecard.criteria
+        }
+
+    # Create scorecard_new from res and with the context and scoring distribution by copying from the original scorecard
+    scorecard_new = Scorecard(
+        criteria=[
+            BaseCriterion(
+                description=criterion.description,
+                type=criterion.type,
+                importance_level=criterion.importance_level,
+                context=existing_criteria.get(criterion.description, (None, None))[0],
+                scoring_distribution=existing_criteria.get(
+                    criterion.description, (None, None)
+                )[1],
+            )
+            for criterion in res.criteria
+        ],
+    )
+
+    print(scorecard_new)
+
     return {
-        "scorecard": res,
+        "scorecard": scorecard_new,
         "human_context": (state.human_context or []) + (state.human_feedback or []),
         "human_feedback": [],
     }
