@@ -11,12 +11,6 @@ from scorecard.models.scorecard import Scorecard
 from scorecard.state import ScorecardGraphState
 from utils import init_model
 
-prompt_iterative_instruction = """
-You are in the UPDATE stage of the scorecard design process.
-You are given a job scorecard to update by adding missing scoring distributions.
-Do not update the existing scoring distributions, only add new ones for the criteria that are missing it.
-"""
-
 
 class ScorecardWithScoringDistributionValidation(Scorecard):
     """Scorecard with scoring distribution validation."""

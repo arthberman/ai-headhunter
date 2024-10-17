@@ -2,8 +2,9 @@ from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.graph import CompiledGraph
 
+from analysis.full.state import MainGraphState
 from analysis.iterative.configuration import Configuration
-from analysis.iterative.state import InputGraphState, MainGraphState
+from analysis.iterative.state import InputGraphState
 from analysis.nodes.analysis_subgraph.graph import get_analysis_subgraph
 from analysis.nodes.analysis_subgraph.state import AnalysisMainState
 from analysis.nodes.synthesis.node import node_synthesis

@@ -3,8 +3,8 @@ from typing import Optional, cast
 from langchain import hub
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
+from analysis.full.state import MainGraphState
 from analysis.iterative.configuration import Configuration
-from analysis.iterative.state import MainGraphState
 from analysis.models.synthesis import ExtendedScoredCriterion, Synthesis
 from analysis.nodes.analysis_subgraph.models import ScoredCriterion
 from scorecard.models.scorecard import Scorecard
