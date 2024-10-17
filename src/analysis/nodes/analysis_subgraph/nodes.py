@@ -6,9 +6,9 @@ from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 
+from analysis.full.state import MainGraphState
 from analysis.iterative.configuration import Configuration
-from analysis.iterative.state import MainGraphState
-from analysis.nodes.analysis_subgraph.prepare_scoring_instructions import (
+from analysis.nodes.analysis_subgraph.dynamic_prompt import (
     prepare_scoring_instructions,
 )
 from analysis.nodes.analysis_subgraph.state import AnalysisMainState
@@ -46,8 +46,6 @@ def init_agent(
 
 
 # Define the function that calls the model
-
-
 def call_model(
     state: AnalysisMainState, *, config: Optional[RunnableConfig] = None
 ) -> AnalysisMainState:

@@ -19,10 +19,6 @@ class ProfileRelatedElement(BaseModel):
         default=None,
         description="Description of element(s) from the profile related to the human feedback provided.",
     )
-    explanation: Optional[str] = Field(
-        default=None,
-        description="Explanation of why the element(s) are related to the human feedback provided.",
-    )
 
 
 class ScorecardRelatedElement(BaseModel):
@@ -31,10 +27,6 @@ class ScorecardRelatedElement(BaseModel):
     criteria: Optional[List[ScoredCriterion]] = Field(
         default=None,
         description="Criteria from the scorecard related to the human feedback provided.",
-    )
-    explanation: Optional[str] = Field(
-        default=None,
-        description="Explanation of why the criteria are related to the human feedback provided.",
     )
 
 

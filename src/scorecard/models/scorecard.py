@@ -64,26 +64,36 @@ class Scorecard(BaseModel):
         default_factory=list, description="List of criteria in the scorecard"
     )
 
+    is_updating: bool = Field(
+        default=False,
+        description="Whether the scorecard is updating, defaults to False",
+    )
+
     @model_validator(mode="after")
     def validate_importance_levels(self) -> "Scorecard":
-        """Validate the importance levels."""
-        must_have_count = sum(
-            1 for c in self.criteria if c.importance_level == ImportanceLevel.MUST_HAVE
-        )
-        important_count = sum(
-            1 for c in self.criteria if c.importance_level == ImportanceLevel.IMPORTANT
-        )
-        nice_to_have_count = sum(
-            1
-            for c in self.criteria
-            if c.importance_level == ImportanceLevel.NICE_TO_HAVE
-        )
+        """Validate the importance levels only when not updating."""
+        if not self.is_updating:
+            must_have_count = sum(
+                1
+                for c in self.criteria
+                if c.importance_level == ImportanceLevel.MUST_HAVE
+            )
+            important_count = sum(
+                1
+                for c in self.criteria
+                if c.importance_level == ImportanceLevel.IMPORTANT
+            )
+            nice_to_have_count = sum(
+                1
+                for c in self.criteria
+                if c.importance_level == ImportanceLevel.NICE_TO_HAVE
+            )
 
-        if must_have_count < 2:
-            raise ValueError("There must be at least 2 MUST_HAVE criteria")
-        if important_count < 2:
-            raise ValueError("There must be at least 2 IMPORTANT criteria")
-        if nice_to_have_count < 2:
-            raise ValueError("There must be at least 2 NICE_TO_HAVE criteria")
+            if must_have_count < 2:
+                raise ValueError("There must be at least 2 MUST_HAVE criteria")
+            if important_count < 2:
+                raise ValueError("There must be at least 2 IMPORTANT criteria")
+            if nice_to_have_count < 2:
+                raise ValueError("There must be at least 2 NICE_TO_HAVE criteria")
 
         return self

@@ -139,6 +139,7 @@ def node_synthesize_feedback(
         chain.invoke(
             {
                 "human_feedback": state.human_feedback,
+                "scorecard_synthesis": state.scorecard_synthesis,
                 "scorecard_related_elements": state.scorecard_related_elements.model_dump()
                 if state.scorecard_related_elements
                 else None,
