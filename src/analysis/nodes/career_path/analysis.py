@@ -5,11 +5,10 @@ from langchain_core.runnables import Runnable, RunnableConfig
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import MainGraphState
-from analysis.full.utils import init_model, log_cancelled_error
 from analysis.nodes.career_path.models import CareerPathOutput
+from utils import init_model
 
 
-@log_cancelled_error
 def node_career_path(
     state: MainGraphState, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:

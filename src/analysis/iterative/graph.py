@@ -4,26 +4,20 @@ from langgraph.graph.graph import CompiledGraph
 
 from analysis.iterative.configuration import Configuration
 from analysis.iterative.state import InputGraphState, MainGraphState
-from analysis.iterative.utils import get_retry_policy
 from analysis.nodes.analysis_subgraph.graph import get_analysis_subgraph
 from analysis.nodes.analysis_subgraph.state import AnalysisMainState
 from analysis.nodes.synthesis.node import node_synthesis
+from utils import get_retry_policy
 
 
 def continue_to_analysis(state: MainGraphState):
     """Continue to the analysis graph."""
-    all_criteria = (
-        state.scorecard.must_have_criteria
-        + state.scorecard.important_criteria
-        + state.scorecard.nice_to_have_criteria
-    )
-
     return [
         Send(
             "node_analysis",
             AnalysisMainState(main_state=state, messages=[], criterion=criterion),
         )
-        for criterion in all_criteria
+        for criterion in state.scorecard.criteria
     ]
 
 

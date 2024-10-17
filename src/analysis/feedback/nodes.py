@@ -11,10 +11,9 @@ from analysis.feedback.models import (
     SynthesizedFeedback,
 )
 from analysis.feedback.state import MainGraphState
-from analysis.feedback.utils import init_model, log_cancelled_error
+from utils import init_model
 
 
-@log_cancelled_error
 def node_reformulate_human_feedback(
     state: MainGraphState, *, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:
@@ -43,7 +42,6 @@ def node_reformulate_human_feedback(
     return {"human_feedback": output.reformed_human_feedback}
 
 
-@log_cancelled_error
 def node_extract_profile_related_elements(
     state: MainGraphState, *, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:
@@ -79,7 +77,6 @@ def node_extract_profile_related_elements(
     return {"profile_related_elements": output}
 
 
-@log_cancelled_error
 def node_extract_scorecard_related_elements(
     state: MainGraphState, *, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:

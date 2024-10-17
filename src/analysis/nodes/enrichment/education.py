@@ -21,9 +21,9 @@ from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import EducationState, MainGraphState
-from analysis.full.utils import init_model, log_cancelled_error
 from analysis.models.profile import ProfileEducation
 from analysis.models.school import SchoolInfo
+from utils import init_model
 
 Base = declarative_base()
 
@@ -106,7 +106,6 @@ def add_school_to_db(session: Session, school_info: SchoolInfo) -> None:
         raise ValueError(f"IntegrityError occurred while adding/updating school: {e}")
 
 
-@log_cancelled_error
 def node_education_enrichment(
     state: EducationState, *, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:

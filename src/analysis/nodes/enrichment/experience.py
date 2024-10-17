@@ -21,9 +21,9 @@ from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import ExperienceState, MainGraphState
-from analysis.full.utils import init_model, log_cancelled_error
 from analysis.models.company import CompanyInfo
 from analysis.models.profile import ProfileExperience
+from utils import init_model
 
 Base = declarative_base()
 
@@ -107,7 +107,6 @@ def add_company_to_db(session: Session, company_info: CompanyInfo) -> None:
         raise ValueError(f"IntegrityError occurred: {e}")
 
 
-@log_cancelled_error
 def node_experience_enrichment(
     state: ExperienceState, *, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:

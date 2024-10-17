@@ -35,6 +35,9 @@ class ScoringDistribution(str, Enum):
 class BaseCriterion(BaseModel):
     """Base criterion."""
 
+    id: Optional[str] = Field(
+        None, description="Unique identifier for the criterion (UUID)"
+    )
     description: str = Field(..., description="Detailed description of the criterion")
     type: CriterionType = Field(
         ...,
