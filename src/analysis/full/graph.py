@@ -6,7 +6,6 @@ from langgraph.graph.graph import CompiledGraph
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import InputGraphState, MainGraphState
-from analysis.full.utils import get_retry_policy
 from analysis.nodes.analysis_subgraph.graph import get_analysis_subgraph
 from analysis.nodes.career_path.analysis import node_career_path
 from analysis.nodes.enrichment.education import node_education_enrichment
@@ -16,6 +15,7 @@ from analysis.nodes.enrichment.language import node_language_enrichment
 from analysis.nodes.enrichment.profile_age import node_estimate_profile_age
 from analysis.nodes.enrichment.profile_metadata import get_profile_metadata
 from analysis.nodes.synthesis.node import node_synthesis
+from utils import get_retry_policy
 
 
 def continue_to_education_enrichment(state: MainGraphState):
@@ -72,18 +72,12 @@ def init_node(state: MainGraphState) -> MainGraphState:
 
 def continue_to_analysis(state: MainGraphState):
     """Continue to the analysis graph."""
-    all_criteria = (
-        state.scorecard.must_have_criteria
-        + state.scorecard.important_criteria
-        + state.scorecard.nice_to_have_criteria
-    )
-
     return [
         Send(
             "node_analysis",
             {"main_state": state, "messages": [], "criterion": criterion},
         )
-        for criterion in all_criteria
+        for criterion in state.scorecard.criteria
     ]
 
 

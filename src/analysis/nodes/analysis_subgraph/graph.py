@@ -3,7 +3,6 @@ from langgraph.prebuilt import ToolNode
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import MainGraphState
-from analysis.full.utils import get_retry_policy
 from analysis.nodes.analysis_subgraph.nodes import (
     call_model,
     init_agent,
@@ -12,6 +11,7 @@ from analysis.nodes.analysis_subgraph.nodes import (
 )
 from analysis.nodes.analysis_subgraph.state import AnalysisMainState
 from analysis.nodes.analysis_subgraph.tools import get_tools
+from utils import get_retry_policy
 
 
 def get_analysis_subgraph():

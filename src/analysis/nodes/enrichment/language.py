@@ -6,8 +6,8 @@ from pydantic import BaseModel, Field
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import MainGraphState
-from analysis.full.utils import format_data, init_model, log_cancelled_error
 from analysis.models.language import LanguageProficiency
+from utils import format_data, init_model
 
 
 class StructuredOutput(BaseModel):
@@ -18,7 +18,6 @@ class StructuredOutput(BaseModel):
     )
 
 
-@log_cancelled_error
 def node_language_enrichment(
     state: MainGraphState, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:

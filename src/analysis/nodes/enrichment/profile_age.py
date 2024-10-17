@@ -6,11 +6,10 @@ from langchain_core.runnables import Runnable, RunnableConfig
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import MainGraphState
-from analysis.full.utils import format_data, init_model, log_cancelled_error
 from analysis.models.profile import ProfileAge
+from utils import format_data, init_model
 
 
-@log_cancelled_error
 def node_estimate_profile_age(
     state: MainGraphState,
     *,

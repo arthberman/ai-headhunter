@@ -9,7 +9,7 @@ from analysis.feedback.nodes import (
     node_synthesize_feedback,
 )
 from analysis.feedback.state import InputGraphState, MainGraphState
-from analysis.full.utils import get_retry_policy
+from utils import get_retry_policy
 
 
 def compile_analysis_feedback_graph() -> CompiledGraph:

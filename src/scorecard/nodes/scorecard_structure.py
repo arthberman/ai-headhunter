@@ -58,9 +58,7 @@ def node_scorecard_structure(
     raw_model = init_model(configuration.structure_model)
 
     if state.scorecard:
-        limited_scorecard = cast(LimitedScorecard, state.scorecard)
-    else:
-        limited_scorecard = LimitedScorecard()
+        limited_scorecard = LimitedScorecard(**state.scorecard.model_dump())
 
     extractor = create_extractor(raw_model, tools=[LimitedScorecard])
 
@@ -85,7 +83,7 @@ def node_scorecard_structure(
                 "messages": formatted_messages,
                 "existing": (
                     {"LimitedScorecard": limited_scorecard.model_dump()}
-                    if state.scorecard
+                    if state.scorecard and limited_scorecard
                     else None
                 ),
             }

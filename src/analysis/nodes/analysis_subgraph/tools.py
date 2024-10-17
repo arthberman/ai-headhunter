@@ -12,7 +12,6 @@ from sqlalchemy.orm import sessionmaker
 from typing_extensions import Annotated
 
 from analysis.iterative.configuration import Configuration
-from analysis.iterative.utils import format_data
 from analysis.models.knowledge_point import (
     KnowledgePoint,
     KnowledgePointDB,
@@ -20,6 +19,7 @@ from analysis.models.knowledge_point import (
 from analysis.nodes.analysis_subgraph.models import ScoredCriterion
 from analysis.nodes.analysis_subgraph.state import AnalysisMainState
 from scorecard.models.scorecard import CriterionType
+from utils import format_data
 
 
 class CandidateInfoType(Enum):

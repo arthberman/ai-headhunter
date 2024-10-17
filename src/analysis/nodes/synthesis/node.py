@@ -5,10 +5,10 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.iterative.configuration import Configuration
 from analysis.iterative.state import MainGraphState
-from analysis.iterative.utils import format_data, init_model, log_cancelled_error
 from analysis.models.synthesis import ExtendedScoredCriterion, Synthesis
 from analysis.nodes.analysis_subgraph.models import ScoredCriterion
-from scorecard.models.scorecard import ImportanceLevel, Scorecard
+from scorecard.models.scorecard import Scorecard
+from utils import format_data, init_model
 
 
 def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorecard):
@@ -16,13 +16,7 @@ def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorec
     extended_scored_criterion = []
     for scored_criterion in scored_criterion:
         criterion = next(
-            (
-                c
-                for c in scorecard.must_have_criteria
-                + scorecard.important_criteria
-                + scorecard.nice_to_have_criteria
-                if c.id == scored_criterion.id
-            ),
+            (c for c in scorecard.criteria if c.id == scored_criterion.id),
             None,
         )
         if criterion:
@@ -30,15 +24,7 @@ def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorec
                 ExtendedScoredCriterion(
                     **scored_criterion.model_dump(),
                     description=criterion.description,
-                    importance_level=(
-                        ImportanceLevel.MUST_HAVE
-                        if criterion in scorecard.must_have_criteria
-                        else (
-                            ImportanceLevel.IMPORTANT
-                            if criterion in scorecard.important_criteria
-                            else ImportanceLevel.NICE_TO_HAVE
-                        )
-                    ),
+                    importance_level=criterion.importance_level,
                     criterion_type=criterion.type,
                 )
             )
@@ -46,7 +32,6 @@ def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorec
     return extended_scored_criterion
 
 
-@log_cancelled_error
 def node_synthesis(
     state: MainGraphState, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:

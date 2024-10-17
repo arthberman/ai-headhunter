@@ -8,16 +8,14 @@ from langchain_core.runnables import RunnableConfig
 
 from analysis.iterative.configuration import Configuration
 from analysis.iterative.state import MainGraphState
-from analysis.iterative.utils import (
-    init_model,
-    log_cancelled_error,
+from analysis.nodes.analysis_subgraph.prepare_scoring_instructions import (
     prepare_scoring_instructions,
 )
 from analysis.nodes.analysis_subgraph.state import AnalysisMainState
 from analysis.nodes.analysis_subgraph.tools import ScoredCriterion, get_tools
+from utils import init_model
 
 
-@log_cancelled_error
 def init_agent(
     state: AnalysisMainState, *, config: Optional[RunnableConfig] = None
 ) -> AnalysisMainState:
@@ -27,14 +25,12 @@ def init_agent(
     hub_prompt = hub.pull("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
-    instructions, importance = prepare_scoring_instructions(
-        state.criterion.id, state.main_state.scorecard
-    )
+    instructions = prepare_scoring_instructions(state.criterion)
 
     formatted_messages = chat_prompt.format_messages(
         id=state.criterion.id,
         description=state.criterion.description,
-        importance=importance,
+        importance_level=state.criterion.importance_level,
         scoring_distribution=state.criterion.scoring_distribution,
         context=state.criterion.context,
         scoring_instructions=instructions,
@@ -50,7 +46,8 @@ def init_agent(
 
 
 # Define the function that calls the model
-@log_cancelled_error
+
+
 def call_model(
     state: AnalysisMainState, *, config: Optional[RunnableConfig] = None
 ) -> AnalysisMainState:
@@ -88,7 +85,8 @@ def call_model(
 
 
 # Define the function that responds to the user
-@log_cancelled_error
+
+
 def respond(state: AnalysisMainState) -> MainGraphState:
     """Respond to the user with the scored criterion."""
     response = ScoredCriterion(**state.messages[-1].tool_calls[0]["args"])
@@ -97,7 +95,8 @@ def respond(state: AnalysisMainState) -> MainGraphState:
 
 
 # Define the function that determines whether to continue or not
-@log_cancelled_error
+
+
 def should_continue(
     state: AnalysisMainState, config: RunnableConfig
 ) -> AnalysisMainState:
