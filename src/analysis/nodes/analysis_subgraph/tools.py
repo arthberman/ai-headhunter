@@ -7,6 +7,7 @@ from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import BaseTool
 from langgraph.prebuilt import InjectedState
+from pyairtable import Api
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 from typing_extensions import Annotated
@@ -134,27 +135,26 @@ def get_tools() -> List[BaseTool]:
 
 
 def get_knowledge_points(criterion_types: list[CriterionType]) -> list[KnowledgePoint]:
-    """Retrieve knowledge base entries by a list of criterion types.
+    """Retrieve knowledge base entries by a list of criterion types."""
+    api = Api(os.environ["AIRTABLE_API_KEY"])
+    table = api.table("appnlCNqfC0erFVX7", "tbl7TLnZwMynf8pjJ")
 
-    This function should be called at the beginning of the process to obtain knowledge points relevant to the specified criterion types.
-    If the item to score involves multiple criteria (e.g., language and experience), this function should be called with a list of criterion types.
-    """
-    database_url = os.getenv("DATABASE_URL")
-    if not database_url:
-        raise ValueError("DATABASE_URL environment variable is not set")
-    engine = create_engine(database_url)
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    session = SessionLocal()
+    # Construct the OR formula for multiple criterion types
+    criterion_conditions = [
+        f"{{CriterionType}} = '{ct.value}'" for ct in criterion_types
+    ]
+    formula = f"OR({','.join(criterion_conditions)})"
 
-    try:
-        stmt = select(KnowledgePointDB).where(
-            KnowledgePointDB.type.in_(criterion_types)
+    # Fetch filtered records
+    filtered_records = table.all(formula=formula)
+
+    # Convert Airtable records to KnowledgePoint objects
+    knowledge_points = [
+        KnowledgePoint(
+            type=CriterionType(record["fields"]["CriterionType"]),
+            description=record["fields"]["Description"],
         )
-        result = session.execute(stmt).scalars().all()
-        knowledge_points = [
-            KnowledgePoint(type=kp.type, description=kp.description) for kp in result
-        ]  # Convert to KnowledgePoint with only type and description
-    finally:
-        session.close()
+        for record in filtered_records
+    ]
 
     return knowledge_points
