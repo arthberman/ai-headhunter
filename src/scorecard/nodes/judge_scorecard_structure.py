@@ -6,6 +6,7 @@ from langchain_core.runnables import RunnableConfig
 from trustcall import create_extractor
 
 from scorecard.configuration import Configuration
+from scorecard.models.scorecard import BaseCriterion, Scorecard
 from scorecard.nodes.scorecard_structure import LimitedScorecard
 from scorecard.state import ScorecardGraphState
 from utils import init_model
@@ -38,4 +39,28 @@ def node_judge_scorecard_structure(
         )["responses"][0],
     )
 
-    return {"scorecard": res}
+    # Create a dictionary to map descriptions to context and scoring_distribution
+    existing_criteria = {}
+    if state.scorecard:
+        existing_criteria = {
+            criterion.description: (criterion.context, criterion.scoring_distribution)
+            for criterion in state.scorecard.criteria
+        }
+
+    # Create scorecard_new from res and with the context and scoring distribution by copying from the original scorecard
+    scorecard_new = Scorecard(
+        criteria=[
+            BaseCriterion(
+                description=criterion.description,
+                type=criterion.type,
+                importance_level=criterion.importance_level,
+                context=existing_criteria.get(criterion.description, (None, None))[0],
+                scoring_distribution=existing_criteria.get(
+                    criterion.description, (None, None)
+                )[1],
+            )
+            for criterion in res.criteria
+        ],
+    )
+
+    return {"scorecard": scorecard_new}

@@ -21,7 +21,7 @@ class ScorecardWithContextValidation(Scorecard):
         for criterion in self.criteria:
             if criterion.context is None or len(criterion.context) < 80:
                 raise ValueError(
-                    "Context is mandatory for all criteria and should be 200 characters long."
+                    f"Context is mandatory for criterion [{criterion.description}] and should be 200 characters long."
                 )
         return self
 
