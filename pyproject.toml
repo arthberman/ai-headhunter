@@ -23,6 +23,7 @@ dependencies = [
   "langchain-aws>=0.2.2",
   "langchain-fireworks>=0.2.1",
   "trustcall>=0.0.22",
+  "pyairtable>=2.3.3",
 ]
 
 [build-system]
