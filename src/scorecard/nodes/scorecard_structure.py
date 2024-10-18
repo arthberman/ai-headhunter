@@ -60,7 +60,9 @@ def node_scorecard_structure(
     if state.scorecard:
         limited_scorecard = LimitedScorecard(**state.scorecard.model_dump())
 
-    extractor = create_extractor(raw_model, tools=[LimitedScorecard])
+    extractor = create_extractor(
+        raw_model, tools=[LimitedScorecard], tool_choice="LimitedScorecard"
+    )
 
     hub_prompt = hub.pull("generate-scorecard-structure")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
