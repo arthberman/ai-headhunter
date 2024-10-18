@@ -116,8 +116,6 @@ def node_scorecard_structure(
         ],
     )
 
-    print(scorecard_new)
-
     return {
         "scorecard": scorecard_new,
         "human_context": (state.human_context or []) + (state.human_feedback or []),
