@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from typing import List, Union
 
 from pydantic import BaseModel, Field
 
@@ -22,7 +22,7 @@ class CompanyInfo(BaseModel):
     sectors: List[str] = Field(
         ..., description="List of sectors the company operates in"
     )
-    company_stage: CompanyStage = Field(
+    company_stage: Union[CompanyStage, None] = Field(
         ...,
         description="Stage of the company in startup, sme, large corporation or multinational",
     )
