@@ -20,7 +20,9 @@ def node_job_posting(
     # Initialize the chat model with the provided configuration
     raw_model = init_model(configuration.structure_model)
     # Create an extractor for the JobPosting
-    extractor = create_extractor(raw_model, tools=[JobPosting])
+    extractor = create_extractor(
+        raw_model, tools=[JobPosting], tool_choice="JobPosting"
+    )
     # Pull the prompt from the hub
     prompt = hub.pull("generate-scorecard-job-posting")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)

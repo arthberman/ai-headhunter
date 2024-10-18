@@ -45,7 +45,9 @@ def node_scoring_distribution(
     raw_model = init_model(configuration.structure_model)
 
     extractor = create_extractor(
-        raw_model, tools=[ScorecardWithScoringDistributionValidation]
+        raw_model,
+        tools=[ScorecardWithScoringDistributionValidation],
+        tool_choice="ScorecardWithScoringDistributionValidation",
     )
 
     res = cast(

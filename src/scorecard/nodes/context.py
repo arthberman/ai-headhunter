@@ -44,7 +44,11 @@ def node_context(
 
     raw_model = init_model(configuration.structure_model)
 
-    extractor = create_extractor(raw_model, tools=[ScorecardWithContextValidation])
+    extractor = create_extractor(
+        raw_model,
+        tools=[ScorecardWithContextValidation],
+        tool_choice="ScorecardWithContextValidation",
+    )
 
     res = cast(
         ScorecardWithContextValidation,

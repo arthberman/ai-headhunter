@@ -28,7 +28,9 @@ def node_questions(
 
     raw_model = init_model(configuration.structure_model)
 
-    extractor = create_extractor(raw_model, tools=[ListQuestions])
+    extractor = create_extractor(
+        raw_model, tools=[ListQuestions], tool_choice="ListQuestions"
+    )
 
     res = cast(
         ListQuestions,
