@@ -49,7 +49,9 @@ class EnrichmentCompany(Base):
     sectors = Column(ARRAY(String))
     companyStage = Column(String)
 
-    __table_args__ = (UniqueConstraint("name", "linkedinUrl", name="name_linkedinUrl"),)
+    __table_args__ = (
+        UniqueConstraint("name", "linkedinUrl", name="uq_company_name_linkedinUrl"),
+    )
 
 
 tavily_tool = TavilySearchResults(

@@ -4,7 +4,7 @@ from scorecard.nodes import (
     get_enrichment_graph,
     node_context,
     node_job_posting,
-    node_judge_scorecard_structure,
+    #    node_judge_scorecard_structure,
     node_questions,
     node_scorecard_structure,
     node_scoring_distribution,

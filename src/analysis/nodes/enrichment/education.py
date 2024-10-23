@@ -49,7 +49,9 @@ class EnrichmentSchool(Base):
     fields = Column(ARRAY(String))
     ranking = Column(String)
 
-    __table_args__ = (UniqueConstraint("name", "linkedinUrl", name="name_linkedinUrl"),)
+    __table_args__ = (
+        UniqueConstraint("name", "linkedinUrl", name="uq_school_name_linkedinUrl"),
+    )
 
 
 tavily_tool = TavilySearchResults(
