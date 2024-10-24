@@ -14,7 +14,7 @@ class Configuration(BaseModel):
     )
 
     synthesis_model: str = Field(
-        default="bedrock_converse/anthropic.claude-3-5-sonnet-20241022-v2:0",
+        default="bedrock_converse/anthropic.claude-3-5-sonnet-20240620-v1:0",
         description="The name of the language model to use for the synthesis. "
         "Should be in the form: provider/model-name.",
     )

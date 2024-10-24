@@ -6,6 +6,7 @@ def get_retry_policy() -> RetryPolicy:
     return RetryPolicy(
         initial_interval=1.0,
         backoff_factor=2.0,
-        max_attempts=3,
+        max_attempts=5,
+        max_interval=128.0,
         jitter=True,
     )
