@@ -42,10 +42,19 @@ def is_valid_date(date: str) -> bool:
         return False
 
 
-def format_date(date: Optional[str]) -> Optional[datetime]:
-    """Format a date."""
-    if not date or not is_valid_date(date):
+def format_date(date: Optional[str | datetime]) -> Optional[datetime]:
+    """Format a date string or datetime object into a datetime."""
+    if not date:
         return None
+
+    # If it's already a datetime object, just return it
+    if isinstance(date, datetime):
+        return date
+
+    # Otherwise, try to parse the string
+    if not is_valid_date(date):
+        return None
+
     return parser.parse(date)
 
 
@@ -75,29 +84,34 @@ def compute_status(starts_at: Optional[datetime], ends_at: Optional[datetime]) -
 def get_profile_metadata(profile: Profile) -> Profile:
     """Enrich the profile with metadata."""
     for experience in profile.experiences:
-        experience.metadata_duration = compute_duration(
-            experience.startsAt, experience.endsAt
-        )
-        experience.metadata_status = compute_status(
-            experience.startsAt, experience.endsAt
-        )
+        # Format the dates first
+        formatted_start = format_date(experience.startsAt)
+        formatted_end = format_date(experience.endsAt)
+
+        experience.metadata_duration = compute_duration(formatted_start, formatted_end)
+        experience.metadata_status = compute_status(formatted_start, formatted_end)
 
     for education in profile.educations:
-        education.metadata_duration = compute_duration(
-            education.startsAt, education.endsAt
-        )
-        education.metadata_status = compute_status(education.startsAt, education.endsAt)
+        formatted_start = format_date(education.startsAt)
+        formatted_end = format_date(education.endsAt)
+
+        education.metadata_duration = compute_duration(formatted_start, formatted_end)
+        education.metadata_status = compute_status(formatted_start, formatted_end)
 
     for project in profile.projects:
-        project.metadata_duration = compute_duration(project.startsAt, project.endsAt)
-        project.metadata_status = compute_status(project.startsAt, project.endsAt)
+        formatted_start = format_date(project.startsAt)
+        formatted_end = format_date(project.endsAt)
+
+        project.metadata_duration = compute_duration(formatted_start, formatted_end)
+        project.metadata_status = compute_status(formatted_start, formatted_end)
 
     for volunteering in profile.volunteerings:
+        formatted_start = format_date(volunteering.startsAt)
+        formatted_end = format_date(volunteering.endsAt)
+
         volunteering.metadata_duration = compute_duration(
-            volunteering.startsAt, volunteering.endsAt
+            formatted_start, formatted_end
         )
-        volunteering.metadata_status = compute_status(
-            volunteering.startsAt, volunteering.endsAt
-        )
+        volunteering.metadata_status = compute_status(formatted_start, formatted_end)
 
     return profile
