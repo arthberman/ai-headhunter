@@ -16,55 +16,6 @@ load_dotenv(dotenv_path=".env.studio")
 load_dotenv(dotenv_path=".env")
 
 
-def judge_evaluator(root_run: Run, example: Example) -> dict:
-    class GradeCriterion(BaseModel):
-        """A numerical score for criterion relevancy."""
-
-        score: int = Field(description="Criterion score from 1 to 10")
-        explanation: str = Field(
-            description="Explanation for the score, max 100 characters"
-        )
-
-    class GradeQuestions(BaseModel):
-        """A numerical score for question relevancy."""
-
-        questions: List[GradeCriterion] = Field(
-            description="List of criterion scores and explanations"
-        )
-
-    prompt = hub.pull("eval-judge-scorecard-questions")
-    raw_model = init_model(
-        "bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0"
-    )
-    model = raw_model.with_structured_output(GradeQuestions)
-
-    chain = cast(Runnable, prompt | model)
-    res = cast(
-        GradeQuestions,
-        chain.invoke({"input": example.inputs, "output": root_run.outputs}),
-    )
-
-    scores = [q.score for q in res.questions]
-
-    metrics = [
-        {
-            "key": "mean_score",
-            "score": sum(scores) / len(scores),  # Overall performance
-        },
-        {
-            "key": "min_score",
-            "score": min(scores),  # Worst-case detection
-        },
-        {
-            "key": "critical_issues",
-            "score": sum(1 for s in scores if s < 5)
-            / len(scores),  # Proportion of low scores
-        },
-    ]
-
-    return {"results": metrics}
-
-
 def predict_questions(example: dict):
     prompt = hub.pull("generate-scorecard-questions")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
@@ -91,10 +42,81 @@ def predict_questions(example: dict):
     return res
 
 
+def judge_evaluator_criteria(root_run: Run, example: Example) -> dict:
+    class GradeCriterion(BaseModel):
+        """A numerical score for criterion relevancy."""
+
+        score: int = Field(description="Criterion score from 1 to 10")
+        explanation: str = Field(
+            description="Explanation for the score, max 100 characters"
+        )
+
+    class GradeQuestions(BaseModel):
+        """A numerical score for question relevancy."""
+
+        questions: List[GradeCriterion] = Field(
+            description="List of criterion scores and explanations"
+        )
+
+    prompt = hub.pull("eval-judge-scorecard-questions-criteria")
+    raw_model = init_model(
+        "bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+    )
+    model = raw_model.with_structured_output(GradeQuestions)
+
+    chain = cast(Runnable, prompt | model)
+    res = cast(
+        GradeQuestions,
+        chain.invoke({"input": example.inputs, "output": root_run.outputs}),
+    )
+
+    scores = [q.score for q in res.questions]
+
+    metrics = [
+        {
+            "key": "mean_score",
+            "score": sum(scores) / len(scores),  # Overall performance
+        },
+        {
+            "key": "min_score",
+            "score": min(scores),  # Worst-case detection
+        },
+        {
+            "key": "critical_issues",
+            "score": sum(1 for s in scores if s < 5)
+            / len(scores),  # Propo@rtion of low scores
+        },
+    ]
+
+    return {"results": metrics}
+
+
+def judge_evaluator_reference(root_run: Run, example: Example) -> dict:
+    class GradeScore(BaseModel):
+        """A numerical score for question relevancy."""
+
+        score: int = Field(description="Score from 1 to 10")
+        explanation: str = Field(description="Explanation for the score")
+
+    prompt = hub.pull("eval-judge-scorecard-questions")
+    raw_model = init_model(
+        "bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+    )
+    model = raw_model.with_structured_output(GradeScore)
+
+    chain = cast(Runnable, prompt | model)
+    res = cast(
+        GradeScore,
+        chain.invoke({"prediction": root_run.outputs, "reference": example.outputs}),
+    )
+
+    return {"results": [{"key": "reference_score", "score": res.score}]}
+
+
 experiment_results = evaluate(
     predict_questions,
     data="ds-scorecard-questions",
-    evaluators=[judge_evaluator],
+    evaluators=[judge_evaluator_criteria, judge_evaluator_reference],
     experiment_prefix="test-scorecard-questions",
     metadata={
         "variant": "synthethic data",
