@@ -1,3 +1,5 @@
+# ruff: noqa
+
 import os
 import re
 import subprocess
@@ -113,6 +115,14 @@ def update_packages():
     # Delete the requirements.txt file
     os.remove("requirements.txt")
     print("requirements.txt has been deleted.")
+
+    # Run uv lock --upgrade
+    print("Running uv lock --upgrade...")
+    lock_result = run_command("uv lock --upgrade")
+    if lock_result is not None:
+        print("uv lock completed successfully.")
+    else:
+        print("Error occurred while running uv lock.")
 
     # Run uv sync
     print("Running uv sync...")
