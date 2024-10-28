@@ -20,6 +20,6 @@ class LanguageProficiency(BaseModel):
     proficiency: str = Field(
         description="The proficiency level of the language ('native', 'profesionnal' or 'fluent')"
     )
-    reason: str = Field(
-        description="The reason for the prediction, brief explanation of the model's decision"
+    explanation: str = Field(
+        description="The explanation for the prediction, brief explanation of the model's decision"
     )
