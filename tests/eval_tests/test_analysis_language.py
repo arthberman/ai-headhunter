@@ -15,7 +15,7 @@ load_dotenv(dotenv_path=".env.studio")
 load_dotenv(dotenv_path=".env")
 
 
-def test_language_enrichment(example: dict):
+def predict_language_enrichment(example: dict):
     # Initialize the raw model with the provided configuration
     raw_model = init_model(
         "bedrock_converse/us.us.anthropic.claude-3-5-sonnet-20241022-v2:0"
@@ -90,11 +90,11 @@ def correct_label(root_run: Run, example: Example) -> dict:
 
 
 experiment_results = evaluate(
-    test_language_enrichment,
+    predict_language_enrichment,
     data="ds-language",
     evaluators=[correct_label],
     experiment_prefix="test-language-enrichment",
     metadata={
-        "variant": "synthethic data with openai/gpt-4o-mini",
+        "variant": "synthethic data",
     },
 )

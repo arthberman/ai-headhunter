@@ -9,4 +9,5 @@ def init_model(fully_specified_name: str) -> BaseChatModel:
     else:
         provider = None
         model = fully_specified_name
+
     return init_chat_model(model, model_provider=provider, temperature=0)
