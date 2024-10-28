@@ -1,5 +1,6 @@
 from langgraph.graph import END, START, StateGraph
 
+from scorecard.configuration import Configuration
 from scorecard.nodes import (
     get_enrichment_graph,
     node_context,
@@ -16,7 +17,11 @@ from utils import get_retry_policy
 
 def compile_scorecard_graph() -> StateGraph:
     """Compile the scorecard full graph."""
-    workflow = StateGraph(ScorecardGraphState, input=ScorecardInputGraphState)
+    workflow = StateGraph(
+        ScorecardGraphState,
+        input=ScorecardInputGraphState,
+        config_schema=Configuration,
+    )
 
     # Add nodes to the graph
     workflow.add_node("enrichment", get_enrichment_graph())
