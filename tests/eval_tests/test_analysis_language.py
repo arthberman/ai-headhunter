@@ -77,7 +77,13 @@ def correct_label(root_run: Run, example: Example) -> dict:
 
     # Handle edge case where there are no true positives
     if true_positives == 0:
-        return {"key": "f1_score", "score": 0.0}
+        return {
+            "results": [
+                {"key": "f1_score", "score": 0.0},
+                {"key": "precision", "score": 0.0},
+                {"key": "recall", "score": 0.0},
+            ]
+        }
 
     # Compute precision and recall
     precision = true_positives / (true_positives + false_positives)
@@ -86,7 +92,13 @@ def correct_label(root_run: Run, example: Example) -> dict:
     # Calculate F1 score
     f1_score = 2 * (precision * recall) / (precision + recall)
 
-    return {"key": "f1_score", "score": f1_score}
+    return {
+        "results": [
+            {"key": "f1_score", "score": f1_score},
+            {"key": "precision", "score": precision},
+            {"key": "recall", "score": recall},
+        ]
+    }
 
 
 experiment_results = evaluate(

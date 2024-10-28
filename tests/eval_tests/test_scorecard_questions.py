@@ -84,7 +84,7 @@ def judge_evaluator_criteria(root_run: Run, example: Example) -> dict:
         {
             "key": "critical_issues",
             "score": sum(1 for s in scores if s < 5)
-            / len(scores),  # Propo@rtion of low scores
+            / len(scores),  # Proportion of low scores
         },
     ]
 
