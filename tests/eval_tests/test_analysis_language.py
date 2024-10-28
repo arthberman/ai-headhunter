@@ -18,7 +18,7 @@ load_dotenv(dotenv_path=".env")
 def predict_language_enrichment(example: dict):
     # Initialize the raw model with the provided configuration
     raw_model = init_model(
-        "bedrock_converse/us.us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+        "bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0"
     )
 
     # Initialize the prompt
