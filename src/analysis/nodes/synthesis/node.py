@@ -24,8 +24,8 @@ def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorec
                 ExtendedScoredCriterion(
                     **scored_criterion.model_dump(),
                     description=criterion.description,
-                    importance_level=criterion.importance_level,
-                    criterion_type=criterion.type,
+                    importance_level=criterion.importance_level.value,
+                    criterion_type=criterion.type.value,
                 )
             )
 

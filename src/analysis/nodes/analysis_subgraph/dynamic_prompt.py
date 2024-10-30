@@ -1,8 +1,38 @@
+from analysis.nodes.analysis_subgraph.models import CotQuestions
 from scorecard.models.scorecard import (
     BaseCriterion,
     ImportanceLevel,
     ScoringDistribution,
 )
+
+
+def prepare_evaluation_steps(cot_questions: CotQuestions, instructions: str) -> str:
+    """Generate evaluation steps with dynamically inserted questions."""
+    steps = ["1. Carefully analyze the given criterion to score."]
+
+    # Add questions starting from step 2
+    for i, question in enumerate(cot_questions.questions, start=2):
+        steps.append(
+            f"{i}. Answer the question : {question.text} (purpose: {question.purpose})."
+        )
+
+    # Continue with remaining steps
+    next_step = len(cot_questions.questions) + 2
+    remaining_steps = [
+        f"{next_step}. If necessary, use `search_web` to gather additional context available on a web search (maximum 2 call to the `search_web` tool)",
+        f"{next_step + 1}. Evaluate how well the candidate meets the criterion based on all gathered information and reasonable inferences.",
+        f"{next_step + 2}. Apply the scoring instructions to assign a numerical score:",
+        f"{'<scoring_instructions>'}\n{instructions}\n{'</scoring_instructions>'}",  # Escaped using nested f-strings
+        f"{next_step + 3}. Determine your confidence level based on whether the information was directly available or inferred.",
+        f"{next_step + 4}. Write a brief explanation for your evaluation (max 400 characters), including:",
+        "   - Key factors that influenced your scoring",
+        "   - Any inferences you made and how they affected your score and confidence level",
+        f"{next_step + 5}. Use `ScoredCriterion` tool to submit your final score, explanation, and confidence level.",
+    ]
+
+    steps.extend(remaining_steps)
+
+    return "\n".join(steps)
 
 
 def prepare_scoring_instructions(
@@ -59,11 +89,5 @@ def prepare_scoring_instructions(
     instructions.append(
         "   - HIGH = 0.8: When the information is directly available and clearly supports your evaluation."
     )
-
-    # Add criterion-specific information
-    instructions.append(f"\nCriterion Description: {criterion.description}")
-    if criterion.context:
-        instructions.append(f"Context: {criterion.context}")
-    instructions.append(f"Type: {criterion.type.value}")
 
     return "\n".join(instructions)
