@@ -5,7 +5,7 @@ description = "AI Agents for repio.co"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = ["python-dotenv>=1.0.1",
-  "langchain>=0.3.4",
+  "langchain>=0.3.5",
   "langchain-community>=0.3.3",
   "langchainhub>=0.1.21",
   "langchain-anthropic>=0.2.3",
@@ -21,8 +21,8 @@ dependencies = ["python-dotenv>=1.0.1",
   "sqlalchemy>=2.0.36",
   "langchain-aws>=0.2.4",
   "langchain-fireworks>=0.2.1",
-  "trustcall>=0.0.22",
-  "pyairtable>=2.3.4"]
+  "trustcall>=0.0.24",
+  "pyairtable>=2.3.5"]
 
 [build-system]
 requires = ["hatchling"]

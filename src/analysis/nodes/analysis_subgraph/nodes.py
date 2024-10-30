@@ -1,16 +1,18 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, cast
 
 from langchain import hub
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnableConfig
+from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.full.state import MainGraphState
 from analysis.iterative.configuration import Configuration
 from analysis.nodes.analysis_subgraph.dynamic_prompt import (
+    prepare_evaluation_steps,
     prepare_scoring_instructions,
 )
+from analysis.nodes.analysis_subgraph.models import CotQuestions
 from analysis.nodes.analysis_subgraph.state import AnalysisMainState
 from analysis.nodes.analysis_subgraph.tools import ScoredCriterion, get_tools
 from utils import init_model
@@ -22,18 +24,41 @@ def init_agent(
     """Initialize the agent with the provided state."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
+
+    prompt = hub.pull("analysis-cot-questions:production")
+    raw_model = init_model(
+        "bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+    )
+    model = raw_model.with_structured_output(CotQuestions)
+
+    # Create the chain
+    chain = cast(RunnableLambda, prompt | model)
+
+    cot_questions = cast(
+        CotQuestions,
+        chain.invoke(
+            {
+                "description": state.criterion.description,
+                "importance_level": state.criterion.importance_level.value,
+                "context": state.criterion.context,
+            }
+        ),
+    )
+
     hub_prompt = hub.pull("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
     instructions = prepare_scoring_instructions(state.criterion)
+    evaluation_steps = prepare_evaluation_steps(cot_questions, instructions)
 
     formatted_messages = chat_prompt.format_messages(
         id=state.criterion.id,
         description=state.criterion.description,
-        importance_level=state.criterion.importance_level,
-        scoring_distribution=state.criterion.scoring_distribution,
+        importance_level=state.criterion.importance_level.value,
+        type=state.criterion.type.value,
+        scoring_distribution=state.criterion.scoring_distribution.value,
         context=state.criterion.context,
-        scoring_instructions=instructions,
+        evaluation_steps=evaluation_steps,
         system_time=datetime.now().isoformat(),
     )
 
@@ -68,9 +93,7 @@ def call_model(
     raw_model = init_model(configuration.analysis_model)
 
     # Bind the tools to the model
-    model = raw_model.bind_tools(
-        get_tools(), tool_choice="any", parallel_tool_calls=True
-    )
+    model = raw_model.bind_tools(get_tools(), tool_choice="any")
 
     # Call the model with the provided state
     response = model.invoke(state.messages)
