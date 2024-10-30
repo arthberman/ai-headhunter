@@ -20,7 +20,7 @@ def node_career_path(
     raw_model = init_model(configuration.career_path_model)
 
     # Initialize the prompt
-    prompt = hub.pull("analyze-career-path")
+    prompt = hub.pull("analyze-career-path:production")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(CareerPathOutput)
