@@ -22,7 +22,7 @@ def prepare_evaluation_steps(cot_questions: CotQuestions, instructions: str) -> 
         f"{next_step}. If necessary, use `search_web` to gather additional context available on a web search (maximum 2 call to the `search_web` tool)",
         f"{next_step + 1}. Evaluate how well the candidate meets the criterion based on all gathered information and reasonable inferences.",
         f"{next_step + 2}. Apply the scoring instructions to assign a numerical score:",
-        f"{'<scoring_instructions>'}\n{instructions}\n{'</scoring_instructions>'}",  # Escaped using nested f-strings
+        f"{instructions}",
         f"{next_step + 3}. Determine your confidence level based on whether the information was directly available or inferred.",
         f"{next_step + 4}. Write a brief explanation for your evaluation (max 400 characters), including:",
         "   - Key factors that influenced your scoring",
@@ -43,7 +43,7 @@ def prepare_scoring_instructions(
 
     # Add importance level instruction
     instructions.append(
-        f"1. Consider the importance level of the criterion: {criterion.importance_level.value}"
+        f"a. Consider the importance level of the criterion: {criterion.importance_level.value}"
     )
 
     if criterion.importance_level == ImportanceLevel.MUST_HAVE:
@@ -62,7 +62,7 @@ def prepare_scoring_instructions(
     # Add scoring distribution instruction
     if criterion.scoring_distribution:
         instructions.append(
-            f"2. Apply the {criterion.scoring_distribution.value} scoring distribution:"
+            f"b. Apply the {criterion.scoring_distribution.value} scoring distribution:"
         )
 
         if criterion.scoring_distribution == ScoringDistribution.BINARY:
@@ -79,7 +79,7 @@ def prepare_scoring_instructions(
             )
 
     # Add simplified confidence level instruction
-    instructions.append("3. Determine your confidence level:")
+    instructions.append("c. Determine your confidence level:")
     instructions.append(
         "   - LOW = 0.2: When you need to make significant inferences or have limited information to support your evaluation."
     )
