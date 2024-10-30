@@ -32,7 +32,7 @@ def node_scoring_distribution(
     """Generate scoring distribution for the scorecard criteria without existing distributions."""
     configuration = Configuration.from_runnable_config(config)
 
-    prompt = hub.pull("generate-scorecard-scoring-distribution:production")
+    prompt = hub.pull("generate-scorecard-scoring-distribution:development")
 
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 

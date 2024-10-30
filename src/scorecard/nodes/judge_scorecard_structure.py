@@ -24,7 +24,7 @@ def node_judge_scorecard_structure(
 
     limited_scorecard = LimitedScorecard(**state.scorecard.model_dump())
 
-    prompt = hub.pull("judge-scorecard-structure:production")
+    prompt = hub.pull("judge-scorecard-structure:development")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages()

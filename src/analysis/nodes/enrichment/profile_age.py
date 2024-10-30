@@ -23,7 +23,7 @@ def node_estimate_profile_age(
     raw_model = init_model(configuration.default_model)
 
     # Initialize the prompt
-    prompt = hub.pull("analysis-find-age:production")
+    prompt = hub.pull("analysis-find-age:development")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(ProfileAge)
