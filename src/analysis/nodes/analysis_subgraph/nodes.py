@@ -45,7 +45,7 @@ def init_agent(
         ),
     )
 
-    hub_prompt = hub.pull("score-analysis-criterion")
+    hub_prompt = hub.pull("score-analysis-criterion:production")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
     instructions = prepare_scoring_instructions(state.criterion)
