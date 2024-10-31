@@ -138,7 +138,9 @@ def node_education_enrichment(
             }
 
         # If not in database, perform Tavily search
-        tavily_res = tavily_tool.invoke({"query": f"school {education.school}"})
+        tavily_res = tavily_tool.invoke(
+            {"query": f"school {education.school} ({education.linkedin_url})"}
+        )
         prompt = hub.pull("generate-education-enrichment:production")
 
         # Initialize the chat model with the provided configuration

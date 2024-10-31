@@ -139,7 +139,9 @@ def node_experience_enrichment(
             }
 
         # If not in database, perform Tavily search
-        tavily_res = tavily_tool.invoke({"query": f"company {experience.company}"})
+        tavily_res = tavily_tool.invoke(
+            {"query": f"company {experience.company} ({experience.location})"}
+        )
         prompt = hub.pull("generate-experience-enrichment:production")
 
         # Initialize the chat model with the provided configuration
