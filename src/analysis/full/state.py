@@ -17,7 +17,15 @@ from analysis.nodes.career_path.models import CareerPathOutput
 from scorecard.models.scorecard import Scorecard
 
 
-class MainGraphState(BaseModel):
+class InputGraphState(BaseModel):
+    """State of the input graph."""
+
+    profile: Profile = Field(...)
+    scorecard: Scorecard = Field(...)
+    job_synthesis: str = Field(...)
+
+
+class MainGraphState(InputGraphState):
     """State of the main graph."""
 
     profile: Profile = Field(...)
@@ -31,14 +39,6 @@ class MainGraphState(BaseModel):
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
     career_path: Optional[CareerPathOutput] = Field(default=None)
     synthesis: Optional[Synthesis] = Field(default=None)
-
-
-class InputGraphState(BaseModel):
-    """State of the input graph."""
-
-    profile: Profile = Field(...)
-    scorecard: Scorecard = Field(...)
-    job_synthesis: str = Field(...)
 
 
 class EducationState(BaseModel):
