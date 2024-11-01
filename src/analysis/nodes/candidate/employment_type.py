@@ -14,15 +14,17 @@ class StructuredOutput(BaseModel):
     """Structured output for employment type detection."""
 
     employment_type: str = Field(
-        description="The employment type of the experience (Full-time, Part-time, Internship, Apprenticeship, Freelance, Non-Executive Role)"
+        ...,
+        description="The employment type of the experience (Full-time, Part-time, Internship, Apprenticeship, Freelance, Non-Executive Role)",
     )
 
     explanation: str = Field(
-        description="The explanation for the employment type, max 200 characters."
+        ..., description="The explanation for the employment type, max 200 characters."
     )
 
     confidence_score: float = Field(
-        description="The confidence score of the employment type (LOW: 0.2 - MEDIUM: 0.5 - HIGH: 0.8)."
+        ...,
+        description="The confidence score of the employment type (LOW: 0.2 - MEDIUM: 0.5 - HIGH: 0.8).",
     )
 
 

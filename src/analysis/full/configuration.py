@@ -8,13 +8,15 @@ class Configuration(BaseModel):
     """The configuration for the matcher."""
 
     default_model: str = Field(
-        default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        # default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        default="openai/gpt-4o",
         description="The name of the language model to use for the analysis. "
         "Should be in the form: provider/model-name.",
     )
 
     analysis_model: str = Field(
-        default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        # default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        default="openai/gpt-4o",
         description="The name of the language model to use for the analysis. "
         "Should be in the form: provider/model-name.",
     )
@@ -26,13 +28,15 @@ class Configuration(BaseModel):
     )
 
     synthesis_model: str = Field(
-        default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        # default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        default="openai/gpt-4o",
         description="The name of the language model to use for the synthesis. "
         "Should be in the form: provider/model-name.",
     )
 
     career_path_model: str = Field(
-        default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        # default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        default="openai/gpt-4o",
         description="The name of the language model to use for the career path. "
         "Should be in the form: provider/model-name.",
     )

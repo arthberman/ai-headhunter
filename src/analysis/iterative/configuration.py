@@ -8,7 +8,7 @@ class Configuration(BaseModel):
     """The configuration for the matcher."""
 
     analysis_model: str = Field(
-        default="openai/gpt-4o-2024-08-06",
+        default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
         description="The name of the language model to use for the analysis. "
         "Should be in the form: provider/model-name.",
     )

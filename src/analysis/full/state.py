@@ -13,7 +13,6 @@ from analysis.models.profile import (
 from analysis.models.school import SchoolInfo
 from analysis.models.synthesis import Synthesis
 from analysis.nodes.analysis_subgraph.models import ScoredCriterion
-from analysis.nodes.career_path.models import CareerPathOutput
 from scorecard.models.scorecard import Scorecard
 
 
@@ -37,7 +36,10 @@ class MainGraphState(InputGraphState):
     language_enrichment: Optional[List[LanguageProficiency]] = Field(default=None)
 
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
-    career_path: Optional[CareerPathOutput] = Field(default=None)
+    sector_analysis: Optional[str] = Field(default=None)
+    culture_analysis: Optional[str] = Field(default=None)
+    intent_analysis: Optional[str] = Field(default=None)
+    hierarchy_analysis: Optional[str] = Field(default=None)
     synthesis: Optional[Synthesis] = Field(default=None)
 
 
