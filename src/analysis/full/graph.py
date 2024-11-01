@@ -7,13 +7,14 @@ from langgraph.graph.graph import CompiledGraph
 from analysis.full.configuration import Configuration
 from analysis.full.state import InputGraphState, MainGraphState
 from analysis.nodes.analysis_subgraph.graph import get_analysis_subgraph
-from analysis.nodes.career_path.analysis import node_career_path
+from analysis.nodes.candidate.culture import node_analysis_culture
+from analysis.nodes.candidate.employment_type import node_find_employment_type
+from analysis.nodes.candidate.language import node_language_enrichment
+from analysis.nodes.candidate.profile_age import node_estimate_profile_age
+from analysis.nodes.candidate.profile_metadata import get_profile_metadata
+from analysis.nodes.candidate.sector import node_analysis_sector
 from analysis.nodes.enrichment.education import node_education_enrichment
-from analysis.nodes.enrichment.employment_type import node_find_employment_type
 from analysis.nodes.enrichment.experience import node_experience_enrichment
-from analysis.nodes.enrichment.language import node_language_enrichment
-from analysis.nodes.enrichment.profile_age import node_estimate_profile_age
-from analysis.nodes.enrichment.profile_metadata import get_profile_metadata
 from analysis.nodes.synthesis.node import node_synthesis
 from utils import get_retry_policy
 
@@ -118,7 +119,12 @@ def compile_analysis_full_graph() -> CompiledGraph:
         "node_analysis",
         get_analysis_subgraph(),
     )
-    workflow.add_node("node_career_path", node_career_path, retry=get_retry_policy())
+    workflow.add_node(
+        "node_analysis_sector", node_analysis_sector, retry=get_retry_policy()
+    )
+    workflow.add_node(
+        "node_analysis_culture", node_analysis_culture, retry=get_retry_policy()
+    )
     workflow.add_node("init_analysis", init_analysis)
     workflow.add_node("node_synthesis", node_synthesis, retry=get_retry_policy())
 
@@ -136,15 +142,17 @@ def compile_analysis_full_graph() -> CompiledGraph:
     )
     workflow.add_edge("init_node", "node_language_enrichment")
     workflow.add_edge("init_node", "node_find_employment_type")
-    workflow.add_edge("init_node", "node_career_path")
+    workflow.add_edge("init_node", "node_analysis_sector")
+    workflow.add_edge("init_node", "node_analysis_culture")
     workflow.add_edge("node_find_employment_type", "node_estimate_profile_age")
     workflow.add_edge(
         [
             "node_experience_enrichment",
             "node_education_enrichment",
             "node_language_enrichment",
-            "node_career_path",
             "node_estimate_profile_age",
+            "node_analysis_sector",
+            "node_analysis_culture",
         ],
         "init_analysis",
     )

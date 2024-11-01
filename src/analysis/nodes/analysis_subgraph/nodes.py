@@ -6,8 +6,8 @@ from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
+from analysis.full.configuration import Configuration
 from analysis.full.state import MainGraphState
-from analysis.iterative.configuration import Configuration
 from analysis.nodes.analysis_subgraph.dynamic_prompt import (
     prepare_evaluation_steps,
     prepare_scoring_instructions,
@@ -26,9 +26,7 @@ def init_agent(
     configuration = Configuration.from_runnable_config(config)
 
     prompt = hub.pull("analysis-cot-questions:production")
-    raw_model = init_model(
-        "bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0"
-    )
+    raw_model = init_model(configuration.analysis_model)
     model = raw_model.with_structured_output(CotQuestions)
 
     # Create the chain
