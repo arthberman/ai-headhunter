@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, cast
 
 from langchain import hub
@@ -62,6 +63,9 @@ def node_synthesis(
                 "profile": format_data(state.profile),
                 "extended_scored_criterion": extended_scored_criterion,
                 "job_synthesis": state.job_synthesis,
+                "output_schema": Synthesis.model_json_schema(),
+                "output_language": "en",
+                "system_time": datetime.now().isoformat(),
             }
         ),
     )

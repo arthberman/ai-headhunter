@@ -61,6 +61,8 @@ def node_find_employment_type(
                         "experience": format_data(experience),
                         "experiences": format_data(state.profile.experiences),
                         "educations": format_data(state.profile.educations),
+                        "output_schema": StructuredOutput.model_json_schema(),
+                        "output_language": "en",
                         "system_time": datetime.now().isoformat(),
                     }
                 ),

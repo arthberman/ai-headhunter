@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional, cast
 
 from langchain import hub
@@ -40,7 +41,14 @@ def node_language_enrichment(
     # Invoke the chain
     res = cast(
         StructuredOutput,
-        chain.invoke({"profile": format_data(state.profile), "knowledge_points": ""}),
+        chain.invoke(
+            {
+                "profile": format_data(state.profile),
+                "output_schema": StructuredOutput.model_json_schema(),
+                "output_language": "en",
+                "system_time": datetime.now().isoformat(),
+            }
+        ),
     )
 
     return {"language_enrichment": res.language_proficiency}

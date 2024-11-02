@@ -39,6 +39,9 @@ def init_agent(
                 "description": state.criterion.description,
                 "importance_level": state.criterion.importance_level.value,
                 "context": state.criterion.context,
+                "output_schema": CotQuestions.model_json_schema(),
+                "system_time": datetime.now().isoformat(),
+                "output_language": "en",
             }
         ),
     )
@@ -57,6 +60,7 @@ def init_agent(
         scoring_distribution=state.criterion.scoring_distribution.value,
         context=state.criterion.context,
         evaluation_steps=evaluation_steps,
+        output_language="en",
         system_time=datetime.now().isoformat(),
     )
 

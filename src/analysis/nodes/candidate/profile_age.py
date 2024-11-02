@@ -36,6 +36,8 @@ def node_estimate_profile_age(
         chain.invoke(
             {
                 "profile": format_data(state.profile),
+                "output_schema": ProfileAge.model_json_schema(),
+                "output_language": "en",
                 "system_time": datetime.now().isoformat(),
             }
         ),

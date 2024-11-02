@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, cast
 
 from langchain import hub
@@ -39,7 +40,14 @@ def node_analysis_culture(
     # Invoke the chain
     res = cast(
         StructuredOutput,
-        chain.invoke({"candidate": format_data(state.profile)}),
+        chain.invoke(
+            {
+                "candidate": format_data(state.profile),
+                "output_schema": StructuredOutput.model_json_schema(),
+                "output_language": "en",
+                "system_time": datetime.now().isoformat(),
+            }
+        ),
     )
 
     return {"culture_analysis": res.synthesis}
