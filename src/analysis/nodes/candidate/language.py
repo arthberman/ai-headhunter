@@ -11,10 +11,10 @@ from analysis.models.language import LanguageProficiency
 from utils import format_data, init_model
 
 
-class StructuredOutput(BaseModel):
-    """Structured output for the language enrichment model."""
+class LanguageProficiency(BaseModel):
+    """Language proficiency."""
 
-    language_proficiency: List[LanguageProficiency] = Field(
+    languages: List[LanguageProficiency] = Field(
         description="List of language proficiencies, each containing a language and its corresponding level"
     )
 
@@ -33,22 +33,22 @@ def node_language_enrichment(
     prompt = hub.pull("generate-language-enrichment:production")
 
     # Bind the model to the structured output
-    model = raw_model.with_structured_output(StructuredOutput)
+    model = raw_model.with_structured_output(LanguageProficiency)
 
     # Create the chain
     chain = cast(Runnable, prompt | model)
 
     # Invoke the chain
     res = cast(
-        StructuredOutput,
+        LanguageProficiency,
         chain.invoke(
             {
                 "profile": format_data(state.profile),
-                "output_schema": StructuredOutput.model_json_schema(),
+                "output_schema": LanguageProficiency.model_json_schema(),
                 "output_language": "en",
                 "system_time": datetime.now().isoformat(),
             }
         ),
     )
 
-    return {"language_enrichment": res.language_proficiency}
+    return {"language_enrichment": res.languages}

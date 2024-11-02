@@ -10,10 +10,10 @@ from analysis.full.state import MainGraphState
 from utils import format_data, init_model
 
 
-class StructuredOutput(BaseModel):
-    """Structured output for employment type detection."""
+class EmploymentType(BaseModel):
+    """Employment type detection."""
 
-    employment_type: str = Field(
+    type: str = Field(
         ...,
         description="The employment type of the experience (Full-time, Part-time, Internship, Apprenticeship, Freelance, Non-Executive Role)",
     )
@@ -22,7 +22,7 @@ class StructuredOutput(BaseModel):
         ..., description="The explanation for the employment type, max 200 characters."
     )
 
-    confidence_score: float = Field(
+    confidence: float = Field(
         ...,
         description="The confidence score of the employment type (LOW: 0.2 - MEDIUM: 0.5 - HIGH: 0.8).",
     )
@@ -44,7 +44,7 @@ def node_find_employment_type(
     prompt = hub.pull("analysis-find-employment-type:production")
 
     # Bind the model to the structured output
-    model = raw_model.with_structured_output(StructuredOutput)
+    model = raw_model.with_structured_output(EmploymentType)
 
     # Create the chain
     chain = cast(Runnable, prompt | model)
@@ -55,13 +55,13 @@ def node_find_employment_type(
         if not experience.employment_type:
             # Invoke the chain for experiences without employment type
             res = cast(
-                StructuredOutput,
+                EmploymentType,
                 chain.invoke(
                     {
                         "experience": format_data(experience),
                         "experiences": format_data(state.profile.experiences),
                         "educations": format_data(state.profile.educations),
-                        "output_schema": StructuredOutput.model_json_schema(),
+                        "output_schema": EmploymentType.model_json_schema(),
                         "output_language": "en",
                         "system_time": datetime.now().isoformat(),
                     }
@@ -70,7 +70,7 @@ def node_find_employment_type(
 
             # Update employment type if confidence score is higher than 70%
             if res.confidence_score >= 0.5:
-                experience.employment_type = res.employment_type
+                experience.employment_type = res.type
 
         updated_experiences.append(experience)
 
