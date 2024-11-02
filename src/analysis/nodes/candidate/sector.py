@@ -10,8 +10,8 @@ from analysis.full.state import MainGraphState
 from utils import format_data, init_model
 
 
-class StructuredOutput(BaseModel):
-    """Structured output for the sector analysis model."""
+class SectorSynthesis(BaseModel):
+    """Sector analysis synthesis."""
 
     synthesis: str = Field(
         description="Synthesis of the analysis of the sector of the candidate. (max 600 characters)"
@@ -32,18 +32,18 @@ def node_analysis_sector(
     prompt = hub.pull("analysis-candidate-sector:production")
 
     # Bind the model to the structured output
-    model = raw_model.with_structured_output(StructuredOutput)
+    model = raw_model.with_structured_output(SectorSynthesis)
 
     # Create the chain
     chain = cast(Runnable, prompt | model)
 
     # Invoke the chain
     res = cast(
-        StructuredOutput,
+        SectorSynthesis,
         chain.invoke(
             {
                 "candidate": format_data(state.profile),
-                "output_schema": StructuredOutput.model_json_schema(),
+                "output_schema": SectorSynthesis.model_json_schema(),
                 "output_language": "en",
                 "system_time": datetime.now().isoformat(),
             }
