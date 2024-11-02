@@ -20,18 +20,21 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from analysis.full.configuration import Configuration
-from analysis.full.state import EducationState, MainGraphState
-from analysis.models.profile import ProfileEducation
-from analysis.models.school import SchoolInfo
+from analysis.models.company import CompanyInfo
+from analysis.models.profile import ProfileExperience
+from analysis.sub_graph.web_enrichment.state import (
+    ExperienceState,
+    OutputEnrichmentState,
+)
 from utils import init_model
 
 Base = declarative_base()
 
 
-class EnrichmentSchool(Base):
-    """School enrichment model."""
+class EnrichmentCompany(Base):
+    """Company enrichment model."""
 
-    __tablename__ = "EnrichmentSchool"
+    __tablename__ = "EnrichmentCompany"
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -46,11 +49,11 @@ class EnrichmentSchool(Base):
     name = Column(String, nullable=False)
     description = Column(String)
     linkedinUrl = Column(String, nullable=False)
-    fields = Column(ARRAY(String))
-    ranking = Column(String)
+    sectors = Column(ARRAY(String))
+    companyStage = Column(String)
 
     __table_args__ = (
-        UniqueConstraint("name", "linkedinUrl", name="uq_school_name_linkedinUrl"),
+        UniqueConstraint("name", "linkedinUrl", name="uq_company_name_linkedinUrl"),
     )
 
 
@@ -70,32 +73,33 @@ def create_db_session():
     return SessionLocal()
 
 
-def get_school_from_db(
+def get_company_from_db(
     session: Session, name: str, linkedin_url: str
-) -> EnrichmentSchool | None:
-    """Get a school from the database."""
-    stmt = select(EnrichmentSchool).where(
-        (EnrichmentSchool.name == name) & (EnrichmentSchool.linkedinUrl == linkedin_url)
+) -> EnrichmentCompany | None:
+    """Get a company from the database."""
+    stmt = select(EnrichmentCompany).where(
+        (EnrichmentCompany.name == name)
+        & (EnrichmentCompany.linkedinUrl == linkedin_url)
     )
     return session.execute(stmt).scalar_one_or_none()
 
 
-def add_school_to_db(session: Session, school_info: SchoolInfo) -> None:
-    """Add a school to the database or update if it already exists."""
-    insert_stmt = insert(EnrichmentSchool).values(
-        name=school_info.name,
-        description=school_info.description,
-        linkedinUrl=school_info.linkedin_url,
-        fields=school_info.fields,
-        ranking=school_info.ranking,
+def add_company_to_db(session: Session, company_info: CompanyInfo) -> None:
+    """Add a company to the database or update if it already exists."""
+    insert_stmt = insert(EnrichmentCompany).values(
+        name=company_info.name,
+        description=company_info.description,
+        linkedinUrl=company_info.linkedin_url,
+        sectors=company_info.sectors,
+        companyStage=company_info.company_stage,
     )
 
     do_update_stmt = insert_stmt.on_conflict_do_update(
         index_elements=["name", "linkedinUrl"],
         set_={
-            "description": school_info.description,
-            "fields": school_info.fields,
-            "ranking": school_info.ranking,
+            "description": company_info.description,
+            "sectors": company_info.sectors,
+            "companyStage": company_info.company_stage,
             "updatedAt": datetime.now(),
         },
     )
@@ -105,67 +109,68 @@ def add_school_to_db(session: Session, school_info: SchoolInfo) -> None:
         session.commit()
     except IntegrityError as e:
         session.rollback()
-        raise ValueError(f"IntegrityError occurred while adding/updating school: {e}")
+        raise ValueError(f"IntegrityError occurred: {e}")
 
 
-def node_education_enrichment(
-    state: EducationState, *, config: Optional[RunnableConfig] = None
-) -> MainGraphState:
-    """Enrich the education of the candidate."""
-    education: ProfileEducation = state["education"]
+def node_experience_enrichment(
+    state: ExperienceState, *, config: Optional[RunnableConfig] = None
+) -> OutputEnrichmentState:
+    """Enrich the experience of the candidate."""
+    experience: ProfileExperience = state["experience"]
     db_session = create_db_session()
 
     try:
         # Load configuration from the provided RunnableConfig
         configuration = Configuration.from_runnable_config(config)
 
-        # Check if the school exists in the database
-        db_school = get_school_from_db(
-            db_session, education.school, education.linkedin_url
+        # Check if the company exists in the database
+        db_company = get_company_from_db(
+            db_session, experience.company, experience.linkedin_url
         )
 
-        if db_school:
+        if db_company:
             return {
-                "education_enrichment": [
-                    SchoolInfo(
-                        name=db_school.name,
-                        description=db_school.description,
-                        linkedin_url=db_school.linkedinUrl,
-                        fields=db_school.fields,
-                        ranking=db_school.ranking,
+                "experience_enrichment": [
+                    CompanyInfo(
+                        name=db_company.name,
+                        description=db_company.description,
+                        linkedin_url=db_company.linkedinUrl,
+                        sectors=db_company.sectors,
+                        company_stage=db_company.companyStage,
                     )
                 ]
             }
 
         # If not in database, perform Tavily search
         tavily_res = tavily_tool.invoke(
-            {"query": f"school {education.school} ({education.linkedin_url})"}
+            {"query": f"company {experience.company} ({experience.location})"}
         )
-        prompt = hub.pull("generate-education-enrichment:production")
+        prompt = hub.pull("generate-experience-enrichment:production")
 
         # Initialize the chat model with the provided configuration
         raw_model = init_model(configuration.enrichment_model)
-        model = raw_model.with_structured_output(SchoolInfo)
+        model = raw_model.with_structured_output(CompanyInfo)
 
         chain = cast(Runnable, prompt | model)
         res = cast(
-            SchoolInfo,
+            CompanyInfo,
             chain.invoke(
                 {
                     "web_browsing_result": tavily_res,
-                    "school": education.school,
-                    "school_description": education.description,
-                    "linkedin_url": education.linkedin_url,
-                    "output_schema": SchoolInfo.model_json_schema(),
+                    "company": experience.company,
+                    "company_title": experience.title,
+                    "company_description": experience.description,
+                    "linkedin_url": experience.linkedin_url,
+                    "output_schema": CompanyInfo.model_json_schema(),
                     "output_language": "en",
                     "system_time": datetime.now().isoformat(),
                 }
             ),
         )
 
-        # Add the new school info to the database
-        add_school_to_db(db_session, res)
+        # Add the new company info to the database
+        add_company_to_db(db_session, res)
 
-        return {"education_enrichment": [res]}
+        return {"experience_enrichment": [res]}
     finally:
         db_session.close()

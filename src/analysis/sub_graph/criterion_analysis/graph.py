@@ -3,19 +3,19 @@ from langgraph.prebuilt import ToolNode
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import MainGraphState
-from analysis.nodes.analysis_subgraph.nodes import (
+from analysis.sub_graph.criterion_analysis.nodes import (
     call_model,
     init_agent,
     respond,
     should_continue,
 )
-from analysis.nodes.analysis_subgraph.state import AnalysisMainState
-from analysis.nodes.analysis_subgraph.tools import get_tools
+from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
+from analysis.sub_graph.criterion_analysis.tools import get_tools
 from utils import get_retry_policy
 
 
-def get_analysis_subgraph():
-    """Get the analysis subgraph."""
+def get_criterion_analysis_subgraph():
+    """Get the criterion analysis subgraph."""
     workflow = StateGraph(
         AnalysisMainState,
         input=AnalysisMainState,
@@ -48,5 +48,5 @@ def get_analysis_subgraph():
 
     # Compile the graph
     graph = workflow.compile()
-    graph.name = "AnalysisSubGraph"
+    graph.name = "CriterionAnalysisSubGraph"
     return graph

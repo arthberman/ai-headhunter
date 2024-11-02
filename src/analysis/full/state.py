@@ -33,23 +33,12 @@ class MainGraphState(InputGraphState):
 
     education_enrichment: Annotated[List[SchoolInfo], operator.add]
     experience_enrichment: Annotated[List[CompanyInfo], operator.add]
-    language_enrichment: Optional[List[LanguageProficiency]] = Field(default=None)
 
-    scored_criterion: Annotated[List[ScoredCriterion], operator.add]
+    language_analysis: Optional[List[LanguageProficiency]] = Field(default=None)
     sector_analysis: Optional[str] = Field(default=None)
     culture_analysis: Optional[str] = Field(default=None)
     intent_analysis: Optional[str] = Field(default=None)
     hierarchy_analysis: Optional[str] = Field(default=None)
+
+    scored_criterion: Annotated[List[ScoredCriterion], operator.add]
     synthesis: Optional[Synthesis] = Field(default=None)
-
-
-class EducationState(BaseModel):
-    """State of the education graph."""
-
-    education: ProfileEducation = Field(...)
-
-
-class ExperienceState(BaseModel):
-    """State of the experience graph."""
-
-    experience: ProfileExperience = Field(...)
