@@ -18,7 +18,11 @@ def find_python_files(root_dir: str) -> List[str]:
 def update_hub_references(
     file_path: str, environment: str, dry_run: bool
 ) -> Tuple[bool, List[str]]:
-    """Update hub.pull references in a file for the specified environment."""
+    """Update hub references in a file for the specified environment.
+
+    In production: adds ':production' suffix
+    In development: removes any environment suffix
+    """
     with open(file_path, "r") as f:
         content = f.read()
 
@@ -33,7 +37,12 @@ def update_hub_references(
             0
         ]  # Remove any existing environment suffix
         original = match.group(0)
-        new_ref = f'hub.pull("{prompt_name}:{environment}")'
+
+        # For development, use prompt name without suffix
+        if environment == "development":
+            new_ref = f'hub.pull("{prompt_name}")'
+        else:
+            new_ref = f'hub.pull("{prompt_name}:{environment}")'
 
         if original != new_ref:
             modified = True

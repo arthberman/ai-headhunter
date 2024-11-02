@@ -11,8 +11,11 @@ class ScoredCriterion(BaseModel):
         ..., ge=0, le=1, description="Score assigned to this criterion"
     )
     explanation: str = Field(..., description="Explanation for the assigned score")
-    confidence_level: float = Field(
-        ..., ge=0, le=1, description="Confidence level in the assigned score (0 to 1)"
+    confidence: float = Field(
+        ...,
+        ge=0,
+        le=1,
+        description="Confidence level in the assigned score (0 to 1)",
     )
 
 

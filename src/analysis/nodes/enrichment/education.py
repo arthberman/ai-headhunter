@@ -156,6 +156,9 @@ def node_education_enrichment(
                     "school": education.school,
                     "school_description": education.description,
                     "linkedin_url": education.linkedin_url,
+                    "output_schema": SchoolInfo.model_json_schema(),
+                    "output_language": "en",
+                    "system_time": datetime.now().isoformat(),
                 }
             ),
         )

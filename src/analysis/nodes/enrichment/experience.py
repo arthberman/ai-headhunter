@@ -158,6 +158,9 @@ def node_experience_enrichment(
                     "company_title": experience.title,
                     "company_description": experience.description,
                     "linkedin_url": experience.linkedin_url,
+                    "output_schema": CompanyInfo.model_json_schema(),
+                    "output_language": "en",
+                    "system_time": datetime.now().isoformat(),
                 }
             ),
         )

@@ -7,14 +7,14 @@ from pydantic import BaseModel, Field
 class ProfileEducation(BaseModel):
     """Profile education."""
 
-    startsAt: Annotated[
+    starts_at: Annotated[
         Optional[datetime], Field(description="Start date of education")
     ]
-    endsAt: Annotated[
+    ends_at: Annotated[
         Optional[datetime], Field(default=None, description="End date of education")
     ]
     school: Annotated[str, Field(description="School name")]
-    fieldOfStudy: Annotated[
+    field_of_study: Annotated[
         Optional[str], Field(default=None, description="Field of study")
     ]
     description: Annotated[
@@ -34,10 +34,10 @@ class ProfileEducation(BaseModel):
 class ProfileExperience(BaseModel):
     """Profile experience."""
 
-    startsAt: Annotated[
+    starts_at: Annotated[
         Optional[datetime], Field(description="Start date of experience")
     ]
-    endsAt: Annotated[
+    ends_at: Annotated[
         Optional[datetime], Field(default=None, description="End date of experience")
     ]
     company: Annotated[str, Field(description="Company name")]
@@ -61,10 +61,10 @@ class ProfileExperience(BaseModel):
 class ProfileVolunteering(BaseModel):
     """Profile volunteering."""
 
-    startsAt: Annotated[
+    starts_at: Annotated[
         Optional[datetime], Field(description="Start date of volunteering")
     ]
-    endsAt: Annotated[
+    ends_at: Annotated[
         Optional[datetime], Field(default=None, description="End date of volunteering")
     ]
     title: Annotated[
@@ -90,7 +90,7 @@ class ProfileHonor(BaseModel):
     title: Annotated[Optional[str], Field(description="Honor title")]
     description: Annotated[Optional[str], Field(description="Honor description")]
     issuer: Annotated[Optional[str], Field(description="Honor issuer")]
-    issueAt: Annotated[Optional[datetime], Field(description="Date of honor issuance")]
+    issue_at: Annotated[Optional[datetime], Field(description="Date of honor issuance")]
 
 
 class ProfileProject(BaseModel):
@@ -98,8 +98,8 @@ class ProfileProject(BaseModel):
 
     title: Annotated[Optional[str], Field(description="Project title")]
     description: Annotated[Optional[str], Field(description="Project description")]
-    endsAt: Annotated[Optional[datetime], Field(description="Project end date")]
-    startsAt: Annotated[Optional[datetime], Field(description="Project start date")]
+    ends_at: Annotated[Optional[datetime], Field(description="Project end date")]
+    starts_at: Annotated[Optional[datetime], Field(description="Project start date")]
     metadata_duration: Annotated[
         Optional[str], Field(default=None, description="Education duration")
     ]
@@ -116,7 +116,7 @@ class ProfileCertification(BaseModel):
         Optional[str], Field(description="Certification description")
     ]
     issuer: Annotated[Optional[str], Field(description="Certification issuer")]
-    issueAt: Annotated[
+    issue_at: Annotated[
         Optional[datetime], Field(description="Date of certification issuance")
     ]
 
@@ -148,13 +148,13 @@ class Profile(BaseModel):
     state: Annotated[Optional[str], Field(description="State of the profile")]
     headline: Annotated[Optional[str], Field(description="Headline of the profile")]
     summary: Annotated[Optional[str], Field(description="Summary of the profile")]
-    connectionCount: Annotated[
+    connection_count: Annotated[
         Optional[int], Field(description="Number of connections")
     ]
-    followersCount: Annotated[Optional[int], Field(description="Number of followers")]
-    isCreator: Annotated[Optional[bool], Field(description="Is the profile a creator")]
-    isHiring: Annotated[Optional[bool], Field(description="Is the profile hiring")]
-    isOpenToWork: Annotated[
+    followers_count: Annotated[Optional[int], Field(description="Number of followers")]
+    is_creator: Annotated[Optional[bool], Field(description="Is the profile a creator")]
+    is_hiring: Annotated[Optional[bool], Field(description="Is the profile hiring")]
+    is_open_to_work: Annotated[
         Optional[bool], Field(description="Is the profile open to work")
     ]
     linkedin_id: Annotated[str, Field(description="LinkedIn ID of the profile")]

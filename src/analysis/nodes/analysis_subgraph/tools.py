@@ -1,4 +1,5 @@
 # First we initialize the model we want to use.
+from datetime import datetime
 import os
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union, cast
@@ -123,7 +124,17 @@ def search_web(
     raw_model = init_model("openai/gpt-4o-mini")
     model = raw_model.with_structured_output(JudgeWebSearch)
     chain = cast(Runnable, prompt | model)
-    res = cast(JudgeWebSearch, chain.invoke({"web_query": query}))
+    res = cast(
+        JudgeWebSearch,
+        chain.invoke(
+            {
+                "web_query": query,
+                "system_time": datetime.now().isoformat(),
+                "output_schema": JudgeWebSearch.model_json_schema(),
+                "output_language": "en",
+            }
+        ),
+    )
 
     if not res.is_relevant:
         return "The query is not relevant for a web search."
