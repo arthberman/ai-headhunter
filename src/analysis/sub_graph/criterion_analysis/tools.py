@@ -74,9 +74,9 @@ def get_candidate_info(
             "languages": [
                 language.model_dump() for language in state.main_state.profile.languages
             ],
-            "language_enrichment": [
-                language_enrichment.model_dump()
-                for language_enrichment in state.main_state.language_enrichment
+            "language_analysis": [
+                language_analysis.model_dump()
+                for language_analysis in state.main_state.language_analysis
             ],
         },
         CandidateInfoType.PROJECTS: [
