@@ -5,7 +5,7 @@ from langgraph.graph.graph import CompiledGraph
 from analysis.full.state import MainGraphState
 from analysis.iterative.configuration import Configuration
 from analysis.iterative.state import InputGraphState
-from analysis.nodes.synthesis.node import node_synthesis
+from analysis.nodes.synthesis import node_synthesis
 from analysis.sub_graph.criterion_analysis.graph import get_criterion_analysis_subgraph
 from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
 from utils import get_retry_policy
@@ -24,7 +24,7 @@ def continue_to_analysis(state: MainGraphState):
 
 def init_analysis(state: MainGraphState) -> MainGraphState:
     """BLANK : Initialize the analysis graph."""
-    return state
+    return {"scored_criterion": []}
 
 
 def compile_analysis_iterative_graph() -> CompiledGraph:
