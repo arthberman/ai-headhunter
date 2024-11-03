@@ -85,7 +85,7 @@ def call_model(
         return {
             "messages": [
                 AIMessage(
-                    content="You exceeded the maximum number of loops. You must respond to the user by calling the WebContext tool now."
+                    content="You exceeded the maximum number of loops. You must respond to the user by calling the `ScoredCriterion` tool now."
                 )
             ],
             "loop_step": 1,
