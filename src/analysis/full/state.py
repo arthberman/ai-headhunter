@@ -12,7 +12,7 @@ from analysis.models.profile import (
 )
 from analysis.models.school import SchoolInfo
 from analysis.models.synthesis import Synthesis
-from analysis.nodes.analysis_subgraph.models import ScoredCriterion
+from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import Scorecard
 
 

@@ -6,7 +6,7 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
 from analysis.full.configuration import Configuration
-from analysis.full.state import MainGraphState
+from analysis.sub_graph.infer_enrichment.state import MainInferEnrichmentState
 from utils import format_data, init_model
 
 
@@ -29,10 +29,10 @@ class EmploymentType(BaseModel):
 
 
 def node_find_employment_type(
-    state: MainGraphState,
+    state: MainInferEnrichmentState,
     *,
     config: Optional[RunnableConfig] = None,
-) -> MainGraphState:
+) -> MainInferEnrichmentState:
     """Find employment type of experiences if not provided."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

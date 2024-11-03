@@ -6,13 +6,13 @@ from analysis.models.language import LanguageProficiency
 from analysis.models.profile import Profile
 
 
-class MainEnrichmentState(BaseModel):
+class MainInferEnrichmentState(BaseModel):
     """State for the analysis graph."""
 
     profile: Profile = Field(...)
 
 
-class OutputEnrichmentState(BaseModel):
+class OutputInferEnrichmentState(MainInferEnrichmentState):
     """Output state for the enrichment subgraph."""
 
     sector_analysis: str = Field(default=None)

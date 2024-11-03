@@ -6,7 +6,10 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
 from analysis.full.configuration import Configuration
-from analysis.full.state import MainGraphState
+from analysis.sub_graph.infer_enrichment.state import (
+    MainInferEnrichmentState,
+    OutputInferEnrichmentState,
+)
 from utils import format_data, init_model
 
 
@@ -19,8 +22,8 @@ class CultureSynthesis(BaseModel):
 
 
 def node_analysis_culture(
-    state: MainGraphState, config: Optional[RunnableConfig] = None
-) -> MainGraphState:
+    state: MainInferEnrichmentState, config: Optional[RunnableConfig] = None
+) -> OutputInferEnrichmentState:
     """Analyze the culture of the candidate."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

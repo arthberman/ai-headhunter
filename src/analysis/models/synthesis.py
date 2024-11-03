@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from analysis.nodes.analysis_subgraph.models import ScoredCriterion
+from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import CriterionType, ImportanceLevel
 
 

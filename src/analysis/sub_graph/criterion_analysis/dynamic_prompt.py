@@ -1,4 +1,4 @@
-from analysis.nodes.analysis_subgraph.models import CotQuestions
+from analysis.sub_graph.criterion_analysis.models import CotQuestions
 from scorecard.models.scorecard import (
     BaseCriterion,
     ImportanceLevel,
