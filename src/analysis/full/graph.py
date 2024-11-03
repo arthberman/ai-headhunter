@@ -4,21 +4,16 @@ from langgraph.graph.graph import CompiledGraph
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import InputGraphState, MainGraphState
-from analysis.nodes.candidate.culture import node_analysis_culture
-from analysis.nodes.candidate.employment_type import node_find_employment_type
-from analysis.nodes.candidate.language import node_analysis_language
-from analysis.nodes.candidate.profile_age import node_estimate_profile_age
-from analysis.nodes.candidate.profile_metadata import get_profile_metadata
-from analysis.nodes.candidate.sector import node_analysis_sector
-from analysis.nodes.synthesis.node import node_synthesis
+from analysis.nodes.profile_metadata import get_profile_metadata
+from analysis.nodes.synthesis import node_synthesis
 from analysis.sub_graph.criterion_analysis.graph import get_criterion_analysis_subgraph
 from analysis.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgraph
 from analysis.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
 from utils import get_retry_policy
 
 
-def init_node(state: MainGraphState) -> MainGraphState:
-    """Initialize the graph."""
+def compute_profile_metadata(state: MainGraphState) -> MainGraphState:
+    """Compute the profile metadata."""
     profile = get_profile_metadata(state.profile)
     return {"profile": profile}
 
@@ -36,7 +31,7 @@ def continue_to_analysis(state: MainGraphState):
 
 def init_analysis(state: MainGraphState) -> MainGraphState:
     """BLANK : Initialize the analysis graph."""
-    return {"profile": state.profile}
+    return {"scored_criterion": []}
 
 
 def compile_analysis_full_graph() -> CompiledGraph:
@@ -45,7 +40,7 @@ def compile_analysis_full_graph() -> CompiledGraph:
         MainGraphState, input=InputGraphState, config_schema=Configuration
     )
 
-    workflow.add_node("init_node", init_node)
+    workflow.add_node("compute_profile_metadata", compute_profile_metadata)
 
     workflow.add_node(
         "criterion_analysis",
@@ -65,9 +60,9 @@ def compile_analysis_full_graph() -> CompiledGraph:
     workflow.add_node("init_analysis", init_analysis)
     workflow.add_node("node_synthesis", node_synthesis, retry=get_retry_policy())
 
-    workflow.add_edge(START, "init_node")
-    workflow.add_edge("init_node", "web_enrichment")
-    workflow.add_edge("init_node", "infer_enrichment")
+    workflow.add_edge(START, "compute_profile_metadata")
+    workflow.add_edge("compute_profile_metadata", "web_enrichment")
+    workflow.add_edge("compute_profile_metadata", "infer_enrichment")
     workflow.add_edge(
         [
             "web_enrichment",
