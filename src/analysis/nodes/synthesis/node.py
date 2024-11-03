@@ -7,7 +7,7 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 from analysis.full.state import MainGraphState
 from analysis.iterative.configuration import Configuration
 from analysis.models.synthesis import ExtendedScoredCriterion, Synthesis
-from analysis.nodes.analysis_subgraph.models import ScoredCriterion
+from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import Scorecard
 from utils import format_data, init_model
 

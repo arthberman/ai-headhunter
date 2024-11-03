@@ -17,8 +17,8 @@ from analysis.iterative.configuration import Configuration
 from analysis.models.knowledge_point import (
     KnowledgePoint,
 )
-from analysis.nodes.analysis_subgraph.models import ScoredCriterion
-from analysis.nodes.analysis_subgraph.state import AnalysisMainState
+from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
+from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
 from scorecard.models.scorecard import CriterionType
 from utils import format_data, init_model
 
@@ -159,15 +159,13 @@ def get_tools() -> List[BaseTool]:
     return tools
 
 
-def get_knowledge_points(criterion_types: list[CriterionType]) -> list[KnowledgePoint]:
+def get_knowledge_points(types: list[CriterionType]) -> list[KnowledgePoint]:
     """Retrieve knowledge base entries by a list of criterion types."""
     api = Api(os.environ["AIRTABLE_API_KEY"])
     table = api.table("appnlCNqfC0erFVX7", "tbl7TLnZwMynf8pjJ")
 
     # Construct the OR formula for multiple criterion types
-    criterion_conditions = [
-        f"{{CriterionType}} = '{ct.value}'" for ct in criterion_types
-    ]
+    criterion_conditions = [f"{{CriterionType}} = '{ct.value}'" for ct in types]
     formula = f"OR({','.join(criterion_conditions)})"
 
     # Fetch filtered records

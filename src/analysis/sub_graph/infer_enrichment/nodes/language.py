@@ -6,8 +6,11 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
 from analysis.full.configuration import Configuration
-from analysis.full.state import MainGraphState
 from analysis.models.language import LanguageProficiency
+from analysis.sub_graph.infer_enrichment.state import (
+    MainInferEnrichmentState,
+    OutputInferEnrichmentState,
+)
 from utils import format_data, init_model
 
 
@@ -20,8 +23,8 @@ class LanguageProficiency(BaseModel):
 
 
 def node_analysis_language(
-    state: MainGraphState, config: Optional[RunnableConfig] = None
-) -> MainGraphState:
+    state: MainInferEnrichmentState, config: Optional[RunnableConfig] = None
+) -> OutputInferEnrichmentState:
     """Analyze the language proficiency of the candidate."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

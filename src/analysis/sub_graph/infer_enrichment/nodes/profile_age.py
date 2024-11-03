@@ -5,16 +5,16 @@ from langchain import hub
 from langchain_core.runnables import Runnable, RunnableConfig
 
 from analysis.full.configuration import Configuration
-from analysis.full.state import MainGraphState
 from analysis.models.profile import ProfileAge
+from analysis.sub_graph.infer_enrichment.state import MainInferEnrichmentState
 from utils import format_data, init_model
 
 
 def node_estimate_profile_age(
-    state: MainGraphState,
+    state: MainInferEnrichmentState,
     *,
     config: Optional[RunnableConfig] = None,
-) -> MainGraphState:
+) -> MainInferEnrichmentState:
     """Estimate the age of the profile."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

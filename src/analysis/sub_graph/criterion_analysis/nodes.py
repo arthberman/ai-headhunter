@@ -8,13 +8,13 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import MainGraphState
-from analysis.nodes.analysis_subgraph.dynamic_prompt import (
+from analysis.sub_graph.criterion_analysis.dynamic_prompt import (
     prepare_evaluation_steps,
     prepare_scoring_instructions,
 )
-from analysis.nodes.analysis_subgraph.models import CotQuestions
-from analysis.nodes.analysis_subgraph.state import AnalysisMainState
-from analysis.nodes.analysis_subgraph.tools import ScoredCriterion, get_tools
+from analysis.sub_graph.criterion_analysis.models import CotQuestions
+from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
+from analysis.sub_graph.criterion_analysis.tools import ScoredCriterion, get_tools
 from utils import init_model
 
 
