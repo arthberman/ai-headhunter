@@ -48,11 +48,7 @@ def prepare_scoring_instructions(
 
     if criterion.importance_level == ImportanceLevel.MUST_HAVE:
         instructions.append(
-            "   - This criterion is essential. A score below 0.6 should disqualify the candidate."
-        )
-    elif criterion.importance_level == ImportanceLevel.IMPORTANT:
-        instructions.append(
-            "   - This criterion carries significant weight but is not necessarily disqualifying if not fully met."
+            "   - This criterion is essential. A score strictly below 0.6 should disqualify the candidate."
         )
     elif criterion.importance_level == ImportanceLevel.NICE_TO_HAVE:
         instructions.append(

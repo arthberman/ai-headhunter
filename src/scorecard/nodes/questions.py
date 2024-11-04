@@ -18,7 +18,7 @@ def node_questions(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
-    prompt = hub.pull("generate-scorecard-questions:production")
+    prompt = hub.pull("generate-scorecard-questions")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
@@ -37,7 +37,6 @@ def node_questions(
         extractor.invoke(
             {
                 "messages": formatted_messages,
-                # "existing": {"ListQuestions": existing_questions.model_dump()},
             }
         )["responses"][0],
     )

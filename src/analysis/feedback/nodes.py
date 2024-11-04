@@ -28,7 +28,7 @@ def node_reformulate_human_feedback(
     model = raw_model.with_structured_output(ReformedHumanFeedback)
 
     # Pull the prompt from the hub
-    prompt = hub.pull("analysis-feedback-reformulate:production")
+    prompt = hub.pull("analysis-feedback-reformulate")
 
     # Create a chain with the prompt and the model
     chain = cast(Runnable, prompt | model)
@@ -56,7 +56,7 @@ def node_extract_profile_related_elements(
     model = raw_model.with_structured_output(ProfileRelatedElement)
 
     # Pull the prompt from the hub
-    prompt = hub.pull("analysis-feedback-extract-profile:production")
+    prompt = hub.pull("analysis-feedback-extract-profile")
 
     # Create a chain with the prompt and the model
     chain = cast(Runnable, prompt | model)
@@ -91,7 +91,7 @@ def node_extract_scorecard_related_elements(
     model = raw_model.with_structured_output(ScorecardRelatedElement)
 
     # Pull the prompt from the hub
-    prompt = hub.pull("analysis-feedback-extract-scorecard:production")
+    prompt = hub.pull("analysis-feedback-extract-scorecard")
 
     # Create a chain with the prompt and the model
     chain = cast(Runnable, prompt | model)
@@ -128,7 +128,7 @@ def node_synthesize_feedback(
     model = raw_model.with_structured_output(SynthesizedFeedback)
 
     # Pull the prompt from the hub
-    prompt = hub.pull("analysis-feedback-synthesize:production")
+    prompt = hub.pull("analysis-feedback-synthesize")
 
     # Create a chain with the prompt and the model
     chain = cast(Runnable, prompt | model)

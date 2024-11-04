@@ -24,7 +24,7 @@ def node_job_posting(
         raw_model, tools=[JobPosting], tool_choice="JobPosting"
     )
     # Pull the prompt from the hub
-    prompt = hub.pull("generate-scorecard-job-posting:production")
+    prompt = hub.pull("generate-scorecard-job-posting")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
     formatted_messages = chat_prompt.format_messages(
         raw_job_posting=state.raw_job_posting,

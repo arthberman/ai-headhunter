@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from analysis.full.configuration import Configuration
 from analysis.sub_graph.infer_enrichment.state import MainInferEnrichmentState
 from utils import format_data, init_model
+from utils.candidate_timeline import get_candidate_timeline
 
 
 class EmploymentType(BaseModel):
@@ -41,7 +42,7 @@ def node_find_employment_type(
     raw_model = init_model(configuration.default_model)
 
     # Initialize the prompt
-    prompt = hub.pull("analysis-find-employment-type:production")
+    prompt = hub.pull("analysis-find-employment-type")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(EmploymentType)
@@ -59,8 +60,7 @@ def node_find_employment_type(
                 chain.invoke(
                     {
                         "experience": format_data(experience),
-                        "experiences": format_data(state.profile.experiences),
-                        "educations": format_data(state.profile.educations),
+                        "candidate_timeline": get_candidate_timeline(state.profile),
                         "output_schema": EmploymentType.model_json_schema(),
                         "output_language": "en",
                         "system_time": datetime.now().isoformat(),
