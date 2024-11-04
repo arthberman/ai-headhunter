@@ -82,12 +82,15 @@ def call_model(
 
     # Check if the loop step is greater than the maximum number of loops
     if state.loop_step == configuration.analysis_max_loops - 1:
+        message_content = "You exceeded the maximum number of loops. You must respond to the user by calling the `ScoredCriterion` tool now."
+        # Use HumanMessage for Bedrock models, AIMessage for others
+        message_class = (
+            HumanMessage
+            if configuration.analysis_model.startswith("bedrock")
+            else AIMessage
+        )
         return {
-            "messages": [
-                AIMessage(
-                    content="You exceeded the maximum number of loops. You must respond to the user by calling the `ScoredCriterion` tool now."
-                )
-            ],
+            "messages": [message_class(content=message_content)],
             "loop_step": 1,
         }
 
