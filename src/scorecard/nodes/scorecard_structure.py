@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional, cast
 
 from langchain import hub
@@ -64,7 +65,7 @@ def node_scorecard_structure(
         raw_model, tools=[LimitedScorecard], tool_choice="LimitedScorecard"
     )
 
-    hub_prompt = hub.pull("generate-scorecard-structure:production")
+    hub_prompt = hub.pull("generate-scorecard-structure")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
@@ -76,6 +77,8 @@ def node_scorecard_structure(
             if state.scorecard and state.human_feedback
             else ""
         ),
+        output_language="en",
+        system_time=datetime.now().isoformat(),
     )
 
     res = cast(

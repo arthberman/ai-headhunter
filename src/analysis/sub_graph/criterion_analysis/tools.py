@@ -120,7 +120,7 @@ def search_web(
         )
 
     configuration = Configuration.from_runnable_config(config)
-    prompt = hub.pull("judge-web-search:production")
+    prompt = hub.pull("judge-web-search")
     raw_model = init_model("openai/gpt-4o-mini")
     model = raw_model.with_structured_output(JudgeWebSearch)
     chain = cast(Runnable, prompt | model)

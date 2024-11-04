@@ -8,7 +8,6 @@ class ImportanceLevel(str, Enum):
     """Importance level of the criterion."""
 
     MUST_HAVE = "MUST_HAVE"
-    IMPORTANT = "IMPORTANT"
     NICE_TO_HAVE = "NICE_TO_HAVE"
 
 
@@ -17,10 +16,12 @@ class CriterionType(str, Enum):
 
     EDUCATION = "EDUCATION"
     EXPERIENCE = "EXPERIENCE"
-    LANGUAGE = "LANGUAGE"
     HARD_SKILL = "HARD_SKILL"
     SOFT_SKILL = "SOFT_SKILL"
     INDUSTRY_KNOWLEDGE = "INDUSTRY_KNOWLEDGE"
+    PERSONA = "PERSONA"
+    LOCATION = "LOCATION"
+    LANGUAGE = "LANGUAGE"
     ADDITIONAL_QUALIFICATION = "ADDITIONAL_QUALIFICATION"
 
 
@@ -41,11 +42,11 @@ class BaseCriterion(BaseModel):
     description: str = Field(..., description="Detailed description of the criterion")
     type: CriterionType = Field(
         ...,
-        description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION)",
+        description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION, PERSONA, LOCATION)",
     )
     importance_level: ImportanceLevel = Field(
         ...,
-        description="Importance level of the criterion (MUST_HAVE, IMPORTANT, NICE_TO_HAVE)",
+        description="Importance level of the criterion (MUST_HAVE, NICE_TO_HAVE)",
     )
     context: Optional[str] = Field(
         None,
@@ -78,11 +79,6 @@ class Scorecard(BaseModel):
                 for c in self.criteria
                 if c.importance_level == ImportanceLevel.MUST_HAVE
             )
-            important_count = sum(
-                1
-                for c in self.criteria
-                if c.importance_level == ImportanceLevel.IMPORTANT
-            )
             nice_to_have_count = sum(
                 1
                 for c in self.criteria
@@ -91,9 +87,25 @@ class Scorecard(BaseModel):
 
             if must_have_count < 2:
                 raise ValueError("There must be at least 2 MUST_HAVE criteria")
-            if important_count < 2:
-                raise ValueError("There must be at least 2 IMPORTANT criteria")
             if nice_to_have_count < 2:
                 raise ValueError("There must be at least 2 NICE_TO_HAVE criteria")
+
+        return self
+
+    @model_validator(mode="after")
+    def validate_required_criterion_types(self) -> "Scorecard":
+        """Validate that there is at least one criterion for Language and Location."""
+        if not self.is_updating:
+            criteria_types = [c.type for c in self.criteria]
+            required_types = [
+                CriterionType.LANGUAGE,
+                CriterionType.LOCATION,
+            ]
+
+            for required_type in required_types:
+                if required_type not in criteria_types:
+                    raise ValueError(
+                        f"There must be at least 1 criterion of type {required_type}"
+                    )
 
         return self

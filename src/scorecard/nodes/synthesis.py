@@ -18,7 +18,7 @@ def node_synthesis(
     raw_model = init_model(configuration.default_model)
 
     model = raw_model.with_structured_output(Synthesis)
-    prompt = hub.pull("generate-scorecard-synthesis:production")
+    prompt = hub.pull("generate-scorecard-synthesis")
 
     chain = cast(Runnable, prompt | model)
     synthesis = cast(

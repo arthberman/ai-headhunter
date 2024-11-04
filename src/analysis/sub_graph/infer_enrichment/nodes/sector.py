@@ -32,7 +32,7 @@ def node_analysis_sector(
     raw_model = init_model(configuration.analysis_model)
 
     # Initialize the prompt
-    prompt = hub.pull("analysis-candidate-sector:production")
+    prompt = hub.pull("analysis-candidate-sector")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(SectorSynthesis)

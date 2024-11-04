@@ -4,6 +4,7 @@ from langgraph.graph.graph import CompiledGraph
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import InputGraphState, MainGraphState
+from analysis.nodes.location import node_location
 from analysis.nodes.profile_metadata import get_profile_metadata
 from analysis.nodes.synthesis import node_synthesis
 from analysis.sub_graph.criterion_analysis.graph import get_criterion_analysis_subgraph
@@ -41,6 +42,7 @@ def compile_analysis_full_graph() -> CompiledGraph:
     )
 
     workflow.add_node("compute_profile_metadata", compute_profile_metadata)
+    workflow.add_node("node_location", node_location, retry=get_retry_policy())
 
     workflow.add_node(
         "criterion_analysis",
@@ -61,8 +63,16 @@ def compile_analysis_full_graph() -> CompiledGraph:
     workflow.add_node("node_synthesis", node_synthesis, retry=get_retry_policy())
 
     workflow.add_edge(START, "compute_profile_metadata")
-    workflow.add_edge("compute_profile_metadata", "web_enrichment")
-    workflow.add_edge("compute_profile_metadata", "infer_enrichment")
+    workflow.add_conditional_edges(
+        "node_location",
+        lambda x: ["web_enrichment", "infer_enrichment"]
+        if x["location_analysis"] in ["GO", "DOUBT"]
+        else ["__end__"],
+        ["web_enrichment", "infer_enrichment", "__end__"],
+    )
+    workflow.add_edge("compute_profile_metadata", "node_location")
+    workflow.add_edge("node_location", "web_enrichment")
+    workflow.add_edge("node_location", "infer_enrichment")
     workflow.add_edge(
         [
             "web_enrichment",
