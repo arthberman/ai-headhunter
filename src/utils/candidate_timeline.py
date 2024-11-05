@@ -87,7 +87,7 @@ def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
         # Build the entry line with all available metadata
         entry_parts = [f"• [{category}] {description}"]
         if location:
-            entry_parts.append(f"📍 {location}")
+            entry_parts.append(f"- {location}")
         entry_parts.append(date_bracket)
         if status:
             entry_parts.append(f"- {status}")

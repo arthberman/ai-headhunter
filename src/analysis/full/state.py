@@ -5,10 +5,17 @@ from pydantic import BaseModel, Field
 
 from analysis.models.company import CompanyInfo
 from analysis.models.language import LanguageProficiency
-from analysis.models.location import ScoredLocationCriterion
 from analysis.models.profile import Profile
 from analysis.models.school import SchoolInfo
-from analysis.models.synthesis import Synthesis
+from analysis.models.synthesis import (
+    CultureSynthesis,
+    HierarchySynthesis,
+    IntentSynthesis,
+    LocationSynthesis,
+    MustSynthesis,
+    NiceSynthesis,
+    Synthesis,
+)
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import Scorecard
 
@@ -36,9 +43,12 @@ class MainGraphState(InputGraphState):
     infer_culture: Optional[str] = Field(default=None)
     infer_intent: Optional[str] = Field(default=None)
 
-    hierarchy_analysis: Optional[str] = Field(default=None)
-
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
-    scored_location_criterion: Optional[ScoredLocationCriterion] = Field(default=None)
 
-    synthesis: Optional[Synthesis] = Field(default=None)
+    synthesis_must: Optional[MustSynthesis] = Field(default=None)
+    synthesis_nice: Optional[NiceSynthesis] = Field(default=None)
+    synthesis_culture: Optional[CultureSynthesis] = Field(default=None)
+    synthesis_intent: Optional[IntentSynthesis] = Field(default=None)
+    synthesis_hierarchy: Optional[HierarchySynthesis] = Field(default=None)
+    synthesis_location: Optional[LocationSynthesis] = Field(default=None)
+    synthesis_overall: Optional[Synthesis] = Field(default=None)

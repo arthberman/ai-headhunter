@@ -6,34 +6,11 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.full.state import MainGraphState
 from analysis.iterative.configuration import Configuration
-from analysis.models.synthesis import ExtendedScoredCriterion, Synthesis
-from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
-from scorecard.models.scorecard import Scorecard
-from utils import format_data, init_model
+from analysis.models.synthesis import Synthesis
+from utils import format_data, get_extended_scored_criterion, init_model
 
 
-def extend_scored_criterion(scored_criterion: ScoredCriterion, scorecard: Scorecard):
-    """Extend the scored criterion with the scorecard."""
-    extended_scored_criterion = []
-    for scored_criterion in scored_criterion:
-        criterion = next(
-            (c for c in scorecard.criteria if c.id == scored_criterion.id),
-            None,
-        )
-        if criterion:
-            extended_scored_criterion.append(
-                ExtendedScoredCriterion(
-                    **scored_criterion.model_dump(),
-                    description=criterion.description,
-                    importance_level=criterion.importance_level.value,
-                    criterion_type=criterion.type.value,
-                )
-            )
-
-    return extended_scored_criterion
-
-
-def node_synthesis(
+def node_synthesis_overall(
     state: MainGraphState, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:
     """Synthesize the output."""
@@ -51,7 +28,7 @@ def node_synthesis(
     chain = cast(RunnableLambda, prompt | model)
 
     # Extend the scored criterion with the scorecard
-    extended_scored_criterion = extend_scored_criterion(
+    extended_scored_criterion = get_extended_scored_criterion(
         state.scored_criterion, state.scorecard
     )
 
@@ -70,4 +47,4 @@ def node_synthesis(
         ),
     )
 
-    return {"synthesis": res}
+    return {"synthesis_overall": res}

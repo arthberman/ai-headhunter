@@ -4,15 +4,15 @@ from langgraph.graph.graph import CompiledGraph
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import InputGraphState, MainGraphState
-from analysis.models.location import LocationScore
-from analysis.nodes.match_location import node_match_location
+from analysis.models.synthesis import SynthesisScore
+from analysis.nodes.match_location import node_synthesis_location
 from analysis.nodes.profile_metadata import get_profile_metadata
-from analysis.nodes.synthesis import node_synthesis
+from analysis.nodes.synthesis import node_synthesis_overall
 from analysis.nodes.synthesis_must import node_synthesis_must
 from analysis.sub_graph.criterion_analysis.graph import get_criterion_analysis_subgraph
 from analysis.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgraph
 from analysis.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
-from scorecard.models.scorecard import ImportanceLevel
+from scorecard.models.scorecard import CriterionType, ImportanceLevel
 from utils import get_retry_policy
 
 
@@ -31,6 +31,7 @@ def continue_to_nice_criteria(state: MainGraphState):
         )
         for criterion in state.scorecard.criteria
         if criterion.importance_level == ImportanceLevel.NICE_TO_HAVE
+        and criterion.type != CriterionType.LOCATION
     ]
 
 
@@ -43,18 +44,8 @@ def continue_to_must_criteria(state: MainGraphState):
         )
         for criterion in state.scorecard.criteria
         if criterion.importance_level == ImportanceLevel.MUST_HAVE
+        and criterion.type != CriterionType.LOCATION
     ]
-
-
-def continue_after_location(state: MainGraphState):
-    """Continue after the location analysis."""
-    if state.scored_location_criterion.score.value in [
-        LocationScore.PASS,
-        LocationScore.DOUBT,
-    ]:
-        return ["web_enrichment", "infer_enrichment"]
-    else:
-        return END
 
 
 def node_test(state: MainGraphState):
@@ -74,7 +65,9 @@ def compile_analysis_full_graph() -> CompiledGraph:
     )
 
     workflow.add_node("compute_profile_metadata", compute_profile_metadata)
-    workflow.add_node("match_location", node_match_location, retry=get_retry_policy())
+    workflow.add_node(
+        "node_synthesis_location", node_synthesis_location, retry=get_retry_policy()
+    )
 
     workflow.add_node(
         "match_nice_criteria",
@@ -96,17 +89,28 @@ def compile_analysis_full_graph() -> CompiledGraph:
         get_infer_enrichment_subgraph(),
     )
 
-    workflow.add_node("synthesis_must", node_synthesis_must, retry=get_retry_policy())
+    workflow.add_node(
+        "node_synthesis_must", node_synthesis_must, retry=get_retry_policy()
+    )
 
     workflow.add_node("init_analysis", init_analysis)
-    workflow.add_node("node_synthesis", node_synthesis, retry=get_retry_policy())
+    workflow.add_node(
+        "node_synthesis_overall", node_synthesis_overall, retry=get_retry_policy()
+    )
 
     workflow.add_edge(START, "compute_profile_metadata")
-    workflow.add_edge("compute_profile_metadata", "match_location")
+    workflow.add_edge("compute_profile_metadata", "node_synthesis_location")
     workflow.add_conditional_edges(
-        "match_location",
-        continue_after_location,
-        ["web_enrichment", "infer_enrichment", END],
+        "node_synthesis_location",
+        lambda state: (
+            ["web_enrichment", "infer_enrichment"]
+            if state.synthesis_location.score
+            in [SynthesisScore.PASS, SynthesisScore.DOUBT]
+            else ["node_synthesis_overall"]
+        )
+        if isinstance(state, MainGraphState)
+        else [],
+        ["web_enrichment", "infer_enrichment", "node_synthesis_overall"],
     )
     workflow.add_edge(
         [
@@ -120,15 +124,15 @@ def compile_analysis_full_graph() -> CompiledGraph:
         "init_analysis", continue_to_must_criteria, ["match_must_criteria"]
     )
 
-    workflow.add_edge("match_must_criteria", "synthesis_must")
+    workflow.add_edge("match_must_criteria", "node_synthesis_must")
 
     workflow.add_conditional_edges(
-        "synthesis_must",
+        "node_synthesis_must",
         continue_to_nice_criteria,
-        ["match_nice_criteria", END],
+        ["match_nice_criteria", "node_synthesis_overall"],
     )
-    workflow.add_edge("match_nice_criteria", "node_synthesis")
-    workflow.add_edge("node_synthesis", END)
+    workflow.add_edge("match_nice_criteria", "node_synthesis_overall")
+    workflow.add_edge("node_synthesis_overall", END)
 
     graph = workflow.compile()
     graph.name = "AnalysisFullGraph"
