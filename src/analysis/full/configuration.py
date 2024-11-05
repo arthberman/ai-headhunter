@@ -37,8 +37,8 @@ class Configuration(BaseModel):
     )
 
     analysis_max_loops: int = Field(
-        default=5,
-        description="The maximum number of loops to run the analysis for.",
+        default=3,
+        description="The maximum number of iterations to run the analysis for.",
     )
 
     @classmethod

@@ -80,33 +80,25 @@ def call_model(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
-    # Check if the loop step is greater than the maximum number of loops
-    if state.loop_step == configuration.analysis_max_loops - 1:
-        message_content = "You exceeded the maximum number of loops. You must respond to the user by calling the `ScoredCriterion` tool now."
-
-        # Use HumanMessage for Bedrock models, AIMessage for others
-        message_class = (
-            HumanMessage
-            if configuration.analysis_model.startswith("bedrock")
-            else AIMessage
-        )
-
-        # Create a BaseMessage instance
-        message = message_class(content=message_content)
-
-        return {
-            "messages": [message],
-            "loop_step": 1,
-        }
-
     # Initialize the raw model with the provided configuration and bind the tools
     raw_model = init_model(configuration.analysis_model)
 
     # Bind the tools to the model
     model = raw_model.bind_tools(get_tools(), tool_choice="any")
 
-    # Call the model with the provided state
-    response = model.invoke(state.messages)
+    response = None
+    if state.loop_step == configuration.analysis_max_loops:
+        message_content = "You exceeded the maximum number of iterations. You must respond to the user by calling the `ScoredCriterion` tool now."
+        messages = ChatPromptTemplate.from_messages(
+            [
+                *state.messages,
+                ("system", "{message_content}"),
+            ]
+        )
+        response = model.invoke(messages.invoke({"message_content": message_content}))
+    else:
+        # Call the model with the provided state
+        response = model.invoke(state.messages)
 
     return {
         "messages": [response],
@@ -136,20 +128,19 @@ def should_continue(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
-    # Check if the loop step exceeds the maximum number of loops
-    if state.loop_step >= configuration.analysis_max_loops + 3:
-        return "__end__"
-
     messages = state.messages
     last_message = messages[-1]
 
     # If there is only one tool call and it is the response tool call we respond to the user
     if (
-        last_message.tool_calls
+        getattr(last_message, "tool_calls", None)
         and len(last_message.tool_calls) == 1
         and last_message.tool_calls[0]["name"] == "ScoredCriterion"
     ):
         return "respond"
+    # Check if the loop step exceeds the maximum number of loops
+    elif state.loop_step >= configuration.analysis_max_loops + 1:
+        return "__end__"
     # Otherwise we will use the tool node again
     else:
         return "continue"
