@@ -7,12 +7,12 @@ from pydantic import BaseModel, Field
 class LocationScore(Enum):
     """Score of the location analysis."""
 
-    GO = "GO"
-    NO_GO = "NO_GO"
+    PASS = "PASS"
+    FAIL = "FAIL"
     DOUBT = "DOUBT"
 
 
-class LocationAnalysis(BaseModel):
+class ScoredLocationCriterion(BaseModel):
     """Analysis of the candidate's location."""
 
     explanation: str = Field(

@@ -6,12 +6,13 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.full.state import MainGraphState
 from analysis.iterative.configuration import Configuration
-from analysis.models.location import LocationAnalysis
+from analysis.models.location import ScoredLocationCriterion
+from scorecard.models.scorecard import CriterionType
 from utils import init_model
 from utils.candidate_timeline import get_candidate_timeline
 
 
-def node_location(
+def node_match_location(
     state: MainGraphState, config: Optional[RunnableConfig] = None
 ) -> MainGraphState:
     """Analyze the candidate's location."""
@@ -19,11 +20,11 @@ def node_location(
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the prompt
-    prompt = hub.pull("generate-analysis-location")
+    prompt = hub.pull("candidate-analysis-location")
 
     # Initialize the model
     raw_model = init_model(configuration.analysis_model)
-    model = raw_model.with_structured_output(LocationAnalysis)
+    model = raw_model.with_structured_output(ScoredLocationCriterion)
 
     # Create the chain
     chain = cast(RunnableLambda, prompt | model)
@@ -32,12 +33,12 @@ def node_location(
     location_criteria = [
         criterion
         for criterion in state.scorecard.criteria
-        if criterion.type == "location"
+        if criterion.type == CriterionType.LOCATION
     ]
 
     # Invoke the chain
     res = cast(
-        LocationAnalysis,
+        ScoredLocationCriterion,
         chain.invoke(
             {
                 "job_location_criteria": location_criteria,
@@ -49,4 +50,4 @@ def node_location(
         ),
     )
 
-    return {"location_analysis": res}
+    return {"scored_location_criterion": res}

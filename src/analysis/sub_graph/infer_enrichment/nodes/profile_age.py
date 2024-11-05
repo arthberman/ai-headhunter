@@ -10,7 +10,7 @@ from analysis.sub_graph.infer_enrichment.state import MainInferEnrichmentState
 from utils import format_data, init_model
 
 
-def node_estimate_profile_age(
+def node_infer_age(
     state: MainInferEnrichmentState,
     *,
     config: Optional[RunnableConfig] = None,

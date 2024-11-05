@@ -21,7 +21,7 @@ class CultureSynthesis(BaseModel):
     )
 
 
-def node_analysis_culture(
+def node_infer_culture(
     state: MainInferEnrichmentState, config: Optional[RunnableConfig] = None
 ) -> OutputInferEnrichmentState:
     """Analyze the culture of the candidate."""
@@ -53,4 +53,4 @@ def node_analysis_culture(
         ),
     )
 
-    return {"culture_analysis": res.synthesis}
+    return {"infer_culture": res.synthesis}

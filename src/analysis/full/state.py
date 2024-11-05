@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 from analysis.models.company import CompanyInfo
 from analysis.models.language import LanguageProficiency
-from analysis.models.location import LocationAnalysis
+from analysis.models.location import ScoredLocationCriterion
 from analysis.models.profile import Profile
 from analysis.models.school import SchoolInfo
 from analysis.models.synthesis import Synthesis
@@ -31,12 +31,14 @@ class MainGraphState(InputGraphState):
     education_enrichment: Annotated[List[SchoolInfo], operator.add]
     experience_enrichment: Annotated[List[CompanyInfo], operator.add]
 
-    location_analysis: Optional[LocationAnalysis] = Field(default=None)
-    language_analysis: Optional[List[LanguageProficiency]] = Field(default=None)
-    sector_analysis: Optional[str] = Field(default=None)
-    culture_analysis: Optional[str] = Field(default=None)
-    intent_analysis: Optional[str] = Field(default=None)
+    infer_languages: Optional[List[LanguageProficiency]] = Field(default=None)
+    infer_sector: Optional[str] = Field(default=None)
+    infer_culture: Optional[str] = Field(default=None)
+    infer_intent: Optional[str] = Field(default=None)
+
     hierarchy_analysis: Optional[str] = Field(default=None)
 
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
+    scored_location_criterion: Optional[ScoredLocationCriterion] = Field(default=None)
+
     synthesis: Optional[Synthesis] = Field(default=None)
