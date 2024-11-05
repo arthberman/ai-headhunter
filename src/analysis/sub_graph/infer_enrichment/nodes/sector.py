@@ -21,7 +21,7 @@ class SectorSynthesis(BaseModel):
     )
 
 
-def node_analysis_sector(
+def node_infer_sector(
     state: MainInferEnrichmentState, config: Optional[RunnableConfig] = None
 ) -> OutputInferEnrichmentState:
     """Analyze the sector of the candidate."""
@@ -53,4 +53,4 @@ def node_analysis_sector(
         ),
     )
 
-    return {"sector_analysis": res.synthesis}
+    return {"infer_sector": res.synthesis}

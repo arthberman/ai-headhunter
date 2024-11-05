@@ -20,6 +20,6 @@ class InputGraphState(BaseModel):
 
     education_enrichment: List[SchoolInfo] = Field(...)
     experience_enrichment: List[CompanyInfo] = Field(...)
-    language_analysis: List[LanguageProficiency] = Field(...)
-    sector_analysis: str = Field(...)
-    culture_analysis: str = Field(...)
+    infer_languages: List[LanguageProficiency] = Field(...)
+    infer_sector: str = Field(...)
+    infer_culture: str = Field(...)

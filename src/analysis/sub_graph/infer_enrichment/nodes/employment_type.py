@@ -29,7 +29,7 @@ class EmploymentType(BaseModel):
     )
 
 
-def node_find_employment_type(
+def node_infer_employment_type(
     state: MainInferEnrichmentState,
     *,
     config: Optional[RunnableConfig] = None,

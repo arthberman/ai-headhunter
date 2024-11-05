@@ -71,7 +71,7 @@ def prepare_scoring_instructions(
             )
         elif criterion.scoring_distribution == ScoringDistribution.GAUSSIAN:
             instructions.append(
-                "   - This distribution assumes that the majority of people will score in the middle, with a small percentage scoring very high or very low."
+                "   - Score ranges [low met = 0.2, average met = 0.5 and excellent met = 0.8], this distribution assumes that the majority of people will score in the middle [average met 0.5], with a small percentage scoring very high or very low."
             )
 
     # Add simplified confidence level instruction
