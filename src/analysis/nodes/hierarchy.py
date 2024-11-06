@@ -42,4 +42,4 @@ def node_hierarchy(state: MainGraphState, config: Optional[RunnableConfig] = Non
         ),
     )
 
-    return {"infer_languages": res.languages}
+    return {"synthesis_hierarchy": res}
