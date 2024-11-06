@@ -30,24 +30,6 @@ class MustSynthesis(BaseModel):
     )
 
 
-class NiceSynthesis(BaseModel):
-    """Synthesis of the analysis of the candidate's nice criteria relative to the job."""
-
-    score: SynthesisScore = Field(..., description="Score of the synthesis")
-    explanation: str = Field(
-        ..., description="Explanation of the synthesis (max 600 characters)"
-    )
-
-
-class CultureSynthesis(BaseModel):
-    """Synthesis of the analysis of the candidate's culture relative to the company culture."""
-
-    score: SynthesisScore = Field(..., description="Score of the synthesis")
-    explanation: str = Field(
-        ..., description="Explanation of the synthesis (max 600 characters)"
-    )
-
-
 class IntentSynthesis(BaseModel):
     """Synthesis of the analysis of the candidate's intent to be open to opportunities."""
 

@@ -24,6 +24,9 @@ def compute_profile_metadata(state: MainGraphState) -> MainGraphState:
 
 def continue_to_nice_criteria(state: MainGraphState):
     """Continue to the nice criteria analysis."""
+    if state.synthesis_must.score == SynthesisScore.FAIL:
+        return ["node_synthesis_overall"]
+
     return [
         Send(
             "match_nice_criteria",
@@ -48,14 +51,9 @@ def continue_to_must_criteria(state: MainGraphState):
     ]
 
 
-def node_test(state: MainGraphState):
-    """Test node."""
-    return {"scored_criterion": []}
-
-
 def init_analysis(state: MainGraphState) -> MainGraphState:
-    """BLANK : Initialize the analysis graph."""
-    return {"scored_criterion": []}
+    """Fake node."""
+    pass
 
 
 def compile_analysis_full_graph() -> CompiledGraph:

@@ -7,7 +7,7 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 from analysis.full.state import MainGraphState
 from analysis.iterative.configuration import Configuration
 from analysis.models.synthesis import LocationSynthesis
-from scorecard.models.scorecard import CriterionType
+from scorecard.models.scorecard import CriterionType, ImportanceLevel
 from utils import init_model
 from utils.candidate_timeline import get_candidate_timeline
 
@@ -34,9 +34,9 @@ def node_synthesis_location(
         criterion
         for criterion in state.scorecard.criteria
         if criterion.type == CriterionType.LOCATION
+        and criterion.importance_level == ImportanceLevel.MUST_HAVE
     ]
 
-    # Invoke the chain
     res = cast(
         LocationSynthesis,
         chain.invoke(

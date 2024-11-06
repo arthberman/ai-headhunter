@@ -8,12 +8,10 @@ from analysis.models.language import LanguageProficiency
 from analysis.models.profile import Profile
 from analysis.models.school import SchoolInfo
 from analysis.models.synthesis import (
-    CultureSynthesis,
     HierarchySynthesis,
     IntentSynthesis,
     LocationSynthesis,
     MustSynthesis,
-    NiceSynthesis,
     Synthesis,
 )
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
@@ -31,10 +29,6 @@ class InputGraphState(BaseModel):
 class MainGraphState(InputGraphState):
     """State of the main graph."""
 
-    profile: Profile = Field(...)
-    scorecard: Scorecard = Field(...)
-    job_synthesis: str = Field(...)
-
     education_enrichment: Annotated[List[SchoolInfo], operator.add]
     experience_enrichment: Annotated[List[CompanyInfo], operator.add]
 
@@ -46,8 +40,6 @@ class MainGraphState(InputGraphState):
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
 
     synthesis_must: Optional[MustSynthesis] = Field(default=None)
-    synthesis_nice: Optional[NiceSynthesis] = Field(default=None)
-    synthesis_culture: Optional[CultureSynthesis] = Field(default=None)
     synthesis_intent: Optional[IntentSynthesis] = Field(default=None)
     synthesis_hierarchy: Optional[HierarchySynthesis] = Field(default=None)
     synthesis_location: Optional[LocationSynthesis] = Field(default=None)

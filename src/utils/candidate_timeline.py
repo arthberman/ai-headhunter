@@ -6,6 +6,22 @@ from analysis.models.profile import Profile
 
 def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
     """Get a chronological timeline of the candidate's profile."""
+    output = []
+    output.append("Candidate Timeline:")
+    # Add headline if available
+    if profile.headline:
+        output.append(f"Headline: {profile.headline}")
+        output.append("")
+
+    # Add summary if available
+    if profile.summary:
+        output.append("Summary:")
+        summary_lines = profile.summary.split("\n")
+        for line in summary_lines:
+            if line.strip():
+                output.append(f"    {line.strip()}")
+        output.append("")
+
     timeline_events: List[
         Tuple[
             datetime,
@@ -38,6 +54,7 @@ def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
                     edu.metadata_duration,
                     edu.metadata_status,
                     edu.description,
+                    None,  # Add None for employment_type in education entries
                 )
             )
 
@@ -59,6 +76,7 @@ def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
                     exp.metadata_duration,
                     exp.metadata_status,
                     exp.description,
+                    exp.employment_type,
                 )
             )
 
@@ -66,7 +84,6 @@ def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
     timeline_events.sort(key=lambda x: x[0], reverse=True)
 
     # Generate output
-    output = []
     for i, (
         start,
         end,
@@ -76,6 +93,7 @@ def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
         duration,
         status,
         details,
+        employment_type,
     ) in enumerate(timeline_events):
         # Format date range for display and bracket
         end_date_str = "Present" if end == datetime.now() else end.strftime("%b %Y")
@@ -88,6 +106,10 @@ def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
         entry_parts = [f"• [{category}] {description}"]
         if location:
             entry_parts.append(f"- {location}")
+        if (
+            category == "Experience" and employment_type
+        ):  # Add employment type for experiences
+            entry_parts.append(f"({employment_type})")
         entry_parts.append(date_bracket)
         if status:
             entry_parts.append(f"- {status}")
@@ -103,7 +125,7 @@ def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
 
         # Check for overlaps
         overlaps = []
-        for next_start, next_end, next_cat, next_desc, _, _, _, _ in timeline_events[
+        for next_start, next_end, next_cat, next_desc, _, _, _, _, _ in timeline_events[
             i + 1 :
         ]:
             if (next_start < end) and (start < next_end):
