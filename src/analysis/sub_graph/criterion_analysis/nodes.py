@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Optional, cast
 
 from langchain import hub
-from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
@@ -63,11 +62,6 @@ def init_agent(
         output_language="en",
         system_time=datetime.now().isoformat(),
     )
-
-    # if it's a bedrock_converse model
-    if configuration.analysis_model.startswith("bedrock_converse"):
-        # replace the first system message with a user message to fit Bedrock Converse API requirements
-        formatted_messages[0] = HumanMessage(content=formatted_messages[0].content)
 
     return {"messages": formatted_messages}
 

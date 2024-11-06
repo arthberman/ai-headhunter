@@ -82,7 +82,4 @@ def node_synthesis_must(
         ),
     )
 
-    print(f"AI result: {ai_result}")
-    print(f"Heuristic result: {heuristic_result}")
-
     return {"synthesis_must": ai_result}

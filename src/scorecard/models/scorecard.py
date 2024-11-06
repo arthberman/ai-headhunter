@@ -14,15 +14,14 @@ class ImportanceLevel(str, Enum):
 class CriterionType(str, Enum):
     """Criterion type."""
 
+    LOCATION = "LOCATION"
     EDUCATION = "EDUCATION"
     EXPERIENCE = "EXPERIENCE"
     HARD_SKILL = "HARD_SKILL"
     SOFT_SKILL = "SOFT_SKILL"
-    INDUSTRY_KNOWLEDGE = "INDUSTRY_KNOWLEDGE"
-    PERSONA = "PERSONA"
-    LOCATION = "LOCATION"
     LANGUAGE = "LANGUAGE"
-    ADDITIONAL_QUALIFICATION = "ADDITIONAL_QUALIFICATION"
+    INDUSTRY_SECTOR = "INDUSTRY_SECTOR"
+    COMPANY_CULTURE = "COMPANY_CULTURE"
 
 
 class ScoringDistribution(str, Enum):
@@ -42,7 +41,7 @@ class BaseCriterion(BaseModel):
     description: str = Field(..., description="Detailed description of the criterion")
     type: CriterionType = Field(
         ...,
-        description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_KNOWLEDGE, ADDITIONAL_QUALIFICATION, PERSONA, LOCATION)",
+        description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_SECTOR, COMPANY_CULTURE, LOCATION)",
     )
     importance_level: ImportanceLevel = Field(
         ...,
@@ -94,18 +93,28 @@ class Scorecard(BaseModel):
 
     @model_validator(mode="after")
     def validate_required_criterion_types(self) -> "Scorecard":
-        """Validate that there is at least one criterion for Language and Location."""
+        """Validate that there is exactly one MUST_HAVE LOCATION criterion and at least one LANGUAGE criterion."""
         if not self.is_updating:
-            criteria_types = [c.type for c in self.criteria]
-            required_types = [
-                CriterionType.LANGUAGE,
-                CriterionType.LOCATION,
+            # Check for exactly one MUST_HAVE LOCATION criterion
+            location_must_have_criteria = [
+                c
+                for c in self.criteria
+                if c.type == CriterionType.LOCATION
+                and c.importance_level == ImportanceLevel.MUST_HAVE
             ]
+            if len(location_must_have_criteria) != 1:
+                raise ValueError(
+                    "There must be exactly 1 MUST_HAVE criterion of type LOCATION"
+                )
 
-            for required_type in required_types:
-                if required_type not in criteria_types:
-                    raise ValueError(
-                        f"There must be at least 1 criterion of type {required_type}"
-                    )
+            # Check for at least one LANGUAGE MUST_HAVE criterion
+            if not any(
+                c.type == CriterionType.LANGUAGE
+                and c.importance_level == ImportanceLevel.MUST_HAVE
+                for c in self.criteria
+            ):
+                raise ValueError(
+                    "There must be at least 1 MUST_HAVE criterion of type LANGUAGE"
+                )
 
         return self

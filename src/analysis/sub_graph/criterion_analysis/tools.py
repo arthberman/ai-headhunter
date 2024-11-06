@@ -34,6 +34,8 @@ class CandidateInfoType(Enum):
     LANGUAGES = "LANGUAGES"
     PROJECTS = "PROJECTS"
     VOLUNTEERINGS = "VOLUNTEERINGS"
+    CULTURE = "CULTURE"
+    SECTOR = "SECTOR"
 
 
 def get_candidate_info(
@@ -86,6 +88,8 @@ def get_candidate_info(
             volunteering.model_dump()
             for volunteering in state.main_state.profile.volunteerings
         ],
+        CandidateInfoType.CULTURE: state.main_state.infer_culture,
+        CandidateInfoType.SECTOR: state.main_state.infer_sector,
     }
 
     if info_type not in info_map:
@@ -154,7 +158,6 @@ def get_tools() -> List[BaseTool]:
         ScoredCriterion,
         search_web,
         get_candidate_info,
-        get_knowledge_points,
     ]
     return tools
 
