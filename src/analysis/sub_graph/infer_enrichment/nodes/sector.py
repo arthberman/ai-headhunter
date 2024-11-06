@@ -53,4 +53,4 @@ def node_infer_sector(
         ),
     )
 
-    return {"infer_sector": res.synthesis}
+    return {"inferred_sector": res.synthesis}

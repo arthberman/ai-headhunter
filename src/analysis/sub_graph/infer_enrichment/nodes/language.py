@@ -54,4 +54,4 @@ def node_infer_languages(
         ),
     )
 
-    return {"infer_languages": res.languages}
+    return {"inferred_languages": res.languages}
