@@ -41,7 +41,7 @@ def node_synthesis_overall(
                 "extended_scored_criterion": extended_scored_criterion,
                 "job_synthesis": state.job_synthesis,
                 "output_schema": Synthesis.model_json_schema(),
-                "output_language": "en",
+                "output_language": configuration.output_language,
                 "system_time": datetime.now().isoformat(),
             }
         ),

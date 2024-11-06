@@ -44,7 +44,7 @@ def node_synthesis_location(
                 "job_location_criteria": location_criteria,
                 "candidate_timeline": get_candidate_timeline(state.profile),
                 "candidate_headline_location": f"{state.profile.city}, {state.profile.state}, {state.profile.country}",
-                "output_language": "en",
+                "output_language": configuration.output_language,
                 "system_time": datetime.now().isoformat(),
             }
         ),

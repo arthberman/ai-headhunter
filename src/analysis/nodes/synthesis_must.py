@@ -76,7 +76,7 @@ def node_synthesis_must(
             {
                 "scored_must_criteria": scored_must_criteria,
                 "heuristic_result": heuristic_result.model_dump(),
-                "output_language": "en",
+                "output_language": configuration.output_language,
                 "system_time": datetime.now().isoformat(),
             },
         ),

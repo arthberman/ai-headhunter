@@ -13,7 +13,7 @@ class SynthesisScore(Enum):
 
 
 class LocationSynthesis(BaseModel):
-    """Synthesis of the analysis of the candidate's location relative to the job."""
+    """Synthesis of the candidate's location relative to the job."""
 
     score: SynthesisScore = Field(..., description="Score of the synthesis")
     explanation: str = Field(
@@ -22,7 +22,7 @@ class LocationSynthesis(BaseModel):
 
 
 class MustSynthesis(BaseModel):
-    """Synthesis of the analysis of the candidate's must criteria relative to the job."""
+    """Synthesis of the candidate's must criteria relative to the job."""
 
     score: SynthesisScore = Field(..., description="Score of the synthesis")
     explanation: str = Field(
@@ -31,7 +31,7 @@ class MustSynthesis(BaseModel):
 
 
 class IntentSynthesis(BaseModel):
-    """Synthesis of the analysis of the candidate's intent to be open to opportunities."""
+    """Synthesis of the candidate's intent to be open to opportunities."""
 
     score: SynthesisScore = Field(..., description="Score of the synthesis")
     explanation: str = Field(
@@ -40,7 +40,16 @@ class IntentSynthesis(BaseModel):
 
 
 class HierarchySynthesis(BaseModel):
-    """Synthesis of the analysis of the candidate's hierarchy relative to the job."""
+    """Synthesis of the candidate's hierarchy relative to the job."""
+
+    score: SynthesisScore = Field(..., description="Score of the synthesis")
+    explanation: str = Field(
+        ..., description="Explanation of the synthesis (max 600 characters)"
+    )
+
+
+class OpenToWorkSynthesis(BaseModel):
+    """Synthesis of the candidate's openess to work, awareness of new opportunities."""
 
     score: SynthesisScore = Field(..., description="Score of the synthesis")
     explanation: str = Field(

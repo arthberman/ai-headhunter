@@ -41,6 +41,11 @@ class Configuration(BaseModel):
         description="The maximum number of iterations to run the analysis for.",
     )
 
+    output_language: str = Field(
+        default="English",
+        description="The language to use for the LLM output.",
+    )
+
     @classmethod
     def from_runnable_config(
         cls, config: RunnableConfig | None = None

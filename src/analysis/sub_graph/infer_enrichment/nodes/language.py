@@ -48,7 +48,7 @@ def node_infer_languages(
             {
                 "profile": format_data(state.profile),
                 "output_schema": LanguageProficiency.model_json_schema(),
-                "output_language": "en",
+                "output_language": configuration.output_language,
                 "system_time": datetime.now().isoformat(),
             }
         ),

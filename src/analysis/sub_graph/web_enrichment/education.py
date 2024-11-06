@@ -160,7 +160,7 @@ def node_education_enrichment(
                     "school_description": education.description,
                     "linkedin_url": education.linkedin_url,
                     "output_schema": SchoolInfo.model_json_schema(),
-                    "output_language": "en",
+                    "output_language": configuration.output_language,
                     "system_time": datetime.now().isoformat(),
                 }
             ),
