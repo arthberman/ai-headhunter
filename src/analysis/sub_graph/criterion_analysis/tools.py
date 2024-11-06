@@ -135,7 +135,7 @@ def search_web(
                 "web_query": query,
                 "system_time": datetime.now().isoformat(),
                 "output_schema": JudgeWebSearch.model_json_schema(),
-                "output_language": "en",
+                "output_language": configuration.output_language,
             }
         ),
     )

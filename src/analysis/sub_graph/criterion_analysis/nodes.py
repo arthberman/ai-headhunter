@@ -40,7 +40,7 @@ def init_agent(
                 "context": state.criterion.context,
                 "output_schema": CotQuestions.model_json_schema(),
                 "system_time": datetime.now().isoformat(),
-                "output_language": "en",
+                "output_language": configuration.output_language,
             }
         ),
     )

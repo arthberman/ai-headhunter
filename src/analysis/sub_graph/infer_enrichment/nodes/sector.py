@@ -47,7 +47,7 @@ def node_infer_sector(
             {
                 "candidate": format_data(state.profile),
                 "output_schema": SectorSynthesis.model_json_schema(),
-                "output_language": "en",
+                "output_language": configuration.output_language,
                 "system_time": datetime.now().isoformat(),
             }
         ),

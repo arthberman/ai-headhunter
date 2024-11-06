@@ -12,6 +12,7 @@ from analysis.models.synthesis import (
     IntentSynthesis,
     LocationSynthesis,
     MustSynthesis,
+    OpenToWorkSynthesis,
     Synthesis,
 )
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
@@ -35,12 +36,12 @@ class MainGraphState(InputGraphState):
     infer_languages: Optional[List[LanguageProficiency]] = Field(default=None)
     infer_sector: Optional[str] = Field(default=None)
     infer_culture: Optional[str] = Field(default=None)
-    infer_intent: Optional[str] = Field(default=None)
 
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
 
-    synthesis_must: Optional[MustSynthesis] = Field(default=None)
-    synthesis_intent: Optional[IntentSynthesis] = Field(default=None)
-    synthesis_hierarchy: Optional[HierarchySynthesis] = Field(default=None)
     synthesis_location: Optional[LocationSynthesis] = Field(default=None)
+    synthesis_must: Optional[MustSynthesis] = Field(default=None)
+    synthesis_hierarchy: Optional[HierarchySynthesis] = Field(default=None)
+    synthesis_open_to_work: Optional[OpenToWorkSynthesis] = Field(default=None)
+    synthesis_intent: Optional[IntentSynthesis] = Field(default=None)
     synthesis_overall: Optional[Synthesis] = Field(default=None)

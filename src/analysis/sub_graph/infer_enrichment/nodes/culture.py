@@ -47,7 +47,7 @@ def node_infer_culture(
             {
                 "candidate": format_data(state.profile),
                 "output_schema": CultureSynthesis.model_json_schema(),
-                "output_language": "en",
+                "output_language": configuration.output_language,
                 "system_time": datetime.now().isoformat(),
             }
         ),

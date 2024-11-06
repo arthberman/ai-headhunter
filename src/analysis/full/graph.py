@@ -5,10 +5,12 @@ from langgraph.graph.graph import CompiledGraph
 from analysis.full.configuration import Configuration
 from analysis.full.state import InputGraphState, MainGraphState
 from analysis.models.synthesis import SynthesisScore
-from analysis.nodes.match_location import node_synthesis_location
+from analysis.nodes.hierarchy import node_hierarchy
+from analysis.nodes.location import node_synthesis_location
+from analysis.nodes.open_to_work import node_open_to_work
 from analysis.nodes.profile_metadata import get_profile_metadata
-from analysis.nodes.synthesis import node_synthesis_overall
 from analysis.nodes.synthesis_must import node_synthesis_must
+from analysis.nodes.synthesis_overall import node_synthesis_overall
 from analysis.sub_graph.criterion_analysis.graph import get_criterion_analysis_subgraph
 from analysis.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgraph
 from analysis.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
@@ -96,6 +98,13 @@ def compile_analysis_full_graph() -> CompiledGraph:
         "node_synthesis_overall", node_synthesis_overall, retry=get_retry_policy()
     )
 
+    workflow.add_node(
+        "node_synthesis_open_to_work", node_open_to_work, retry=get_retry_policy()
+    )
+    workflow.add_node(
+        "node_synthesis_hierarchy", node_hierarchy, retry=get_retry_policy()
+    )
+
     workflow.add_edge(START, "compute_profile_metadata")
     workflow.add_edge("compute_profile_metadata", "node_synthesis_location")
     workflow.add_conditional_edges(
@@ -129,7 +138,9 @@ def compile_analysis_full_graph() -> CompiledGraph:
         continue_to_nice_criteria,
         ["match_nice_criteria", "node_synthesis_overall"],
     )
-    workflow.add_edge("match_nice_criteria", "node_synthesis_overall")
+    workflow.add_edge("match_nice_criteria", "node_synthesis_open_to_work")
+    workflow.add_edge("node_synthesis_open_to_work", "node_synthesis_hierarchy")
+    workflow.add_edge("node_synthesis_hierarchy", "node_synthesis_overall")
     workflow.add_edge("node_synthesis_overall", END)
 
     graph = workflow.compile()
