@@ -26,8 +26,11 @@ def compute_profile_metadata(state: MainGraphState) -> MainGraphState:
 
 def continue_to_nice_criteria(state: MainGraphState):
     """Continue to the nice criteria analysis."""
-    if state.synthesis_must.score == SynthesisScore.FAIL:
-        return ["node_synthesis_overall"]
+    """ if state.synthesis_must.score == SynthesisScore.FAIL:
+        return ["node_synthesis_overall"] """
+
+    # Get set of already processed criterion IDs
+    processed_criterion_ids = {sc.id for sc in state.scored_criterion}
 
     return [
         Send(
@@ -37,11 +40,16 @@ def continue_to_nice_criteria(state: MainGraphState):
         for criterion in state.scorecard.criteria
         if criterion.importance_level == ImportanceLevel.NICE_TO_HAVE
         and criterion.type != CriterionType.LOCATION
+        and criterion.id
+        not in processed_criterion_ids  # Add check for already processed criteria
     ]
 
 
 def continue_to_must_criteria(state: MainGraphState):
     """Continue to the must criteria analysis."""
+    # Get set of already processed criterion IDs
+    processed_criterion_ids = {sc.id for sc in state.scored_criterion}
+
     return [
         Send(
             "match_must_criteria",
@@ -50,6 +58,8 @@ def continue_to_must_criteria(state: MainGraphState):
         for criterion in state.scorecard.criteria
         if criterion.importance_level == ImportanceLevel.MUST_HAVE
         and criterion.type != CriterionType.LOCATION
+        and criterion.id
+        not in processed_criterion_ids  # Add check for already processed criteria
     ]
 
 

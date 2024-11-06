@@ -30,19 +30,19 @@ def node_synthesis_location(
     # Create the chain
     chain = cast(RunnableLambda, prompt | model)
 
-    # Get scorecard criteria of type location
-    location_criteria = [
+    # Get the first scorecard criteria of type location
+    criterion = next(
         criterion
         for criterion in state.scorecard.criteria
         if criterion.type == CriterionType.LOCATION
         and criterion.importance_level == ImportanceLevel.MUST_HAVE
-    ]
+    )
 
     res = cast(
         LocationSynthesis,
         chain.invoke(
             {
-                "job_location_criteria": location_criteria,
+                "job_location_criteria": criterion,
                 "candidate_timeline": get_candidate_timeline(state.profile),
                 "candidate_headline_location": f"{state.profile.city}, {state.profile.state}, {state.profile.country}",
                 "output_language": configuration.output_language,
@@ -53,8 +53,12 @@ def node_synthesis_location(
 
     # confidence is 1 if the score is PASS, 0.5 if DOUBT, 0 otherwise
     scored_criterion = ScoredCriterion(
-        criterion=location_criteria[0],
-        score=res.score,
+        id=criterion.id,
+        score=1
+        if res.score == SynthesisScore.PASS
+        else 0.5
+        if res.score == SynthesisScore.DOUBT
+        else 0,
         explanation=res.explanation,
         confidence=1
         if res.score == SynthesisScore.PASS

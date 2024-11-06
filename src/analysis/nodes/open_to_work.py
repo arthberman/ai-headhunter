@@ -44,6 +44,7 @@ def node_open_to_work(state: MainGraphState, config: Optional[RunnableConfig] = 
                 "candidate_timeline": get_candidate_timeline(
                     state.profile, with_detail=True
                 ),
+                "target_role": state.job_synthesis,
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().isoformat(),
             }
