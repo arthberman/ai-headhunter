@@ -6,7 +6,8 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.full.state import MainGraphState
 from analysis.iterative.configuration import Configuration
-from analysis.models.synthesis import LocationSynthesis
+from analysis.models.synthesis import LocationSynthesis, SynthesisScore
+from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import CriterionType, ImportanceLevel
 from utils import init_model
 from utils.candidate_timeline import get_candidate_timeline
@@ -50,4 +51,16 @@ def node_synthesis_location(
         ),
     )
 
-    return {"synthesis_location": res}
+    # confidence is 1 if the score is PASS, 0.5 if DOUBT, 0 otherwise
+    scored_criterion = ScoredCriterion(
+        criterion=location_criteria[0],
+        score=res.score,
+        explanation=res.explanation,
+        confidence=1
+        if res.score == SynthesisScore.PASS
+        else 0.5
+        if res.score == SynthesisScore.DOUBT
+        else 0,
+    )
+
+    return {"synthesis_location": res, "scored_criterion": [scored_criterion]}
