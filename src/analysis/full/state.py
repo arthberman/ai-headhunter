@@ -33,9 +33,9 @@ class MainGraphState(InputGraphState):
     education_enrichment: Annotated[List[SchoolInfo], operator.add]
     experience_enrichment: Annotated[List[CompanyInfo], operator.add]
 
-    infer_languages: Optional[List[LanguageProficiency]] = Field(default=None)
-    infer_sector: Optional[str] = Field(default=None)
-    infer_culture: Optional[str] = Field(default=None)
+    inferred_languages: Optional[List[LanguageProficiency]] = Field(default=None)
+    inferred_sector: Optional[str] = Field(default=None)
+    inferred_culture: Optional[str] = Field(default=None)
 
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
 

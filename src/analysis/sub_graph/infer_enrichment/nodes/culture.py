@@ -53,4 +53,4 @@ def node_infer_culture(
         ),
     )
 
-    return {"infer_culture": res.synthesis}
+    return {"inferred_culture": res.synthesis}

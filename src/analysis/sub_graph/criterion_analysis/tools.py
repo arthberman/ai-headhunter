@@ -76,9 +76,9 @@ def get_candidate_info(
             "languages": [
                 language.model_dump() for language in state.main_state.profile.languages
             ],
-            "infer_languages": [
-                infer_languages.model_dump()
-                for infer_languages in state.main_state.infer_languages
+            "inferred_languages": [
+                inferred_languages.model_dump()
+                for inferred_languages in state.main_state.inferred_languages
             ],
         },
         CandidateInfoType.PROJECTS: [
@@ -88,8 +88,8 @@ def get_candidate_info(
             volunteering.model_dump()
             for volunteering in state.main_state.profile.volunteerings
         ],
-        CandidateInfoType.CULTURE: state.main_state.infer_culture,
-        CandidateInfoType.SECTOR: state.main_state.infer_sector,
+        CandidateInfoType.CULTURE: state.main_state.inferred_culture,
+        CandidateInfoType.SECTOR: state.main_state.inferred_sector,
     }
 
     if info_type not in info_map:
