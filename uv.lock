@@ -353,7 +353,7 @@ wheels = [
 
 [[package]]
 name = "fireworks-ai"
-version = "0.15.7"
+version = "0.15.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -362,9 +362,9 @@ dependencies = [
     { name = "pillow" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d2/0f/d204da3ea0b1637bfec575ed0b9dd88609bfb59b2b36f21b581bf7d90bc6/fireworks_ai-0.15.7.tar.gz", hash = "sha256:70193f1f81954f49a88ba85d77f4a7f42bdb5ac5ffc9f9aa72ba83aef20df22f", size = 88623 }
+sdist = { url = "https://files.pythonhosted.org/packages/85/71/a5f15e80ef218beea4f32b799a66cea12742ad33b98d6261cf63a92f8592/fireworks_ai-0.15.8.tar.gz", hash = "sha256:ebd86cb582d30e30db018f5087ac923958f74f1e7ad3bdc955c83ef7c5e0fc2d", size = 90288 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d5/c0/1d2748d64d33c2db611e6218743367f1d588f13fe076f95cee784708d7b8/fireworks_ai-0.15.7-py3-none-any.whl", hash = "sha256:44d6985e245b70e3417c5800a3ef1a1710e2827469f42dab356a82d17d44a45e", size = 109867 },
+    { url = "https://files.pythonhosted.org/packages/9f/5e/7949224fa9197a2f7d30e12ccd4a351899ce337e244fccd26e0a65d72ff0/fireworks_ai-0.15.8-py3-none-any.whl", hash = "sha256:7053b571b33948df341f453e878ffef9cc29a58963ad65fdf49607276448031a", size = 111591 },
 ]
 
 [[package]]
@@ -807,16 +807,16 @@ wheels = [
 
 [[package]]
 name = "langchain-openai"
-version = "0.2.5"
+version = "0.2.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "openai" },
     { name = "tiktoken" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b3/7a/2cf68955181b9571d7768dfc4229f54f21977206fe6d7a0eb39fc48be649/langchain_openai-0.2.5.tar.gz", hash = "sha256:55b98711a880474ec363267bf6cd0e2727dc00e8433731318d063a2184582c28", size = 43165 }
+sdist = { url = "https://files.pythonhosted.org/packages/93/67/91e89373c8d6c670bd092d04078086b8e15028caae11708a162f80ae5201/langchain_openai-0.2.6.tar.gz", hash = "sha256:7054e5f64498ad8e59d77cdc210103f5ea4f67258997edc48ae237298adeb316", size = 43166 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/85/74/f0c5d1b00f9c63246c8106b795ea792bb7ac61e92db9101716f05cfc42c7/langchain_openai-0.2.5-py3-none-any.whl", hash = "sha256:745fd9d51a5a3a9cb8839d41f3786ab38dfc539e47c713a806cbca32f3d0875c", size = 50368 },
+    { url = "https://files.pythonhosted.org/packages/a2/71/789e9a66d3af707928b1bb42a67b1e93798c80a4b6a064bad32803cd1b79/langchain_openai-0.2.6-py3-none-any.whl", hash = "sha256:d56e4d9183bdd1a5fb5f3ed9d287f15108e01d631ded170dd330a566f2927b95", size = 50366 },
 ]
 
 [[package]]
@@ -888,7 +888,7 @@ wheels = [
 
 [[package]]
 name = "langsmith"
-version = "0.1.139"
+version = "0.1.140"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -897,9 +897,9 @@ dependencies = [
     { name = "requests" },
     { name = "requests-toolbelt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/28/6d/15ab5402bdca9c7782049bbcebde643047450fdaa3c19e36839f72843f64/langsmith-0.1.139.tar.gz", hash = "sha256:2f9e4d32fef3ad7ef42c8506448cce3a31ad6b78bb4f3310db04ddaa1e9d744d", size = 291595 }
+sdist = { url = "https://files.pythonhosted.org/packages/98/fa/ef7c3857cf473bf6c29520a7b5f84b5b64ce4274aea0bae96d552d0e0ff4/langsmith-0.1.140.tar.gz", hash = "sha256:cb0a717d7b9e6d3145285d7ca0ab216e064cbe7a1ca4139fc04af57fb2315e70", size = 293742 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/33/bf/5f94d4102c9497710dd0c7939e0a855d9c2d1008451a61651a5a2d28b472/langsmith-0.1.139-py3-none-any.whl", hash = "sha256:2a4a541bfbd0a9727255df28a60048c85bc8c4c6a276975923785c3fd82dc879", size = 302202 },
+    { url = "https://files.pythonhosted.org/packages/60/e6/9487d1bfea455424ad4dfb498bc5fa983c00a73915b529e97573c7576d35/langsmith-0.1.140-py3-none-any.whl", hash = "sha256:3de70183ae19a4ada4d77a8a9f336ff95ca0ead98215771033ee889a2889fe19", size = 304802 },
 ]
 
 [[package]]
@@ -1031,7 +1031,7 @@ wheels = [
 
 [[package]]
 name = "openai"
-version = "1.54.0"
+version = "1.54.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -1043,9 +1043,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6d/15/2bf6bb16e49c5a56beae6586aa83785578a875c544349f84a2ccac38e221/openai-1.54.0.tar.gz", hash = "sha256:df2a84384314165b706722a7ac8988dc33eba20dd7fc3b939d138110e608b1ce", size = 312249 }
+sdist = { url = "https://files.pythonhosted.org/packages/d5/d8/ea8cb03694087ac59bfa54a98aff15e0ef546c962d9147ce586d072ce84c/openai-1.54.1.tar.gz", hash = "sha256:5b832bf82002ba8c4f6e5e25c1c0f5d468c22f043711544c716eaffdb30dd6f1", size = 312474 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9b/60/d3925bbd89c19dfa00eefc91ea5109b6cb2a9b1c133a2519c28277738ed1/openai-1.54.0-py3-none-any.whl", hash = "sha256:24ed8874b56e919f0fbb80b7136c3fb022dc82ce9f5f21579b7b280ea4bba249", size = 389267 },
+    { url = "https://files.pythonhosted.org/packages/b5/49/020190de3190ec9532c387e90d70aa8185fb7df4282b5e8b79addeaa4d99/openai-1.54.1-py3-none-any.whl", hash = "sha256:3cb49ccb6bfdc724ad01cc397d323ef8314fc7d45e19e9de2afdd6484a533324", size = 389312 },
 ]
 
 [[package]]
@@ -1546,7 +1546,7 @@ requires-dist = [
     { name = "langchain-core", specifier = ">=0.3.15" },
     { name = "langchain-fireworks", specifier = ">=0.2.5" },
     { name = "langchain-groq", specifier = ">=0.2.1" },
-    { name = "langchain-openai", specifier = ">=0.2.5" },
+    { name = "langchain-openai", specifier = ">=0.2.6" },
     { name = "langchainhub", specifier = ">=0.1.21" },
     { name = "langgraph", specifier = ">=0.2.45" },
     { name = "packaging", specifier = ">=24.1" },
