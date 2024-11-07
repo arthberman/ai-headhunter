@@ -19,7 +19,7 @@ def node_hierarchy(state: MainGraphState, config: Optional[RunnableConfig] = Non
     raw_model = init_model(configuration.analysis_model)
 
     # Initialize the prompt
-    prompt = hub.pull("candidate-analysis-hierarchy")
+    prompt = hub.pull("candidate-analysis-hierarchy:production")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(HierarchySynthesis)

@@ -28,7 +28,7 @@ class AgentState(BaseModel):
 
 def init_agent(state: AgentState):
     """Initialize the agent."""
-    hub_prompt = hub.pull("generate-scorecard-enrichment")
+    hub_prompt = hub.pull("generate-scorecard-enrichment:production")
 
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 

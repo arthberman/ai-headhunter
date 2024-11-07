@@ -21,7 +21,7 @@ def node_synthesis_location(
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the prompt
-    prompt = hub.pull("candidate-analysis-location")
+    prompt = hub.pull("candidate-analysis-location:production")
 
     # Initialize the model
     raw_model = init_model(configuration.analysis_model)
