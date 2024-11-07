@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
@@ -32,7 +32,7 @@ def node_infer_sector(
     raw_model = init_model(configuration.analysis_model)
 
     # Initialize the prompt
-    prompt = hub.pull("analysis-candidate-sector:production")
+    prompt = get_hub_prompt("analysis-candidate-sector")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(SectorSynthesis)

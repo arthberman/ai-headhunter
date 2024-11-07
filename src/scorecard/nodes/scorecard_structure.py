@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from pydantic import Field
@@ -65,7 +65,7 @@ def node_scorecard_structure(
         raw_model, tools=[LimitedScorecard], tool_choice="LimitedScorecard"
     )
 
-    hub_prompt = hub.pull("generate-scorecard-structure:production")
+    hub_prompt = get_hub_prompt("generate-scorecard-structure")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(

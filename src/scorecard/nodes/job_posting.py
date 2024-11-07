@@ -1,6 +1,6 @@
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from trustcall import create_extractor
@@ -24,7 +24,7 @@ def node_job_posting(
         raw_model, tools=[JobPosting], tool_choice="JobPosting"
     )
     # Pull the prompt from the hub
-    prompt = hub.pull("generate-scorecard-job-posting:production")
+    prompt = get_hub_prompt("generate-scorecard-job-posting")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
     formatted_messages = chat_prompt.format_messages(
         raw_job_posting=state.raw_job_posting,

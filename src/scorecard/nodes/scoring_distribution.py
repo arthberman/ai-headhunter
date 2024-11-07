@@ -1,6 +1,6 @@
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from pydantic import model_validator
@@ -32,7 +32,7 @@ def node_scoring_distribution(
     """Generate scoring distribution for the scorecard criteria without existing distributions."""
     configuration = Configuration.from_runnable_config(config)
 
-    prompt = hub.pull("generate-scorecard-scoring-distribution:production")
+    prompt = get_hub_prompt("generate-scorecard-scoring-distribution")
 
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 

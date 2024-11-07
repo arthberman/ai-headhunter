@@ -1,6 +1,6 @@
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from pydantic import model_validator
@@ -33,7 +33,7 @@ def node_context(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
-    prompt = hub.pull("generate-scorecard-context:production")
+    prompt = get_hub_prompt("generate-scorecard-context")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(

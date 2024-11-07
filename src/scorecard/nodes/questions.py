@@ -1,6 +1,6 @@
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from trustcall import create_extractor
@@ -18,7 +18,7 @@ def node_questions(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
-    prompt = hub.pull("generate-scorecard-questions:production")
+    prompt = get_hub_prompt("generate-scorecard-questions")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(

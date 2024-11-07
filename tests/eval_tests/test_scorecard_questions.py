@@ -1,7 +1,7 @@
 from typing import List, cast
 
 from dotenv import load_dotenv
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import Runnable
 from langsmith.evaluation import evaluate
@@ -17,7 +17,7 @@ load_dotenv(dotenv_path=".env")
 
 
 def predict_questions(example: dict):
-    prompt = hub.pull("generate-scorecard-questions")
+    prompt = get_hub_prompt("generate-scorecard-questions")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
@@ -58,7 +58,7 @@ def judge_evaluator_criteria(root_run: Run, example: Example) -> dict:
             description="List of criterion scores and explanations"
         )
 
-    prompt = hub.pull("eval-judge-scorecard-questions-criteria")
+    prompt = get_hub_prompt("eval-judge-scorecard-questions-criteria")
     raw_model = init_model(
         "bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0"
     )
@@ -98,7 +98,7 @@ def judge_evaluator_reference(root_run: Run, example: Example) -> dict:
         score: int = Field(description="Score from 1 to 10")
         explanation: str = Field(description="Explanation for the score")
 
-    prompt = hub.pull("eval-judge-scorecard-questions")
+    prompt = get_hub_prompt("eval-judge-scorecard-questions")
     raw_model = init_model(
         "bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0"
     )
