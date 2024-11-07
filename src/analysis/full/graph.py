@@ -8,7 +8,6 @@ from analysis.models.synthesis import SynthesisScore
 from analysis.nodes.hierarchy import node_hierarchy
 from analysis.nodes.location import node_synthesis_location
 from analysis.nodes.open_to_work import node_open_to_work
-from analysis.nodes.profile_metadata import get_profile_metadata
 from analysis.nodes.synthesis_must import node_synthesis_must
 from analysis.nodes.synthesis_overall import node_synthesis_overall
 from analysis.sub_graph.criterion_analysis.graph import get_criterion_analysis_subgraph
@@ -16,6 +15,7 @@ from analysis.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgr
 from analysis.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
 from scorecard.models.scorecard import CriterionType, ImportanceLevel
 from utils import get_retry_policy
+from utils.get_profile_metadata import get_profile_metadata
 
 
 def compute_profile_metadata(state: MainGraphState) -> MainGraphState:

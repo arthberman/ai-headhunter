@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 from typing import List, Optional, Tuple
 
 from analysis.models.profile import Profile
-from analysis.nodes.profile_metadata import format_date
+from utils.get_profile_metadata import format_date
 
 
 def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
