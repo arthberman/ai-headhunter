@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import List, Optional, Tuple
 
 from analysis.models.profile import Profile
+from analysis.nodes.profile_metadata import format_date
 
 
 def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
@@ -38,38 +39,38 @@ def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
 
     # Add educations
     for edu in profile.educations:
-        if edu.starts_at:
-            end_date = (
-                edu.ends_at
-                if (edu.ends_at and edu.ends_at.year > 1900)
-                else datetime.now()
-            )
+        starts_at = format_date(edu.starts_at)
+        if starts_at:
+            ends_at = format_date(edu.ends_at)
+            if not ends_at or ends_at.year <= 1900:
+                ends_at = datetime.now(UTC)
+
             timeline_events.append(
                 (
-                    edu.starts_at,
-                    end_date,
+                    starts_at,
+                    ends_at,
                     "Education",
                     f"{edu.degree or 'Study'} in {edu.field_of_study or 'N/A'} @ {edu.school}",
-                    None,  # Location not typically available for education
+                    None,
                     edu.metadata_duration,
                     edu.metadata_status,
                     edu.description,
-                    None,  # Add None for employment_type in education entries
+                    None,
                 )
             )
 
     # Add experiences
     for exp in profile.experiences:
-        if exp.starts_at:
-            end_date = (
-                exp.ends_at
-                if (exp.ends_at and exp.ends_at.year > 1900)
-                else datetime.now()
-            )
+        starts_at = format_date(exp.starts_at)
+        if starts_at:
+            ends_at = format_date(exp.ends_at)
+            if not ends_at or ends_at.year <= 1900:
+                ends_at = datetime.now(UTC)
+
             timeline_events.append(
                 (
-                    exp.starts_at,
-                    end_date,
+                    starts_at,
+                    ends_at,
                     "Experience",
                     f"{exp.title or 'Role'} @ {exp.company}",
                     exp.location,
@@ -96,7 +97,7 @@ def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
         employment_type,
     ) in enumerate(timeline_events):
         # Format date range for display and bracket
-        end_date_str = "Present" if end == datetime.now() else end.strftime("%b %Y")
+        end_date_str = "Present" if end == datetime.now(UTC) else end.strftime("%b %Y")
         date_bracket = f"[{start.strftime('%b %Y')} - {end_date_str}"
         if duration:
             date_bracket += f" / {duration}"
@@ -123,7 +124,7 @@ def get_candidate_timeline(profile: Profile, with_detail: bool = False) -> str:
                 if line.strip():
                     output.append(f"    ↳ {line.strip()}")
 
-        # Check for overlaps
+        # Check for overlaps with consistent timezone awareness
         overlaps = []
         for next_start, next_end, next_cat, next_desc, _, _, _, _, _ in timeline_events[
             i + 1 :
