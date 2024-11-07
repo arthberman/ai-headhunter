@@ -32,7 +32,7 @@ def node_infer_culture(
     raw_model = init_model(configuration.analysis_model)
 
     # Initialize the prompt
-    prompt = hub.pull("analysis-candidate-culture")
+    prompt = hub.pull("analysis-candidate-culture:production")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(CultureSynthesis)

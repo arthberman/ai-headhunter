@@ -42,7 +42,7 @@ def node_infer_employment_type(
     raw_model = init_model(configuration.default_model)
 
     # Initialize the prompt
-    prompt = hub.pull("analysis-find-employment-type")
+    prompt = hub.pull("analysis-find-employment-type:production")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(EmploymentType)

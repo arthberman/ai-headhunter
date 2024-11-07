@@ -61,7 +61,7 @@ def node_synthesis_must(
         heuristic_result.explanation += " (Low confidence in assessment)"
 
     # Initialize the prompt
-    prompt = hub.pull("analysis-synthesis-must")
+    prompt = hub.pull("analysis-synthesis-must:production")
 
     # Initialize the model
     raw_model = init_model(configuration.analysis_model)

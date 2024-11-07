@@ -18,7 +18,7 @@ def node_synthesis_overall(
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the prompt
-    prompt = hub.pull("generate-analysis-synthesis")
+    prompt = hub.pull("generate-analysis-synthesis:production")
 
     # Initialize the model
     raw_model = init_model(configuration.synthesis_model)
