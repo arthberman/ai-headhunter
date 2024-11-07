@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
@@ -24,7 +24,7 @@ def init_agent(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
-    prompt = hub.pull("analysis-cot-questions:production")
+    prompt = get_hub_prompt("analysis-cot-questions")
     raw_model = init_model(configuration.analysis_model)
     model = raw_model.with_structured_output(CotQuestions)
 
@@ -45,7 +45,7 @@ def init_agent(
         ),
     )
 
-    hub_prompt = hub.pull("score-analysis-criterion:production")
+    hub_prompt = get_hub_prompt("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
     instructions = prepare_scoring_instructions(state.criterion)

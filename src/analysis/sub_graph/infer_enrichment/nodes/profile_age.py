@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 
 from analysis.full.configuration import Configuration
@@ -23,7 +23,7 @@ def node_infer_age(
     raw_model = init_model(configuration.default_model)
 
     # Initialize the prompt
-    prompt = hub.pull("analysis-find-age:production")
+    prompt = get_hub_prompt("analysis-find-age")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(ProfileAge)

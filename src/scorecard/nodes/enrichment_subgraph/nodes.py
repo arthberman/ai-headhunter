@@ -1,7 +1,7 @@
 import operator
 from typing import Annotated, Optional, Sequence
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.messages import AIMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
@@ -28,7 +28,7 @@ class AgentState(BaseModel):
 
 def init_agent(state: AgentState):
     """Initialize the agent."""
-    hub_prompt = hub.pull("generate-scorecard-enrichment:production")
+    hub_prompt = get_hub_prompt("generate-scorecard-enrichment")
 
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 

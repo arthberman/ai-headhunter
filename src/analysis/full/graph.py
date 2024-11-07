@@ -6,6 +6,7 @@ from analysis.full.configuration import Configuration
 from analysis.full.state import InputGraphState, MainGraphState
 from analysis.models.synthesis import SynthesisScore
 from analysis.nodes.hierarchy import node_hierarchy
+from analysis.nodes.intent import node_intent
 from analysis.nodes.location import node_synthesis_location
 from analysis.nodes.open_to_work import node_open_to_work
 from analysis.nodes.synthesis_must import node_synthesis_must
@@ -99,6 +100,8 @@ def compile_analysis_full_graph() -> CompiledGraph:
         get_infer_enrichment_subgraph(),
     )
 
+    workflow.add_node("node_synthesis_intent", node_intent, retry=get_retry_policy())
+
     workflow.add_node(
         "node_synthesis_must", node_synthesis_must, retry=get_retry_policy()
     )
@@ -150,7 +153,8 @@ def compile_analysis_full_graph() -> CompiledGraph:
     )
     workflow.add_edge("match_nice_criteria", "node_synthesis_open_to_work")
     workflow.add_edge("node_synthesis_open_to_work", "node_synthesis_hierarchy")
-    workflow.add_edge("node_synthesis_hierarchy", "node_synthesis_overall")
+    workflow.add_edge("node_synthesis_hierarchy", "node_synthesis_intent")
+    workflow.add_edge("node_synthesis_intent", "node_synthesis_overall")
     workflow.add_edge("node_synthesis_overall", END)
 
     graph = workflow.compile()

@@ -2,7 +2,7 @@ from datetime import datetime
 from statistics import mean, median
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.full.state import MainGraphState
@@ -61,7 +61,7 @@ def node_synthesis_must(
         heuristic_result.explanation += " (Low confidence in assessment)"
 
     # Initialize the prompt
-    prompt = hub.pull("analysis-synthesis-must:production")
+    prompt = get_hub_prompt("analysis-synthesis-must")
 
     # Initialize the model
     raw_model = init_model(configuration.analysis_model)

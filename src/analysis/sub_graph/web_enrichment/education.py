@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import Runnable, RunnableConfig
 from sqlalchemy import (
@@ -144,7 +144,7 @@ def node_education_enrichment(
         tavily_res = tavily_tool.invoke(
             {"query": f"school {education.school} ({education.linkedin_url})"}
         )
-        prompt = hub.pull("generate-education-enrichment:production")
+        prompt = get_hub_prompt("generate-education-enrichment")
 
         # Initialize the chat model with the provided configuration
         raw_model = init_model(configuration.enrichment_model)

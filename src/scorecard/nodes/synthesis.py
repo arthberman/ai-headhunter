@@ -1,6 +1,6 @@
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 
 from scorecard.configuration import Configuration
@@ -18,7 +18,7 @@ def node_synthesis(
     raw_model = init_model(configuration.default_model)
 
     model = raw_model.with_structured_output(Synthesis)
-    prompt = hub.pull("generate-scorecard-synthesis:production")
+    prompt = get_hub_prompt("generate-scorecard-synthesis")
 
     chain = cast(Runnable, prompt | model)
     synthesis = cast(

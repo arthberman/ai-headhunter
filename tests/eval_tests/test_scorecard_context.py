@@ -1,7 +1,7 @@
 from typing import List, cast
 
 from dotenv import load_dotenv
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.runnables import Runnable
 from langsmith.evaluation import evaluate
 from langsmith.schemas import Example, Run
@@ -37,7 +37,7 @@ def judge_evaluator_criteria(root_run: Run, example: Example) -> dict:
             description="List of criterion scores and explanations"
         )
 
-    prompt = hub.pull("eval-judge-scorecard-context-criteria")
+    prompt = get_hub_prompt("eval-judge-scorecard-context-criteria")
     raw_model = init_model(
         "bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0"
     )

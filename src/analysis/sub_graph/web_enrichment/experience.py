@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import Runnable, RunnableConfig
 from sqlalchemy import (
@@ -145,7 +145,7 @@ def node_experience_enrichment(
         tavily_res = tavily_tool.invoke(
             {"query": f"company {experience.company} ({experience.location})"}
         )
-        prompt = hub.pull("generate-experience-enrichment:production")
+        prompt = get_hub_prompt("generate-experience-enrichment")
 
         # Initialize the chat model with the provided configuration
         raw_model = init_model(configuration.enrichment_model)

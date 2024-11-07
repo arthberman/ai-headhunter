@@ -1,6 +1,6 @@
 from typing import Optional, cast
 
-from langchain import hub
+from utils import get_hub_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from trustcall import create_extractor
@@ -24,7 +24,7 @@ def node_judge_scorecard_structure(
 
     limited_scorecard = LimitedScorecard(**state.scorecard.model_dump())
 
-    prompt = hub.pull("judge-scorecard-structure:production")
+    prompt = get_hub_prompt("judge-scorecard-structure")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages()
