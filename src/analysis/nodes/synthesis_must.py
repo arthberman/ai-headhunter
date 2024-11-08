@@ -13,7 +13,7 @@ from utils import get_extended_scored_criterion, init_model
 
 
 def node_synthesis_must(
-    state: MainGraphState, config: Optional[RunnableConfig] = None
+    state: MainGraphState, config: RunnableConfig
 ) -> MainGraphState:
     """Synthesize the must criteria."""
     # Load configuration from the provided RunnableConfig

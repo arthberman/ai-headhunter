@@ -13,7 +13,7 @@ from utils import init_model
 
 
 def node_judge_scorecard_structure(
-    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+    state: ScorecardGraphState, *, config: RunnableConfig
 ) -> ScorecardGraphState:
     """Judge and potentially modify the scorecard structure."""
     configuration = Configuration.from_runnable_config(config)

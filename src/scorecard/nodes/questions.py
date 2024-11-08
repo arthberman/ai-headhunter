@@ -12,7 +12,7 @@ from utils import init_model
 
 
 def node_questions(
-    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+    state: ScorecardGraphState, *, config: RunnableConfig
 ) -> ScorecardGraphState:
     """Generate questions for the scorecard criteria."""
     # Load configuration from the provided RunnableConfig

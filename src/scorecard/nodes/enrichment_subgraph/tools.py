@@ -17,9 +17,7 @@ class WebContext(BaseModel):
     )
 
 
-def search_web(
-    query: str, *, config: Optional[RunnableConfig] = None
-) -> Optional[list[dict[str, Any]]]:
+def search_web(query: str, *, config: RunnableConfig) -> Optional[list[dict[str, Any]]]:
     """Query a search engine.
 
     This function queries the web to fetch comprehensive, accurate, and trusted results. It's particularly useful

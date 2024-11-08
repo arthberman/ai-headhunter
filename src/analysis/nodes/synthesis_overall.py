@@ -11,7 +11,7 @@ from utils import format_data, get_extended_scored_criterion, init_model
 
 
 def node_synthesis_overall(
-    state: MainGraphState, config: Optional[RunnableConfig] = None
+    state: MainGraphState, config: RunnableConfig
 ) -> MainGraphState:
     """Synthesize the output."""
     # Load configuration from the provided RunnableConfig

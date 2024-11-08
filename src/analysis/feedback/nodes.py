@@ -15,7 +15,7 @@ from utils import init_model
 
 
 def node_reformulate_human_feedback(
-    state: MainGraphState, *, config: Optional[RunnableConfig] = None
+    state: MainGraphState, *, config: RunnableConfig
 ) -> MainGraphState:
     """Reformulate the human feedback."""
     # Load configuration from the provided RunnableConfig
@@ -43,7 +43,7 @@ def node_reformulate_human_feedback(
 
 
 def node_extract_profile_related_elements(
-    state: MainGraphState, *, config: Optional[RunnableConfig] = None
+    state: MainGraphState, *, config: RunnableConfig
 ) -> MainGraphState:
     """Extract the profile related elements."""
     # Load configuration from the provided RunnableConfig
@@ -78,7 +78,7 @@ def node_extract_profile_related_elements(
 
 
 def node_extract_scorecard_related_elements(
-    state: MainGraphState, *, config: Optional[RunnableConfig] = None
+    state: MainGraphState, *, config: RunnableConfig
 ) -> MainGraphState:
     """Extract the scorecard related elements."""
     # Load configuration from the provided RunnableConfig
@@ -115,7 +115,7 @@ def node_extract_scorecard_related_elements(
 
 
 def node_synthesize_feedback(
-    state: MainGraphState, *, config: Optional[RunnableConfig] = None
+    state: MainGraphState, *, config: RunnableConfig
 ) -> MainGraphState:
     """Iterate the scorecard."""
     # Load configuration from the provided RunnableConfig

@@ -15,7 +15,7 @@ from utils import (
 )
 
 
-def node_open_to_work(state: MainGraphState, config: Optional[RunnableConfig] = None):
+def node_open_to_work(state: MainGraphState, config: RunnableConfig):
     """Analyze the candidate's openess to work, awareness of new opportunities."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

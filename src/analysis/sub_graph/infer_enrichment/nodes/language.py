@@ -23,7 +23,7 @@ class LanguageProficiency(BaseModel):
 
 
 def node_infer_languages(
-    state: MainInferEnrichmentState, config: Optional[RunnableConfig] = None
+    state: MainInferEnrichmentState, config: RunnableConfig
 ) -> OutputInferEnrichmentState:
     """Analyze the language proficiency of the candidate."""
     # Load configuration from the provided RunnableConfig

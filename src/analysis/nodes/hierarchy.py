@@ -10,7 +10,7 @@ from analysis.models.synthesis import HierarchySynthesis
 from utils import get_candidate_timeline, init_model
 
 
-def node_hierarchy(state: MainGraphState, config: Optional[RunnableConfig] = None):
+def node_hierarchy(state: MainGraphState, config: RunnableConfig):
     """Analyze the language proficiency of the candidate."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

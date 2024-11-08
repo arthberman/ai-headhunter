@@ -22,7 +22,7 @@ class CultureSynthesis(BaseModel):
 
 
 def node_infer_culture(
-    state: MainInferEnrichmentState, config: Optional[RunnableConfig] = None
+    state: MainInferEnrichmentState, config: RunnableConfig
 ) -> OutputInferEnrichmentState:
     """Analyze the culture of the candidate."""
     # Load configuration from the provided RunnableConfig
