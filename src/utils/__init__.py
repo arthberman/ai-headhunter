@@ -1,6 +1,7 @@
 """Utility functions used in our graph."""
 
 from .candidate_timeline import get_candidate_timeline
+from .few_shot import FewShotConfig, get_few_shot_messages
 from .format_data import format_data
 from .get_dataset import get_dataset
 from .get_extended_scored_criterion import get_extended_scored_criterion
@@ -23,4 +24,6 @@ __all__ = [
     "compute_status",
     "get_prompt",
     "get_dataset",
+    "get_few_shot_messages",
+    "FewShotConfig",
 ]

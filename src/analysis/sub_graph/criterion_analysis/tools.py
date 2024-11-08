@@ -132,7 +132,7 @@ def search_web(
         chain.invoke(
             {
                 "web_query": query,
-                "system_time": datetime.now().isoformat(),
+                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
                 "output_schema": JudgeWebSearch.model_json_schema(),
                 "output_language": configuration.output_language,
             }

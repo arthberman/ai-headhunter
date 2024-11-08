@@ -10,6 +10,7 @@ from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import CriterionType, ImportanceLevel
 from utils import get_prompt, init_model
 from utils.candidate_timeline import get_candidate_timeline
+from utils.few_shot import FewShotConfig, get_few_shot_messages
 
 
 def node_synthesis_location(
@@ -21,6 +22,17 @@ def node_synthesis_location(
 
     # Initialize the prompt
     prompt = get_prompt("candidate-analysis-location")
+
+    # Few shot
+    few_shot_config = FewShotConfig(
+        dataset_name="fs-candidate-analysis-location",
+        input_keys=["profile_details", "job_criteria"],
+        output_keys=["score", "explanation"],
+        input_template="Profile details: {profile_details}\nJob criteria: {job_criteria}",
+        output_template="Score: {score}\nExplanation: {explanation}",
+    )
+
+    few_shot_messages = get_few_shot_messages(few_shot_config)
 
     # Initialize the model
     raw_model = init_model(configuration.analysis_model)
@@ -44,8 +56,9 @@ def node_synthesis_location(
                 "job_location_criteria": criterion,
                 "candidate_timeline": get_candidate_timeline(state.profile),
                 "candidate_headline_location": f"{state.profile.city}, {state.profile.state}, {state.profile.country}",
+                "examples": few_shot_messages,
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().isoformat(),
+                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
             }
         ),
     )

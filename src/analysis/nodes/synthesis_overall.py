@@ -42,7 +42,7 @@ def node_synthesis_overall(
                 "job_synthesis": state.job_synthesis,
                 "output_schema": Synthesis.model_json_schema(),
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().isoformat(),
+                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
             }
         ),
     )
