@@ -8,7 +8,7 @@ from analysis.iterative.configuration import Configuration
 from analysis.models.synthesis import LocationSynthesis, SynthesisScore
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import CriterionType, ImportanceLevel
-from utils import get_hub_prompt, init_model
+from utils import get_prompt, init_model
 from utils.candidate_timeline import get_candidate_timeline
 
 
@@ -20,7 +20,7 @@ def node_synthesis_location(
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the prompt
-    prompt = get_hub_prompt("candidate-analysis-location")
+    prompt = get_prompt("candidate-analysis-location")
 
     # Initialize the model
     raw_model = init_model(configuration.analysis_model)

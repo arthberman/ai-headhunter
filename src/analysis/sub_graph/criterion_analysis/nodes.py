@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import Optional, cast
 
-from utils import get_hub_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig, RunnableLambda
+from langgraph.errors import GraphInterrupt
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import MainGraphState
@@ -14,7 +14,7 @@ from analysis.sub_graph.criterion_analysis.dynamic_prompt import (
 from analysis.sub_graph.criterion_analysis.models import CotQuestions
 from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
 from analysis.sub_graph.criterion_analysis.tools import ScoredCriterion, get_tools
-from utils import init_model
+from utils import get_prompt, init_model
 
 
 def init_agent(
@@ -24,7 +24,7 @@ def init_agent(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
-    prompt = get_hub_prompt("analysis-cot-questions")
+    prompt = get_prompt("analysis-cot-questions")
     raw_model = init_model(configuration.analysis_model)
     model = raw_model.with_structured_output(CotQuestions)
 
@@ -45,7 +45,7 @@ def init_agent(
         ),
     )
 
-    hub_prompt = get_hub_prompt("score-analysis-criterion")
+    hub_prompt = get_prompt("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
     instructions = prepare_scoring_instructions(state.criterion)
@@ -82,7 +82,9 @@ def call_model(
 
     response = None
     if state.loop_step == configuration.analysis_max_loops:
-        message_content = "You exceeded the maximum number of iterations. You must respond to the user by calling the `ScoredCriterion` tool now."
+        message_content = """You exceeded the maximum number of iterations.
+        You must respond to the user by calling the `ScoredCriterion` tool now.
+        You don't have the permission to call any other tools."""
         messages = ChatPromptTemplate.from_messages(
             [
                 *state.messages,
@@ -134,7 +136,7 @@ def should_continue(
         return "respond"
     # Check if the loop step exceeds the maximum number of loops
     elif state.loop_step >= configuration.analysis_max_loops + 1:
-        return "__end__"
+        raise GraphInterrupt("Graph exceeded maximum number of loops.")
     # Otherwise we will use the tool node again
     else:
         return "continue"

@@ -2,9 +2,10 @@
 
 from .candidate_timeline import get_candidate_timeline
 from .format_data import format_data
+from .get_dataset import get_dataset
 from .get_extended_scored_criterion import get_extended_scored_criterion
-from .get_hub_prompt import get_hub_prompt
 from .get_profile_metadata import get_profile_metadata
+from .get_prompt import get_prompt
 from .init_model import init_model
 from .retry_policy import get_retry_policy
 from .time import compute_duration, compute_status, format_date, is_valid_date
@@ -20,5 +21,6 @@ __all__ = [
     "format_date",
     "is_valid_date",
     "compute_status",
-    "get_hub_prompt",
+    "get_prompt",
+    "get_dataset",
 ]

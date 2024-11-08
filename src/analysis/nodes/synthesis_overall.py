@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, cast
 
-from utils import get_hub_prompt
+from utils import get_prompt
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.full.state import MainGraphState
@@ -18,7 +18,7 @@ def node_synthesis_overall(
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the prompt
-    prompt = get_hub_prompt("generate-analysis-synthesis")
+    prompt = get_prompt("generate-analysis-synthesis")
 
     # Initialize the model
     raw_model = init_model(configuration.synthesis_model)

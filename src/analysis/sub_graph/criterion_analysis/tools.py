@@ -4,7 +4,6 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union, cast
 
-from utils import get_hub_prompt
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_core.tools import BaseTool
@@ -20,7 +19,7 @@ from analysis.models.knowledge_point import (
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
 from scorecard.models.scorecard import CriterionType
-from utils import format_data, init_model
+from utils import format_data, get_prompt, init_model
 
 
 class CandidateInfoType(Enum):
@@ -39,7 +38,7 @@ class CandidateInfoType(Enum):
 
 
 def get_candidate_info(
-    info_type: CandidateInfoType,
+    infotype: CandidateInfoType,
     state: Annotated[AnalysisMainState, InjectedState],
 ) -> Union[List[Dict[str, Any]], List[str], Dict[str, Any], str]:
     """Get specific information about the candidate."""
@@ -92,13 +91,13 @@ def get_candidate_info(
         CandidateInfoType.SECTOR: state.main_state.inferred_sector,
     }
 
-    if info_type not in info_map:
-        raise ValueError(f"Invalid info_type: {info_type}")
+    if infotype not in info_map:
+        raise ValueError(f"Invalid infotype: {infotype}")
 
-    data = info_map[info_type]
+    data = info_map[infotype]
 
     if not data:
-        return f"No information available for {info_type.value.upper()}. The candidate's profile does not contain any data for this category."
+        return f"No information available for {infotype.value.upper()}. The candidate's profile does not contain any data for this category."
 
     return format_data(data)
 
@@ -124,7 +123,7 @@ def search_web(
         )
 
     configuration = Configuration.from_runnable_config(config)
-    prompt = get_hub_prompt("judge-web-search")
+    prompt = get_prompt("judge-web-search")
     raw_model = init_model("openai/gpt-4o-mini")
     model = raw_model.with_structured_output(JudgeWebSearch)
     chain = cast(Runnable, prompt | model)
