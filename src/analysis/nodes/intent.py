@@ -10,9 +10,7 @@ from analysis.models.synthesis import IntentSynthesis
 from utils import format_data, init_model
 
 
-def node_intent(
-    state: MainGraphState, config: Optional[RunnableConfig] = None
-) -> MainGraphState:
+def node_intent(state: MainGraphState, config: RunnableConfig) -> MainGraphState:
     """Synthesize the intent of the profile."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

@@ -18,7 +18,7 @@ from utils import get_prompt, init_model
 
 
 def init_agent(
-    state: AnalysisMainState, *, config: Optional[RunnableConfig] = None
+    state: AnalysisMainState, *, config: RunnableConfig
 ) -> AnalysisMainState:
     """Initialize the agent with the provided state."""
     # Load configuration from the provided RunnableConfig
@@ -68,7 +68,7 @@ def init_agent(
 
 # Define the function that calls the model
 def call_model(
-    state: AnalysisMainState, *, config: Optional[RunnableConfig] = None
+    state: AnalysisMainState, *, config: RunnableConfig
 ) -> AnalysisMainState:
     """Call the model with the provided state and configuration."""
     # Load configuration from the provided RunnableConfig

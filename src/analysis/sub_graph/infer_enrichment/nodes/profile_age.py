@@ -13,7 +13,7 @@ from utils import format_data, init_model
 def node_infer_age(
     state: MainInferEnrichmentState,
     *,
-    config: Optional[RunnableConfig] = None,
+    config: RunnableConfig,
 ) -> MainInferEnrichmentState:
     """Estimate the age of the profile."""
     # Load configuration from the provided RunnableConfig

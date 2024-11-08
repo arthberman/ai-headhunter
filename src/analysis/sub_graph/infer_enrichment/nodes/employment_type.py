@@ -32,7 +32,7 @@ class EmploymentType(BaseModel):
 def node_infer_employment_type(
     state: MainInferEnrichmentState,
     *,
-    config: Optional[RunnableConfig] = None,
+    config: RunnableConfig,
 ) -> MainInferEnrichmentState:
     """Find employment type of experiences if not provided."""
     # Load configuration from the provided RunnableConfig

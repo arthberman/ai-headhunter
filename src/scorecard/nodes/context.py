@@ -27,7 +27,7 @@ class ScorecardWithContextValidation(Scorecard):
 
 
 def node_context(
-    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+    state: ScorecardGraphState, *, config: RunnableConfig
 ) -> ScorecardGraphState:
     """Generate context for the scorecard criteria without existing context."""
     # Load configuration from the provided RunnableConfig

@@ -27,7 +27,7 @@ class ScorecardWithScoringDistributionValidation(Scorecard):
 
 
 def node_scoring_distribution(
-    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+    state: ScorecardGraphState, *, config: RunnableConfig
 ) -> ScorecardGraphState:
     """Generate scoring distribution for the scorecard criteria without existing distributions."""
     configuration = Configuration.from_runnable_config(config)

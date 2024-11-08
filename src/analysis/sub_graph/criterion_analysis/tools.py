@@ -8,17 +8,12 @@ from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_core.tools import BaseTool
 from langgraph.prebuilt import InjectedState
-from pyairtable import Api
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
 from analysis.iterative.configuration import Configuration
-from analysis.models.knowledge_point import (
-    KnowledgePoint,
-)
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
-from scorecard.models.scorecard import CriterionType
 from utils import format_data, get_prompt, init_model
 
 
@@ -102,9 +97,7 @@ def get_candidate_info(
     return format_data(data)
 
 
-def search_web(
-    query: str, *, config: Optional[RunnableConfig] = None
-) -> Optional[list[dict[str, Any]]]:
+def search_web(query: str, *, config: RunnableConfig) -> Optional[list[dict[str, Any]]]:
     """Query a search engine.
 
     This function queries the web to fetch comprehensive, accurate, and trusted results. It's particularly useful
@@ -159,27 +152,3 @@ def get_tools() -> List[BaseTool]:
         get_candidate_info,
     ]
     return tools
-
-
-def get_knowledge_points(types: list[CriterionType]) -> list[KnowledgePoint]:
-    """Retrieve knowledge base entries by a list of criterion types."""
-    api = Api(os.environ["AIRTABLE_API_KEY"])
-    table = api.table("appnlCNqfC0erFVX7", "tbl7TLnZwMynf8pjJ")
-
-    # Construct the OR formula for multiple criterion types
-    criterion_conditions = [f"{{CriterionType}} = '{ct.value}'" for ct in types]
-    formula = f"OR({','.join(criterion_conditions)})"
-
-    # Fetch filtered records
-    filtered_records = table.all(formula=formula)
-
-    # Convert Airtable records to KnowledgePoint objects
-    knowledge_points = [
-        KnowledgePoint(
-            type=CriterionType(record["fields"]["CriterionType"]),
-            description=record["fields"]["Description"],
-        )
-        for record in filtered_records
-    ]
-
-    return knowledge_points

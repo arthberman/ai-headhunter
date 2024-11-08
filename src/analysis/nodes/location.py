@@ -14,7 +14,7 @@ from utils.few_shot import FewShotConfig, get_few_shot_messages
 
 
 def node_synthesis_location(
-    state: MainGraphState, config: Optional[RunnableConfig] = None
+    state: MainGraphState, config: RunnableConfig
 ) -> MainGraphState:
     """Analyze the candidate's location."""
     # Load configuration from the provided RunnableConfig

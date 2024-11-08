@@ -39,7 +39,7 @@ def init_agent(state: AgentState):
     return {"messages": formatted_messages}
 
 
-def call_model(state: AgentState, *, config: Optional[RunnableConfig] = None):
+def call_model(state: AgentState, *, config: RunnableConfig):
     """Call the model."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
@@ -71,7 +71,7 @@ def respond(state: AgentState):
     return {"web_context": response.web_context}
 
 
-def should_continue(state: AgentState, *, config: Optional[RunnableConfig] = None):
+def should_continue(state: AgentState, *, config: RunnableConfig):
     """Determine whether to continue or not."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

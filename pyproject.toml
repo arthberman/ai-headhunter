@@ -4,7 +4,7 @@ version = "0.0.1"
 description = "AI Agents for repio.co"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["python-dotenv>=1.0.1",
+dependencies = [
   "langchain>=0.3.7",
   "langchain-community>=0.3.5",
   "langchainhub>=0.1.21",
@@ -17,54 +17,37 @@ dependencies = ["python-dotenv>=1.0.1",
   "toml>=0.10.2",
   "packaging>=24.1",
   "ipykernel>=6.29.5",
-  "psycopg-binary>=3.2.3",
-  "sqlalchemy>=2.0.35",
   "langchain-aws>=0.2.7",
   "langchain-fireworks>=0.2.5",
   "trustcall>=0.0.25",
-  "pyairtable>=2.3.5"]
+  "python-dotenv>=1.0.1",
+]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.uv]
-dev-dependencies = ["git-filter-repo>=2.45.0",
+dev-dependencies = [
+  "git-filter-repo>=2.45.0",
   "ipykernel>=6.29.5",
   "langgraph-sdk>=0.1.33",
-  "ruff>=0.6.6"]
+  "ruff>=0.6.6",
+]
 
 [tool.ruff]
-include = ["*.py",
-  "*.pyi",
-  "*.ipynb"]
+include = ["*.py", "*.pyi", "*.ipynb"]
 
 [tool.ruff.lint]
-select = ["E",
-  "F",
-  "I",
-  "D",
-  "D401",
-  "T201",
-  "UP"]
-ignore = ["UP006",
-  "UP007",
-  "UP035",
-  "D417",
-  "E501",
-  "D100"]
+select = ["E", "F", "I", "D", "D401", "T201", "UP"]
+ignore = ["UP006", "UP007", "UP035", "D417", "E501", "D100"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["D",
-  "UP"]
-"ntbk/*" = ["D",
-  "UP",
-  "T201"]
+"tests/*" = ["D", "UP"]
+"ntbk/*" = ["D", "UP", "T201"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/analysis",
-  "src/scorecard"]
-
+packages = ["src/analysis", "src/scorecard"]

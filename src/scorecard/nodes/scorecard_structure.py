@@ -50,7 +50,7 @@ When updating the scorecard, you must only follow the human feedback provided :
 
 
 def node_scorecard_structure(
-    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+    state: ScorecardGraphState, *, config: RunnableConfig
 ) -> ScorecardGraphState:
     """Generate a scorecard structure based on the human feedback."""
     # Load configuration from the provided RunnableConfig

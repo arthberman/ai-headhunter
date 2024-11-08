@@ -10,7 +10,7 @@ from utils import init_model
 
 
 def node_synthesis(
-    state: ScorecardGraphState, *, config: Optional[RunnableConfig] = None
+    state: ScorecardGraphState, *, config: RunnableConfig
 ) -> ScorecardGraphState:
     """Synthesize the scorecard."""
     configuration = Configuration.from_runnable_config(config)
