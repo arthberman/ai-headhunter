@@ -1,7 +1,7 @@
 from typing import List, cast
 
 from dotenv import load_dotenv
-from utils import get_hub_prompt
+from utils import get_prompt
 from langchain_core.runnables import Runnable
 from langsmith.evaluation import evaluate
 from langsmith.schemas import Example, Run
@@ -22,7 +22,7 @@ def predict_language_enrichment(example: dict):
     )
 
     # Initialize the prompt
-    prompt = get_hub_prompt("generate-language-enrichment")
+    prompt = get_prompt("generate-language-enrichment")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(StructuredOutput)

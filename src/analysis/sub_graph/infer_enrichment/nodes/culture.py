@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, cast
 
-from utils import get_hub_prompt
+from utils import get_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
@@ -32,7 +32,7 @@ def node_infer_culture(
     raw_model = init_model(configuration.analysis_model)
 
     # Initialize the prompt
-    prompt = get_hub_prompt("analysis-candidate-culture")
+    prompt = get_prompt("analysis-candidate-culture")
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(CultureSynthesis)

@@ -24,10 +24,10 @@ def get_criterion_analysis_subgraph():
     )
 
     # Define the nodes
-    workflow.add_node("init_agent", init_agent)
+    workflow.add_node("init_agent", init_agent, retry=get_retry_policy())
     workflow.add_node("agent", call_model, retry=get_retry_policy())
     workflow.add_node("respond", respond)
-    workflow.add_node("tools", ToolNode(get_tools()))
+    workflow.add_node("tools", ToolNode(get_tools()), retry=get_retry_policy())
 
     # Set the entrypoint as `init_agent`
     workflow.add_edge(START, "init_agent")
