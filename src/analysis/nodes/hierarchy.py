@@ -37,7 +37,7 @@ def node_hierarchy(state: MainGraphState, config: Optional[RunnableConfig] = Non
                 ),
                 "target_role": state.job_synthesis,
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().isoformat(),
+                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
             }
         ),
     )

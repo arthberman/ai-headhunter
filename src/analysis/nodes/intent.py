@@ -35,7 +35,7 @@ def node_intent(
                 "profile": format_data(state.profile),
                 "synthesis_hierarchy": state.synthesis_hierarchy,
                 "synthesis_open_to_work": state.synthesis_open_to_work,
-                "system_time": datetime.now().isoformat(),
+                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
                 "output_language": configuration.output_language,
             }
         ),

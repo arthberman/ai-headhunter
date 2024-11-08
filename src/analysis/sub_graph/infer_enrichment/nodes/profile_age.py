@@ -38,7 +38,7 @@ def node_infer_age(
                 "profile": format_data(state.profile),
                 "output_schema": ProfileAge.model_json_schema(),
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().isoformat(),
+                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
             }
         ),
     )

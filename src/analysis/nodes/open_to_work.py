@@ -1,13 +1,18 @@
 from datetime import datetime
 from typing import Optional, cast
 
-from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 from langchain_core.runnables import Runnable, RunnableConfig
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import MainGraphState
 from analysis.models.synthesis import OpenToWorkSynthesis, SynthesisScore
-from utils import get_candidate_timeline, get_dataset, get_prompt, init_model
+from utils import (
+    FewShotConfig,
+    get_candidate_timeline,
+    get_few_shot_messages,
+    get_prompt,
+    init_model,
+)
 
 
 def node_open_to_work(state: MainGraphState, config: Optional[RunnableConfig] = None):
@@ -31,33 +36,18 @@ def node_open_to_work(state: MainGraphState, config: Optional[RunnableConfig] = 
     prompt = get_prompt("candidate-analysis-open-to-work")
 
     # Few shot
-    fs_dataset = get_dataset("fs-candidate-analysis-open-to-work")
-    examples = [
-        {
-            "profile_details": example.inputs["profile_details"],
-            "score": example.outputs["score"],
-            "explanation": example.outputs["explanation"],
-        }
-        for example in fs_dataset
-    ]
-
-    example_prompt = ChatPromptTemplate.from_messages(
-        [
-            ("human", "Profile details: {profile_details}"),
-            (
-                "ai",
-                """
+    few_shot_config = FewShotConfig(
+        dataset_name="fs-candidate-analysis-open-to-work",
+        input_keys=["profile_details"],
+        output_keys=["score", "explanation"],
+        input_template="Profile details: {profile_details}",
+        output_template="""
                 Score: {score}
                 Explanation: {explanation}
                 """,
-            ),
-        ]
     )
 
-    few_shot_prompt = FewShotChatMessagePromptTemplate(
-        example_prompt=example_prompt,
-        examples=examples,
-    )
+    few_shot_messages = get_few_shot_messages(few_shot_config)
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(OpenToWorkSynthesis)
@@ -73,10 +63,10 @@ def node_open_to_work(state: MainGraphState, config: Optional[RunnableConfig] = 
                 "candidate_timeline": get_candidate_timeline(
                     state.profile, with_detail=True
                 ),
-                "examples": few_shot_prompt.invoke({}).to_messages(),
+                "examples": few_shot_messages,
                 "target_role": state.job_synthesis,
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().isoformat(),
+                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
             }
         ),
     )

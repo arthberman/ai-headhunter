@@ -63,7 +63,7 @@ def node_infer_employment_type(
                         "candidate_timeline": get_candidate_timeline(state.profile),
                         "output_schema": EmploymentType.model_json_schema(),
                         "output_language": configuration.output_language,
-                        "system_time": datetime.now().isoformat(),
+                        "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
                     }
                 ),
             )

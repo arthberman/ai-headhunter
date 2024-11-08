@@ -161,7 +161,7 @@ def node_education_enrichment(
                     "linkedin_url": education.linkedin_url,
                     "output_schema": SchoolInfo.model_json_schema(),
                     "output_language": configuration.output_language,
-                    "system_time": datetime.now().isoformat(),
+                    "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
                 }
             ),
         )
