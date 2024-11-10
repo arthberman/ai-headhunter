@@ -46,6 +46,10 @@ class Configuration(BaseModel):
         description="The language to use for the LLM output.",
     )
 
+    mem_assistant_id: str = (
+        "memory_graph"  # update to the UUID if you configure a custom assistant
+    )
+
     @classmethod
     def from_runnable_config(
         cls, config: RunnableConfig | None = None
