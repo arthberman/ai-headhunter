@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, cast
+from typing import cast
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig, RunnableLambda
@@ -77,22 +77,22 @@ def call_model(
     # Initialize the raw model with the provided configuration and bind the tools
     raw_model = init_model(configuration.analysis_model)
 
-    # Bind the tools to the model
-    model = raw_model.bind_tools(get_tools(), tool_choice="any")
-
     response = None
     if state.loop_step == configuration.analysis_max_loops:
         message_content = """You exceeded the maximum number of iterations.
-        You must respond to the user by calling the `ScoredCriterion` tool now.
-        You don't have the permission to call any other tools."""
+        You must respond to the user by calling the `ScoredCriterion` tool now."""
         messages = ChatPromptTemplate.from_messages(
             [
                 *state.messages,
                 ("system", "{message_content}"),
             ]
         )
+        # Bind the tools to the model
+        model = raw_model.bind_tools([ScoredCriterion], tool_choice="ScoredCriterion")
         response = model.invoke(messages.invoke({"message_content": message_content}))
     else:
+        # Bind the tools to the model
+        model = raw_model.bind_tools(get_tools(), tool_choice="any")
         # Call the model with the provided state
         response = model.invoke(state.messages)
 

@@ -5,6 +5,7 @@ from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import Runnable, RunnableConfig
 from langgraph.store.base import BaseStore
 
+# from langgraph_sdk import get_client, get_sync_client
 from analysis.full.configuration import Configuration
 from analysis.models.company import CompanyInfo
 from analysis.models.profile import ProfileExperience
@@ -12,6 +13,7 @@ from analysis.sub_graph.web_enrichment.state import (
     ExperienceState,
     OutputEnrichmentState,
 )
+from memory_graph.models import Company
 from utils import get_prompt, init_model
 
 tavily_tool = TavilySearchResults(
@@ -23,7 +25,7 @@ def node_experience_enrichment(
     state: ExperienceState, *, config: RunnableConfig, store: BaseStore
 ) -> OutputEnrichmentState:
     """Enrich the experience of the candidate."""
-    experience: ProfileExperience = state["experience"]
+    experience = cast(ProfileExperience, state["experience"])
 
     # If no linkedin_url or invalid format, return empty
     if not experience.linkedin_url or not experience.linkedin_url.startswith(
@@ -35,17 +37,18 @@ def node_experience_enrichment(
     configuration = Configuration.from_runnable_config(config)
 
     # Access store
-    namespace = ("company", "web_enrichment")
+    namespace = ("company", "enrichment")
     key = experience.linkedin_url.rstrip("/").split("/")[-1].lower().strip()
     company = store.get(namespace, key)
 
     if company:
-        return {"experience_enrichment": [CompanyInfo(**company.value)]}
+        return {"experience_enrichment": [Company(**company.value)]}
 
     # If not in store, perform Tavily search
     tavily_res = tavily_tool.invoke(
         {"query": f"company {experience.company} ({experience.location})"}
     )
+
     prompt = get_prompt("generate-experience-enrichment")
 
     # Initialize the chat model with the provided configuration
@@ -69,7 +72,25 @@ def node_experience_enrichment(
         ),
     )
 
+    
+    # memory_client.runs.wait(
+    #    thread_id=None,
+    #    assistant_id=configuration.mem_assistant_id,
+    #    input={
+    #        "namespace": namespace,
+    #        "key": key,
+    #        "function_name": "Company",
+    #        "information": f"""Web Search Results:
+    #            {tavily_res}
+    #
+    #               Company: {experience.company}
+    #              Title: {experience.title}
+    #             Description: {experience.description}""",
+    #    },
+    # )
+
     # Add the new company info to the store
+    # company = store.get(namespace, key)
     store.put(namespace, key, res)
 
     return {"experience_enrichment": [res]}

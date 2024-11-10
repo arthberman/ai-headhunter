@@ -3,7 +3,8 @@
     "analysis_full": "./src/analysis/full/graph.py:compile_analysis_full_graph",
     "web_enrichment": "./src/analysis/sub_graph/web_enrichment/graph.py:get_web_enrichment_subgraph",
     "infer_enrichment": "./src/analysis/sub_graph/infer_enrichment/graph.py:get_infer_enrichment_subgraph",
-    "scorecard": "./src/scorecard/graph.py:compile_scorecard_graph"
+    "scorecard": "./src/scorecard/graph.py:compile_scorecard_graph",
+    "memory_graph": "./src/memory_graph/graph.py:graph"
   },
   "env": ".env.studio",
   "python_version": "3.12",
