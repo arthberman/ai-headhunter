@@ -151,6 +151,9 @@ def scatter_schemas(state: State, config: RunnableConfig) -> list[Send]:
 
     # Loop over all memory types specified in the configuration
     for v in configurable.memory_types:
+        if state.function_name != v.name:
+            continue
+
         update_mode = v.update_mode
 
         # This specifies the type of memory update to perform from the configuration
@@ -165,7 +168,7 @@ def scatter_schemas(state: State, config: RunnableConfig) -> list[Send]:
                 raise ValueError(f"Unknown update mode: {update_mode}")
 
         # Create new ProcessorState with function name
-        processor_state = ProcessorState(**state.model_dump(), function_name=v.name)
+        processor_state = ProcessorState(**state.model_dump())
 
         # Use Send API to route to the target node and pass the name of the memory schema as function_name
         # Send API allows each memory node to be executed in parallel

@@ -13,11 +13,12 @@ class State(BaseModel):
 
     information: str = Field(..., description="The information to store.")
 
+    function_name: str = Field(..., description="The function name for the stored element.")
+
 
 class ProcessorState(State):
     """Extractor state."""
-
-    function_name: str = Field(description="Name of the function being processed")
+    pass
 
 
 __all__ = [

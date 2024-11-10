@@ -29,7 +29,7 @@ class Role(BaseModel):
     )
 
 
-class Company(BaseModel):
+class CompanyInfo(BaseModel):
     """Information about a company."""
 
     name: str = Field(description="The official name of the company")
