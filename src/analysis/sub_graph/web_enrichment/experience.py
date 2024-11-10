@@ -1,27 +1,24 @@
-from datetime import datetime
 from typing import cast
 
 from langchain_community.tools import TavilySearchResults
-from langchain_core.runnables import Runnable, RunnableConfig
+from langchain_core.runnables import RunnableConfig
 from langgraph.store.base import BaseStore
+from langgraph_sdk import get_client
 
-# from langgraph_sdk import get_client, get_sync_client
 from analysis.full.configuration import Configuration
-from analysis.models.company import CompanyInfo
 from analysis.models.profile import ProfileExperience
 from analysis.sub_graph.web_enrichment.state import (
     ExperienceState,
     OutputEnrichmentState,
 )
-from memory_graph.models import Company
-from utils import get_prompt, init_model
+from memory_graph.models.company import CompanyInfo
 
 tavily_tool = TavilySearchResults(
     max_results=10, include_answer=True, search_depth="advanced"
 )
 
 
-def node_experience_enrichment(
+async def node_experience_enrichment(
     state: ExperienceState, *, config: RunnableConfig, store: BaseStore
 ) -> OutputEnrichmentState:
     """Enrich the experience of the candidate."""
@@ -39,58 +36,40 @@ def node_experience_enrichment(
     # Access store
     namespace = ("company", "enrichment")
     key = experience.linkedin_url.rstrip("/").split("/")[-1].lower().strip()
-    company = store.get(namespace, key)
+    company = await store.aget(namespace, key)
 
     if company:
-        return {"experience_enrichment": [Company(**company.value)]}
+        return {"experience_enrichment": [cast(CompanyInfo, company.value)]}
 
     # If not in store, perform Tavily search
-    tavily_res = tavily_tool.invoke(
+    tavily_res = await tavily_tool.ainvoke(
         {"query": f"company {experience.company} ({experience.location})"}
     )
 
-    prompt = get_prompt("generate-experience-enrichment")
-
-    # Initialize the chat model with the provided configuration
-    raw_model = init_model(configuration.enrichment_model)
-    model = raw_model.with_structured_output(CompanyInfo)
-
-    chain = cast(Runnable, prompt | model)
-    res = cast(
-        CompanyInfo,
-        chain.invoke(
-            {
-                "web_browsing_result": tavily_res,
-                "company": experience.company,
-                "company_title": experience.title,
-                "company_description": experience.description,
-                "linkedin_url": experience.linkedin_url,
-                "output_schema": CompanyInfo.model_json_schema(),
-                "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
-            }
-        ),
+    # Call the memory_graph
+    memory_client = get_client()
+    await memory_client.runs.wait(
+        thread_id=None,
+        assistant_id=configuration.mem_assistant_id,
+        input={
+            "namespace": namespace,
+            "key": key,
+            "function_name": "Company",
+            "information": f"""<web_search>
+                {tavily_res}
+                </web_search>
+                
+                <candidate_profile>
+                Company: {experience.company}
+                Title: {experience.title}
+                Description: {experience.description}
+                </candidate_profile>""",
+        },
     )
 
-    
-    # memory_client.runs.wait(
-    #    thread_id=None,
-    #    assistant_id=configuration.mem_assistant_id,
-    #    input={
-    #        "namespace": namespace,
-    #        "key": key,
-    #        "function_name": "Company",
-    #        "information": f"""Web Search Results:
-    #            {tavily_res}
-    #
-    #               Company: {experience.company}
-    #              Title: {experience.title}
-    #             Description: {experience.description}""",
-    #    },
-    # )
-
     # Add the new company info to the store
-    # company = store.get(namespace, key)
-    store.put(namespace, key, res)
+    company = await store.aget(namespace, key)
+    if not company:
+        raise ValueError("Company not found in the store.")
 
-    return {"experience_enrichment": [res]}
+    return {"experience_enrichment": [cast(CompanyInfo, company.value)]}

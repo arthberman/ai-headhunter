@@ -2,12 +2,11 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from analysis.models.company import CompanyInfo
 from analysis.models.language import LanguageProficiency
 from analysis.models.profile import (
     Profile,
 )
-from analysis.models.school import SchoolInfo
+from memory_graph.models import CompanyInfo, SchoolInfo
 from scorecard.models.scorecard import Scorecard
 
 

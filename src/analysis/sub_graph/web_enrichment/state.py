@@ -3,9 +3,8 @@ from typing import Annotated, List
 
 from pydantic import BaseModel, Field
 
-from analysis.models.company import CompanyInfo
 from analysis.models.profile import Profile, ProfileEducation, ProfileExperience
-from analysis.models.school import SchoolInfo
+from memory_graph.models import CompanyInfo, SchoolInfo
 
 
 class MainEnrichmentState(BaseModel):

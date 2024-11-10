@@ -6,7 +6,7 @@ from langchain_core.runnables import RunnableConfig, ensure_config
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
-from memory_graph.models import Company
+from memory_graph.models import CompanyInfo, SchoolInfo
 
 
 class MemoryConfig(BaseModel):
@@ -58,6 +58,12 @@ DEFAULT_MEMORY_CONFIGS = [
         name="Company",
         description="Update this document to maintain up-to-date information about a company.",
         update_mode="patch",
-        parameters=Company.model_json_schema(),
+        parameters=CompanyInfo.model_json_schema(),
+    ),
+    MemoryConfig(
+        name="School",
+        description="Update this document to maintain up-to-date information about a school.",
+        update_mode="patch",
+        parameters=SchoolInfo.model_json_schema(),
     ),
 ]
