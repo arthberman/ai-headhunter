@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Any, Dict, Optional, Tuple, cast
 
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import RunnableConfig
@@ -18,6 +18,42 @@ tavily_tool = TavilySearchResults(
 )
 
 
+def format_input(
+    namespace: Tuple[str, str],
+    key: str,
+    experience: ProfileExperience,
+    tavily_res: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Format input for memory client with optional Tavily search results."""
+    information = f"""
+        <candidate_profile>
+        Company: {experience.company}
+        Location: {experience.location}"""
+
+    # Add title and description only if description is rich
+    if len(experience.description) >= 100:
+        information += f"""
+        Title: {experience.title}
+        Description: {experience.description}"""
+
+    information += "\n        </candidate_profile>"
+
+    # Add Tavily results if provided
+    if tavily_res:
+        information = f"""
+            <web_search>
+            {tavily_res}
+            </web_search>
+            {information}"""
+
+    return {
+        "namespace": namespace,
+        "key": key,
+        "function_name": "CompanyInfo",
+        "information": information,
+    }
+
+
 async def node_experience_enrichment(
     state: ExperienceState, *, config: RunnableConfig, store: BaseStore
 ) -> OutputEnrichmentState:
@@ -33,43 +69,42 @@ async def node_experience_enrichment(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
+    # Get the memory client
+    memory_client = get_client()
+
     # Access store
     namespace = ("company", "enrichment")
     key = experience.linkedin_url.rstrip("/").split("/")[-1].lower().strip()
     company = await store.aget(namespace, key)
 
     if company:
+        company_info = cast(CompanyInfo, company.value)
+        if len(experience.description) < 100:
+            return {"experience_enrichment": [company_info]}
+
+        # If the description is rich, we can enrich the company info
+        await memory_client.runs.create(
+            thread_id=None,
+            assistant_id=configuration.mem_assistant_id,
+            input=format_input(namespace, key, experience),
+        )
+        return {"experience_enrichment": [company_info]}
+    else:
+        # If not in store or cast failed, perform Tavily search
+        tavily_res = await tavily_tool.ainvoke(
+            {"query": f"company {experience.company} ({experience.location})"}
+        )
+
+        # Call the memory_graph
+        await memory_client.runs.wait(
+            thread_id=None,
+            assistant_id=configuration.mem_assistant_id,
+            input=format_input(namespace, key, experience, tavily_res),
+        )
+
+        # Add the new company info to the store
+        company = await store.aget(namespace, key)
+        if not company:
+            raise ValueError("Company not found in the store.")
+
         return {"experience_enrichment": [cast(CompanyInfo, company.value)]}
-
-    # If not in store, perform Tavily search
-    tavily_res = await tavily_tool.ainvoke(
-        {"query": f"company {experience.company} ({experience.location})"}
-    )
-
-    # Call the memory_graph
-    memory_client = get_client()
-    await memory_client.runs.wait(
-        thread_id=None,
-        assistant_id=configuration.mem_assistant_id,
-        input={
-            "namespace": namespace,
-            "key": key,
-            "function_name": "Company",
-            "information": f"""<web_search>
-                {tavily_res}
-                </web_search>
-                
-                <candidate_profile>
-                Company: {experience.company}
-                Title: {experience.title}
-                Description: {experience.description}
-                </candidate_profile>""",
-        },
-    )
-
-    # Add the new company info to the store
-    company = await store.aget(namespace, key)
-    if not company:
-        raise ValueError("Company not found in the store.")
-
-    return {"experience_enrichment": [cast(CompanyInfo, company.value)]}

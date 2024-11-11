@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class Technologies(BaseModel):
@@ -19,13 +19,21 @@ class Technologies(BaseModel):
 
 
 class Role(BaseModel):
-    """Information about a specific role within a company."""
+    """Information about a specific role within a company.
 
-    title: str = Field(description="The job title")
-    responsibilities: List[str] = Field(description="Key responsibilities of this role")
-    softwares: Optional[List[str]] = Field(
-        default=None,
-        description="Software tools used in this role (e.g., Jira, Zendesk)",
+    Store general patterns and context about what the role typically involves,
+    not specific project details. Focus on the essence of the role.
+
+    Example: For a "Software Engineer" role, store "Works on backend systems using Python"
+    rather than "Developed feature X for product Y in team Z"
+    """
+
+    title: str = Field(description="The standardized job title")
+    context: str = Field(
+        description="General context about what this role typically involves, including common "
+        "responsibilities, focus areas, and working patterns. Should be role-specific "
+        "but not tied to individual projects or teams."
+        "'meta' details that help understand the essence of the role.",
     )
 
 
@@ -46,4 +54,22 @@ class CompanyInfo(BaseModel):
         default=None, description="Types of customers (e.g. B2B, B2C, B2G, C2C, D2C)"
     )
     technologies: Technologies = Field(description="Technical stack information")
+    softwares: Optional[List[str]] = Field(
+        default=None,
+        description="Common software tools (e.g., Jira, Zendesk)",
+    )
     roles: List[Role] = Field(description="List of roles")
+
+    @model_validator(mode="after")
+    def check_duplicate_roles(self) -> "CompanyInfo":
+        """Check for duplicate role titles and raise error if found."""
+        role_titles = {}
+
+        for role in self.roles:
+            if role.title in role_titles:
+                raise ValueError(
+                    f"There are duplicate role titles : must be unique. You should merge information of {role.title} roles."
+                )
+            role_titles[role.title] = True
+
+        return self
