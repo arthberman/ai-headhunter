@@ -1,6 +1,6 @@
 """Define the configurable parameters for the memory service."""
 
-from typing import Any, Literal
+from typing import Any, Literal, Type
 
 from langchain_core.runnables import RunnableConfig, ensure_config
 from pydantic import BaseModel, Field
@@ -13,21 +13,25 @@ class MemoryConfig(BaseModel):
     """Configuration for memory-related operations."""
 
     name: str = Field(
-        description="This tells the model how to reference the function and organizes related memories within the namespace."
+        ...,
+        description="This tells the model how to reference the function and organizes related memories within the namespace.",
     )
     description: str = Field(
-        description="Description for what this memory type is intended to capture."
+        ..., description="Description for what this memory type is intended to capture."
     )
     parameters: dict[str, Any] = Field(
-        description="The JSON Schema of the memory document to manage."
+        ..., description="The JSON Schema of the memory document to manage."
     )
-    system_prompt: str = Field(
-        default="You are a Human Resources recruiter.",
+    prompt: str = Field(
+        ...,
         description="The system prompt to use for the memory assistant.",
     )
     update_mode: Literal["patch", "insert"] = Field(
         default="patch",
         description="Whether to continuously patch the memory, or treat each new generation as a new memory.",
+    )
+    schema_model: Type[BaseModel] = Field(
+        description="The Pydantic model for the memory."
     )
 
 
@@ -55,15 +59,19 @@ class Configuration(BaseModel):
 
 DEFAULT_MEMORY_CONFIGS = [
     MemoryConfig(
-        name="Company",
+        name="CompanyInfo",
         description="Update this document to maintain up-to-date information about a company.",
         update_mode="patch",
+        prompt="memory-company",
         parameters=CompanyInfo.model_json_schema(),
+        schema_model=CompanyInfo,
     ),
     MemoryConfig(
-        name="School",
+        name="SchoolInfo",
         description="Update this document to maintain up-to-date information about a school.",
         update_mode="patch",
+        prompt="memory-school",
         parameters=SchoolInfo.model_json_schema(),
+        schema_model=SchoolInfo,
     ),
 ]

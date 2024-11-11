@@ -6,14 +6,16 @@ import asyncio
 import logging
 import uuid
 
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph
 from langgraph.store.base import BaseStore
 from langgraph.types import Send
 from trustcall import create_extractor
 
-from memory_graph import configuration, utils
+from memory_graph import configuration
 from memory_graph.state import ProcessorState, State
+from utils import get_prompt, init_model
 
 logger = logging.getLogger("memory")
 
@@ -36,10 +38,12 @@ async def handle_patch_memory(
 
     # This is what we use to generate new memories
     extractor = create_extractor(
-        utils.init_model(configurable.model),
+        init_model(configurable.model),
         # We pass the specified (patch) memory schema as a tool
         tools=[
-            {
+            memory_config.schema_model
+            if memory_config.schema_model
+            else {
                 # Tool name
                 "name": memory_config.name,
                 # Tool description
@@ -52,12 +56,15 @@ async def handle_patch_memory(
     )
 
     # Prepare the messages
-    prepared_messages = utils.prepare_messages(
-        state.information, memory_config.system_prompt
+    prompt = get_prompt(memory_config.prompt)
+    chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
+
+    formatted_messages = chat_prompt.format_messages(
+        information=state.information,
     )
 
     # Pass messages and existing patch to the extractor
-    inputs = {"messages": prepared_messages, "existing": existing}
+    inputs = {"messages": formatted_messages, "existing": existing}
     # Update the patch memory
     result = await extractor.ainvoke(inputs, config)
     extracted = result["responses"][0].model_dump(mode="json")
@@ -82,10 +89,12 @@ async def handle_insertion_memory(
 
     # This is what we use to generate new memories
     extractor = create_extractor(
-        utils.init_model(configurable.model),
+        init_model(configurable.model),
         # We pass the specified (insert) memory schema as a tool
         tools=[
-            {
+            memory_config.schema_model
+            if memory_config.schema_model
+            else {
                 # Tool name
                 "name": memory_config.name,
                 # Tool description
@@ -99,13 +108,19 @@ async def handle_insertion_memory(
         enable_inserts=True,
     )
 
+    # Prepare the messages
+    prompt = get_prompt(memory_config.prompt)
+    chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
+
+    formatted_messages = chat_prompt.format_messages(
+        information=state.information,
+    )
+
     # Generate new memories or update existing memories
     extracted = await extractor.ainvoke(
         {
-            # Prepare the messages
-            "messages": utils.prepare_messages(
-                state.information, memory_config.system_prompt
-            ),
+            # Messages
+            "messages": formatted_messages,
             # Prepare the existing memories
             "existing": (
                 [
