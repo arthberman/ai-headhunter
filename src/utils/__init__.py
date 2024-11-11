@@ -1,6 +1,7 @@
 """Utility functions used in our graph."""
 
 from .candidate_timeline import get_candidate_timeline
+from .clean_message import clean_message
 from .few_shot import FewShotConfig, get_few_shot_messages
 from .format_data import format_data
 from .get_dataset import get_dataset
@@ -26,4 +27,5 @@ __all__ = [
     "get_dataset",
     "get_few_shot_messages",
     "FewShotConfig",
+    "clean_message",
 ]

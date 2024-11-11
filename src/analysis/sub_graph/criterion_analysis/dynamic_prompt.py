@@ -8,16 +8,21 @@ from scorecard.models.scorecard import (
 
 def prepare_evaluation_steps(cot_questions: CotQuestions, instructions: str) -> str:
     """Generate evaluation steps with dynamically inserted questions."""
-    steps = ["1. Carefully analyze the given criterion to score."]
+    steps = ["<evaluation_steps>\n"]
+    steps.append("1. Carefully analyze the given criterion to score.\n")
 
-    # Add questions starting from step 2
-    for i, question in enumerate(cot_questions.questions, start=2):
-        steps.append(
-            f"{i}. Answer the question : {question.text} (purpose: {question.purpose})."
-        )
+    # Add questions section with letter formatting
+    steps.append(
+        "2. To help you evaluate the criterion to score, you can try to answer the following questions :\n"
+    )
+
+    # Add individual questions with letter formatting and indentation
+    for i, question in enumerate(cot_questions.questions):
+        letter = chr(97 + i)  # Convert 0,1,2... to a,b,c...
+        steps.append(f"     {letter}. {question.text} (purpose: {question.purpose}).\n")
 
     # Continue with remaining steps
-    next_step = len(cot_questions.questions) + 2
+    next_step = 3
     remaining_steps = [
         f"{next_step}. If necessary, use `search_web` to gather additional context available on a web search (maximum 2 call to the `search_web` tool)",
         f"{next_step + 1}. Evaluate how well the candidate meets the criterion based on all gathered information and reasonable inferences.",
@@ -31,6 +36,7 @@ def prepare_evaluation_steps(cot_questions: CotQuestions, instructions: str) -> 
     ]
 
     steps.extend(remaining_steps)
+    steps.append("\n</evaluation_steps>")
 
     return "\n".join(steps)
 

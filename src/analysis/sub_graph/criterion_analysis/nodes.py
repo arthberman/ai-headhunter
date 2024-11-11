@@ -1,9 +1,11 @@
 from datetime import datetime
 from typing import cast
 
+from langchain_core.messages import AIMessage, ToolMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 from langgraph.errors import GraphInterrupt
+from langgraph.store.base import BaseStore
 
 from analysis.full.configuration import Configuration
 from analysis.full.state import MainGraphState
@@ -14,7 +16,7 @@ from analysis.sub_graph.criterion_analysis.dynamic_prompt import (
 from analysis.sub_graph.criterion_analysis.models import CotQuestions
 from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
 from analysis.sub_graph.criterion_analysis.tools import ScoredCriterion, get_tools
-from utils import get_prompt, init_model
+from utils import clean_message, get_prompt, init_model
 
 
 def init_agent(
@@ -46,7 +48,7 @@ def init_agent(
     )
 
     hub_prompt = get_prompt("score-analysis-criterion")
-    chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
+    chat_prompt = ChatPromptTemplate(hub_prompt.messages)
 
     instructions = prepare_scoring_instructions(state.criterion)
     evaluation_steps = prepare_evaluation_steps(cot_questions, instructions)
@@ -68,7 +70,7 @@ def init_agent(
 
 # Define the function that calls the model
 def call_model(
-    state: AnalysisMainState, *, config: RunnableConfig
+    state: AnalysisMainState, *, config: RunnableConfig, store: BaseStore
 ) -> AnalysisMainState:
     """Call the model with the provided state and configuration."""
     # Load configuration from the provided RunnableConfig
@@ -81,7 +83,7 @@ def call_model(
     if state.loop_step == configuration.analysis_max_loops:
         message_content = """You exceeded the maximum number of iterations.
         You must respond to the user by calling the `ScoredCriterion` tool now."""
-        messages = ChatPromptTemplate.from_messages(
+        messages = ChatPromptTemplate(
             [
                 *state.messages,
                 ("system", "{message_content}"),
@@ -91,10 +93,26 @@ def call_model(
         model = raw_model.bind_tools([ScoredCriterion], tool_choice="ScoredCriterion")
         response = model.invoke(messages.invoke({"message_content": message_content}))
     else:
-        # Bind the tools to the model
-        model = raw_model.bind_tools(get_tools(), tool_choice="any")
-        # Call the model with the provided state
-        response = model.invoke(state.messages)
+        if state.loop_step == 0:
+            # First iteration, push pre tool call result directly to the model
+            namespace = ("scorecard", "criterion", "init_tool_calls")
+            key = state.criterion.id
+            init_tool_calls = store.get(namespace, key)
+
+            # Bind the tools to the model
+            model = raw_model.bind_tools(get_tools(), tool_choice="any")
+            # Call the model with the provided state
+            response = model.invoke(state.messages)
+
+            if not init_tool_calls:
+                # Store the last message
+                last_message = clean_message(response)
+                store.put(namespace, key, last_message)
+        else:
+            # Bind the tools to the model
+            model = raw_model.bind_tools(get_tools(), tool_choice="any")
+            # Call the model with the provided state
+            response = model.invoke(state.messages)
 
     return {
         "messages": [response],
