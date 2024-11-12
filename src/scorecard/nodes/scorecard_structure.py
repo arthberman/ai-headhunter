@@ -78,7 +78,7 @@ def node_scorecard_structure(
             else ""
         ),
         output_language="en",
-        system_time=datetime.now().isoformat(),
+        system_time=datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
     )
 
     res = cast(

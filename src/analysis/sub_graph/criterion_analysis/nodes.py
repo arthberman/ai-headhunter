@@ -2,9 +2,11 @@ from datetime import datetime
 from typing import cast
 
 from langchain_core.messages import AIMessage, ToolMessage
+from langchain_core.messages.utils import convert_to_messages
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 from langgraph.errors import GraphInterrupt
+from langgraph.prebuilt import ToolNode
 from langgraph.store.base import BaseStore
 
 from analysis.full.configuration import Configuration
@@ -20,32 +22,42 @@ from utils import clean_message, get_prompt, init_model
 
 
 def init_agent(
-    state: AnalysisMainState, *, config: RunnableConfig
+    state: AnalysisMainState, *, config: RunnableConfig, store: BaseStore
 ) -> AnalysisMainState:
     """Initialize the agent with the provided state."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
-    prompt = get_prompt("analysis-cot-questions")
-    raw_model = init_model(configuration.analysis_model)
-    model = raw_model.with_structured_output(CotQuestions)
+    namespace = ("scorecard", "criterion", state.criterion.id)
+    key = "cot_questions"
+    stored_questions = store.get(namespace, key)
 
-    # Create the chain
-    chain = cast(RunnableLambda, prompt | model)
+    cot_questions = None
+    if stored_questions:
+        cot_questions = CotQuestions(**stored_questions.value)
+    else:
+        prompt = get_prompt("analysis-cot-questions")
+        raw_model = init_model(configuration.analysis_model)
+        model = raw_model.with_structured_output(CotQuestions)
 
-    cot_questions = cast(
-        CotQuestions,
-        chain.invoke(
-            {
-                "description": state.criterion.description,
-                "importance_level": state.criterion.importance_level.value,
-                "context": state.criterion.context,
-                "output_schema": CotQuestions.model_json_schema(),
-                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
-                "output_language": configuration.output_language,
-            }
-        ),
-    )
+        # Create the chain
+        chain = cast(RunnableLambda, prompt | model)
+
+        cot_questions = cast(
+            CotQuestions,
+            chain.invoke(
+                {
+                    "description": state.criterion.description,
+                    "importance_level": state.criterion.importance_level.value,
+                    "context": state.criterion.context,
+                    "output_schema": CotQuestions.model_json_schema(),
+                    "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
+                    "output_language": configuration.output_language,
+                }
+            ),
+        )
+        # Store the cot questions
+        store.put(namespace, key, cot_questions)
 
     hub_prompt = get_prompt("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate(hub_prompt.messages)
@@ -61,8 +73,8 @@ def init_agent(
         scoring_distribution=state.criterion.scoring_distribution.value,
         context=state.criterion.context,
         evaluation_steps=evaluation_steps,
-        output_language="en",
-        system_time=datetime.now().isoformat(),
+        output_language=configuration.output_language,
+        system_time=datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
     )
 
     return {"messages": formatted_messages}
@@ -95,19 +107,27 @@ def call_model(
     else:
         if state.loop_step == 0:
             # First iteration, push pre tool call result directly to the model
-            namespace = ("scorecard", "criterion", "init_tool_calls")
-            key = state.criterion.id
+            namespace = ("scorecard", "criterion", state.criterion.id)
+            key = "init_tool_calls"
             init_tool_calls = store.get(namespace, key)
 
-            # Bind the tools to the model
-            model = raw_model.bind_tools(get_tools(), tool_choice="any")
-            # Call the model with the provided state
-            response = model.invoke(state.messages)
-
             if not init_tool_calls:
-                # Store the last message
-                last_message = clean_message(response)
-                store.put(namespace, key, last_message)
+                # Bind the tools to the model
+                model = raw_model.bind_tools(get_tools(), tool_choice="any")
+                # Call the model with the provided state
+                response = model.invoke(state.messages)
+
+                # Check if response is a tool call
+                if (
+                    getattr(response, "tool_calls", None)
+                    and len(response.tool_calls) > 0
+                ):
+                    # Store the last message (AI Message with tool calls)
+                    last_message = AIMessage(**clean_message(response).model_dump())
+                    store.put(namespace, key, last_message)
+            else:
+                # Put the last message into the response
+                response = AIMessage(**init_tool_calls.value)
         else:
             # Bind the tools to the model
             model = raw_model.bind_tools(get_tools(), tool_choice="any")
