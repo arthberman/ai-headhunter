@@ -1,7 +1,6 @@
 import operator
 from typing import Annotated, Optional, Sequence
 
-from utils import get_prompt
 from langchain_core.messages import AIMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
@@ -10,7 +9,7 @@ from pydantic import BaseModel, Field
 
 from scorecard.configuration import Configuration
 from scorecard.nodes.enrichment_subgraph.tools import WebContext, get_tools
-from utils import init_model
+from utils import get_prompt, init_model
 
 
 class AgentState(BaseModel):
