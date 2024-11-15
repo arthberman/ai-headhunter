@@ -1,5 +1,3 @@
-from typing import Set
-
 from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
 
@@ -16,47 +14,41 @@ from utils import get_retry_policy
 def continue_to_education_enrichment(state: MainEnrichmentState):
     """Continue to education enrichment."""
     if state.profile.educations:
-        # Use a set to keep track of unique (school, linkedin_url) pairs
-        unique_schools: Set[tuple] = set()
+        unique_urls = set()
         enrichment_tasks = []
 
-        for e in state.profile.educations:
-            school_key = (e.school, e.linkedin_url)
-            if school_key not in unique_schools:
-                unique_schools.add(school_key)
+        for education in state.profile.educations:
+            if education.linkedin_url and education.linkedin_url not in unique_urls:
+                unique_urls.add(education.linkedin_url)
                 enrichment_tasks.append(
                     Send(
                         "node_education_enrichment",
-                        {"education": e},
+                        {"education": education},
                     )
                 )
 
         return enrichment_tasks if enrichment_tasks else END
-    else:
-        return END
+    return END
 
 
 def continue_to_experience_enrichment(state: MainEnrichmentState):
     """Continue to experience enrichment."""
     if state.profile.experiences:
-        # Use a set to keep track of unique (company, linkedin_url) pairs
-        unique_companies: Set[tuple] = set()
+        unique_urls = set()
         enrichment_tasks = []
 
-        for e in state.profile.experiences:
-            company_key = (e.company, e.linkedin_url)
-            if company_key not in unique_companies:
-                unique_companies.add(company_key)
+        for experience in state.profile.experiences:
+            if experience.linkedin_url and experience.linkedin_url not in unique_urls:
+                unique_urls.add(experience.linkedin_url)
                 enrichment_tasks.append(
                     Send(
                         "node_experience_enrichment",
-                        {"experience": e},
+                        {"experience": experience},
                     )
                 )
 
         return enrichment_tasks if enrichment_tasks else END
-    else:
-        return END
+    return END
 
 
 def get_web_enrichment_subgraph():
