@@ -14,6 +14,7 @@ from analysis.nodes.sync_memory import node_sync_memory
 from analysis.nodes.synthetize_intent import node_synthetize_intent
 from analysis.state import InputGraphState, MainGraphState
 from analysis.sub_graph.criterion_analysis.graph import get_criterion_analysis_subgraph
+from analysis.sub_graph.criterion_analysis.state import InputAnalysisMainState
 from analysis.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgraph
 from analysis.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
 from scorecard.models.scorecard import CriterionType, ImportanceLevel
@@ -103,11 +104,13 @@ def compile_analysis_graph() -> CompiledGraph:
     workflow.add_node(
         "score_nice_criteria",
         get_criterion_analysis_subgraph(),
+        input=InputAnalysisMainState,
     )
 
     workflow.add_node(
         "score_must_criteria",
         get_criterion_analysis_subgraph(),
+        input=InputAnalysisMainState,
     )
 
     workflow.add_node(
