@@ -10,6 +10,7 @@ from analysis.nodes.assess_open_to_work import node_assess_open_to_work
 from analysis.nodes.check_hierarchy import node_check_hierarchy
 from analysis.nodes.check_location import node_check_location
 from analysis.nodes.conclude import node_conclude
+from analysis.nodes.sync_memory import node_sync_memory
 from analysis.nodes.synthetize_intent import node_synthetize_intent
 from analysis.state import InputGraphState, MainGraphState
 from analysis.sub_graph.criterion_analysis.graph import get_criterion_analysis_subgraph
@@ -63,6 +64,9 @@ def continue_to_analysis(state: MainGraphState):
                     {"main_state": state, "messages": [], "criterion": criterion},
                 )
             )
+
+    if state.batch_store_ops:
+        return ["sync_memory"]
 
     if sends_must:
         return sends_must
@@ -123,6 +127,7 @@ def compile_analysis_graph() -> CompiledGraph:
     workflow.add_node("synthetize_scored_criteria", pass_through_node)
 
     workflow.add_node("supervisor", pass_through_node)
+    workflow.add_node("sync_memory", node_sync_memory, retry=get_retry_policy())
     workflow.add_node("conclude", node_conclude, retry=get_retry_policy())
 
     workflow.add_node(
@@ -148,11 +153,17 @@ def compile_analysis_graph() -> CompiledGraph:
     workflow.add_conditional_edges(
         "supervisor",
         continue_to_analysis,
-        ["score_must_criteria", "score_nice_criteria", "synthetize_scored_criteria"],
+        [
+            "score_must_criteria",
+            "score_nice_criteria",
+            "synthetize_scored_criteria",
+            "sync_memory",
+        ],
     )
 
     workflow.add_edge("score_must_criteria", "supervisor")
     workflow.add_edge("score_nice_criteria", "supervisor")
+    workflow.add_edge("sync_memory", "supervisor")
 
     workflow.add_edge("synthetize_scored_criteria", "assess_open_to_work")
     workflow.add_edge("synthetize_scored_criteria", "check_hierarchy")
