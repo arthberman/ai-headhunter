@@ -1,8 +1,8 @@
 from langgraph.graph import END, START, StateGraph
 from langgraph.prebuilt import ToolNode
 
-from analysis.full.configuration import Configuration
-from analysis.full.state import MainGraphState
+from analysis.configuration import Configuration
+from analysis.state import MainGraphState
 from analysis.sub_graph.criterion_analysis.nodes import (
     call_model,
     init_agent,

@@ -4,7 +4,7 @@ from typing import Annotated, Sequence
 from langchain_core.messages import BaseMessage
 from pydantic import BaseModel, Field
 
-from analysis.full.state import MainGraphState
+from analysis.state import MainGraphState
 from scorecard.models.scorecard import BaseCriterion
 
 

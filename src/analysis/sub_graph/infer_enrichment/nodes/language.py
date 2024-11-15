@@ -5,7 +5,7 @@ from utils import get_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
-from analysis.full.configuration import Configuration
+from analysis.configuration import Configuration
 from analysis.models.language import LanguageProficiency
 from analysis.sub_graph.infer_enrichment.state import (
     MainInferEnrichmentState,

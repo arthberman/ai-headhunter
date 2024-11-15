@@ -7,8 +7,8 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 from langgraph.errors import GraphInterrupt
 from langgraph.store.base import BaseStore
 
-from analysis.full.configuration import Configuration
-from analysis.full.state import MainGraphState
+from analysis.configuration import Configuration
+from analysis.state import MainGraphState
 from analysis.sub_graph.criterion_analysis.dynamic_prompt import (
     prepare_evaluation_steps,
     prepare_scoring_instructions,

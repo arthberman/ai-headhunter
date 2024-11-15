@@ -1,13 +1,12 @@
 from datetime import datetime
-from typing import Optional, cast
+from typing import cast
 
-from utils import get_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 
-from analysis.full.configuration import Configuration
+from analysis.configuration import Configuration
 from analysis.models.profile import ProfileAge
 from analysis.sub_graph.infer_enrichment.state import MainInferEnrichmentState
-from utils import format_data, init_model
+from utils import format_data, get_prompt, init_model
 
 
 def node_infer_age(
@@ -16,6 +15,10 @@ def node_infer_age(
     config: RunnableConfig,
 ) -> MainInferEnrichmentState:
     """Estimate the age of the profile."""
+    # Skip if already processed
+    if state.profile.age_range:
+        return {"profile": state.profile}
+
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 

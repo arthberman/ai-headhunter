@@ -1,19 +1,16 @@
 from datetime import datetime
-from typing import Optional, cast
+from typing import cast
 
-from utils import get_prompt
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
-from analysis.full.state import MainGraphState
-from analysis.iterative.configuration import Configuration
+from analysis.configuration import Configuration
 from analysis.models.synthesis import Synthesis
-from utils import format_data, get_extended_scored_criterion, init_model
+from analysis.state import MainGraphState
+from utils import format_data, get_extended_scored_criterion, get_prompt, init_model
 
 
-def node_synthesis_overall(
-    state: MainGraphState, config: RunnableConfig
-) -> MainGraphState:
-    """Synthesize the output."""
+def node_conclude(state: MainGraphState, config: RunnableConfig) -> MainGraphState:
+    """Conclude the overall analysis."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 

@@ -1,16 +1,17 @@
 from datetime import datetime
-from typing import Optional, cast
+from typing import cast
 
-from utils import get_prompt
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
-from analysis.full.state import MainGraphState
-from analysis.iterative.configuration import Configuration
+from analysis.configuration import Configuration
 from analysis.models.synthesis import IntentSynthesis
-from utils import format_data, init_model
+from analysis.state import MainGraphState
+from utils import format_data, get_prompt, init_model
 
 
-def node_intent(state: MainGraphState, config: RunnableConfig) -> MainGraphState:
+def node_synthetize_intent(
+    state: MainGraphState, config: RunnableConfig
+) -> MainGraphState:
     """Synthesize the intent of the profile."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

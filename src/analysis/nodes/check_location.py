@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Optional, cast
+from typing import cast
 
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
-from analysis.full.state import MainGraphState
-from analysis.iterative.configuration import Configuration
+from analysis.configuration import Configuration
+from analysis.state import MainGraphState
 from analysis.models.synthesis import LocationSynthesis, SynthesisScore
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import CriterionType, ImportanceLevel
@@ -13,7 +13,7 @@ from utils.candidate_timeline import get_candidate_timeline
 from utils.few_shot import FewShotConfig, get_few_shot_messages
 
 
-def node_synthesis_location(
+def node_check_location(
     state: MainGraphState, config: RunnableConfig
 ) -> MainGraphState:
     """Analyze the candidate's location."""

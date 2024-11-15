@@ -1,21 +1,27 @@
-"""Define the configurable parameters for the analysis feedback."""
+"""Define the configurable parameters for the matcher."""
 
 from langchain_core.runnables import RunnableConfig, ensure_config
 from pydantic import BaseModel, Field
 
 
 class Configuration(BaseModel):
-    """The configuration for the analysis feedback."""
+    """The configuration for the matcher."""
 
-    reformulation_model: str = Field(
+    default_model: str = Field(
         default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
-        description="The name of the language model to use for the reformulation. "
+        description="The name of the language model to use for the analysis. "
         "Should be in the form: provider/model-name.",
     )
 
-    extraction_model: str = Field(
+    analysis_model: str = Field(
         default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
-        description="The name of the language model to use for the extraction. "
+        description="The name of the language model to use for the analysis. "
+        "Should be in the form: provider/model-name.",
+    )
+
+    enrichment_model: str = Field(
+        default="openai/gpt-4o-mini",
+        description="The name of the language model to use for the enrichment. "
         "Should be in the form: provider/model-name.",
     )
 
@@ -25,9 +31,19 @@ class Configuration(BaseModel):
         "Should be in the form: provider/model-name.",
     )
 
+    max_search_results: int = Field(
+        default=5,
+        description="The maximum number of search results to return for each search query.",
+    )
+
     analysis_max_loops: int = Field(
         default=3,
-        description="The maximum number of loops to run the analysis for.",
+        description="The maximum number of iterations to run the analysis for.",
+    )
+
+    output_language: str = Field(
+        default="English",
+        description="The language to use for the LLM output.",
     )
 
     @classmethod

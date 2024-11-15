@@ -11,7 +11,7 @@ from langgraph.prebuilt import InjectedState
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
-from analysis.iterative.configuration import Configuration
+from analysis.configuration import Configuration
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
 from utils import format_data, get_prompt, init_model
