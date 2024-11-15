@@ -20,7 +20,7 @@ class Configuration(BaseModel):
     )
 
     enrichment_model: str = Field(
-        default="bedrock_converse/us.anthropic.claude-3-5-haiku-20241022-v1:0",
+        default="openai/gpt-4o-mini",
         description="The name of the language model to use for the enrichment. "
         "Should be in the form: provider/model-name.",
     )
