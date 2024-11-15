@@ -40,7 +40,6 @@ class MainGraphState(InputGraphState):
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
 
     synthesis_location: Optional[LocationSynthesis] = Field(default=None)
-    synthesis_must: Optional[MustSynthesis] = Field(default=None)
     synthesis_hierarchy: Optional[HierarchySynthesis] = Field(default=None)
     synthesis_open_to_work: Optional[OpenToWorkSynthesis] = Field(default=None)
     synthesis_intent: Optional[IntentSynthesis] = Field(default=None)
