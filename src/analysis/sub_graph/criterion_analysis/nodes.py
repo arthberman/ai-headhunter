@@ -5,7 +5,7 @@ from langchain_core.messages import AIMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 from langgraph.errors import GraphInterrupt
-from langgraph.store.base import BaseStore
+from langgraph.store.base import BaseStore, PutOp
 
 from analysis.configuration import Configuration
 from analysis.state import MainGraphState
@@ -16,7 +16,7 @@ from analysis.sub_graph.criterion_analysis.dynamic_prompt import (
 from analysis.sub_graph.criterion_analysis.models import CotQuestions
 from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
 from analysis.sub_graph.criterion_analysis.tools import ScoredCriterion, get_tools
-from utils import clean_message, get_prompt, init_model, safe_store_put
+from utils import clean_message, get_prompt, init_model
 
 
 def init_agent(
@@ -31,6 +31,7 @@ def init_agent(
     stored_questions = store.get(namespace, key)
 
     cot_questions = None
+    op = None
     if stored_questions:
         cot_questions = CotQuestions(**stored_questions.value)
     else:
@@ -55,7 +56,7 @@ def init_agent(
             ),
         )
         # Store the cot questions
-        safe_store_put(store, namespace, key, cot_questions)
+        op = PutOp(namespace, key, cot_questions)
 
     hub_prompt = get_prompt("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate(hub_prompt.messages)
@@ -75,7 +76,10 @@ def init_agent(
         system_time=datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
     )
 
-    return {"messages": formatted_messages}
+    return {
+        "messages": formatted_messages,
+        "batch_store_ops": [op] if op else [],
+    }
 
 
 # Define the function that calls the model
@@ -90,6 +94,7 @@ def call_model(
     raw_model = init_model(configuration.analysis_model)
 
     response = None
+    op = None
     if state.loop_step == configuration.analysis_max_loops:
         message_content = """You exceeded the maximum number of iterations.
         You must respond to the user by calling the `ScoredCriterion` tool now."""
@@ -122,7 +127,7 @@ def call_model(
                 ):
                     # Store the last message (AI Message with tool calls)
                     last_message = AIMessage(**clean_message(response).model_dump())
-                    safe_store_put(store, namespace, key, last_message)
+                    op = PutOp(namespace, key, last_message)
             else:
                 # Put the last message into the response
                 response = AIMessage(**init_tool_calls.value)
@@ -134,14 +139,12 @@ def call_model(
 
     return {
         "messages": [response],
-        # Add 1 to the step count
-        "loop_step": 1,
+        "loop_step": 1,  # Add 1 to the step count
+        "batch_store_ops": [op] if op else [],
     }
 
 
 # Define the function that responds to the user
-
-
 def respond(state: AnalysisMainState) -> MainGraphState:
     """Respond to the user with the scored criterion."""
     response = ScoredCriterion(**state.messages[-1].tool_calls[0]["args"])
@@ -151,8 +154,6 @@ def respond(state: AnalysisMainState) -> MainGraphState:
 
 
 # Define the function that determines whether to continue or not
-
-
 def should_continue(
     state: AnalysisMainState, config: RunnableConfig
 ) -> AnalysisMainState:

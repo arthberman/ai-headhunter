@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
 
 class Technologies(BaseModel):
@@ -18,7 +18,7 @@ class Technologies(BaseModel):
     )
 
 
-class Role(BaseModel):
+class RoleInfo(BaseModel):
     """Information about a specific role within a company.
 
     Store general patterns and context about what the role typically involves,
@@ -28,7 +28,6 @@ class Role(BaseModel):
     rather than "Developed feature X for product Y in team Z"
     """
 
-    title: str = Field(description="The standardized job title")
     context: str = Field(
         description="General context about what this role typically involves, including common "
         "responsibilities, focus areas, and working patterns. Should be role-specific "
@@ -58,18 +57,6 @@ class CompanyInfo(BaseModel):
         default=None,
         description="Common software tools (e.g., Jira, Zendesk)",
     )
-    roles: List[Role] = Field(description="List of roles")
-
-    @model_validator(mode="after")
-    def check_duplicate_roles(self) -> "CompanyInfo":
-        """Check for duplicate role titles and raise error if found."""
-        role_titles = {}
-
-        for role in self.roles:
-            if role.title in role_titles:
-                raise ValueError(
-                    f"There are duplicate role titles : must be unique. You should merge information of {role.title} roles."
-                )
-            role_titles[role.title] = True
-
-        return self
+    roles: Dict[str, RoleInfo] = Field(
+        description="Dictionary of roles, where keys are role titles and values are role information"
+    )

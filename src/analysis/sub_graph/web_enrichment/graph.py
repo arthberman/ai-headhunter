@@ -1,5 +1,6 @@
 from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
+from langgraph.store.base import BaseStore
 
 from analysis.configuration import Configuration
 from analysis.sub_graph.web_enrichment.education import node_education_enrichment
@@ -27,8 +28,8 @@ def continue_to_education_enrichment(state: MainEnrichmentState):
                     )
                 )
 
-        return enrichment_tasks if enrichment_tasks else END
-    return END
+        return enrichment_tasks if enrichment_tasks else "node_save_memory"
+    return "node_save_memory"
 
 
 def continue_to_experience_enrichment(state: MainEnrichmentState):
@@ -47,8 +48,18 @@ def continue_to_experience_enrichment(state: MainEnrichmentState):
                     )
                 )
 
-        return enrichment_tasks if enrichment_tasks else END
-    return END
+        return enrichment_tasks if enrichment_tasks else "node_save_memory"
+    return "node_save_memory"
+
+
+def node_save_memory(
+    state: MainEnrichmentState, *, store: BaseStore
+) -> OutputEnrichmentState:
+    """Save the memory."""
+    if state.batch_store_ops:
+        store.batch(state.batch_store_ops)
+
+    pass
 
 
 def get_web_enrichment_subgraph():
@@ -69,19 +80,22 @@ def get_web_enrichment_subgraph():
         retry=get_retry_policy(),
     )
 
+    workflow.add_node("node_save_memory", node_save_memory, retry=get_retry_policy())
+
     workflow.add_conditional_edges(
         START,
         continue_to_education_enrichment,
-        ["node_education_enrichment", END],
+        ["node_education_enrichment", "node_save_memory"],
     )
     workflow.add_conditional_edges(
         START,
         continue_to_experience_enrichment,
-        ["node_experience_enrichment", END],
+        ["node_experience_enrichment", "node_save_memory"],
     )
 
-    workflow.add_edge("node_experience_enrichment", END)
-    workflow.add_edge("node_education_enrichment", END)
+    workflow.add_edge("node_experience_enrichment", "node_save_memory")
+    workflow.add_edge("node_education_enrichment", "node_save_memory")
+    workflow.add_edge("node_save_memory", END)
 
     # Compile the graph
     graph = workflow.compile()

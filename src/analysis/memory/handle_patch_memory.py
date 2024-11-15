@@ -4,13 +4,13 @@ from typing import Type
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
-from langgraph.store.base import BaseStore
+from langgraph.store.base import PutOp
 from pydantic import BaseModel
 from tenacity import retry, stop_after_attempt, wait_exponential
 from trustcall import create_extractor
 
 from analysis.configuration import Configuration
-from utils import get_prompt, init_model, safe_store_put
+from utils import get_prompt, init_model
 
 
 @retry(
@@ -22,18 +22,17 @@ def handle_patch_memory(
     namespace: tuple,
     key: str,
     information: str,
+    existing_item: dict | None,
     prompt: str,
     schema_model: Type[BaseModel],
     *,
     config: RunnableConfig,
-    store: BaseStore,
-) -> dict:
+) -> PutOp:
     """Extract and update patch-based memories."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
     # Fetch existing memories from the store for this (patch) memory schema
-    existing_item = store.get(namespace, key)
     existing = {schema_model.__name__: existing_item.value} if existing_item else None
 
     # Create the extractor with the specified memory schema
@@ -55,7 +54,4 @@ def handle_patch_memory(
     )
     extracted = result["responses"][0].model_dump(mode="json")
 
-    # Save to storage
-    safe_store_put(store, namespace, key, extracted)
-
-    return extracted
+    return PutOp(namespace, key, extracted)
