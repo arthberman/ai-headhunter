@@ -2,14 +2,14 @@ from typing import Optional, cast
 
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import RunnableConfig
-from langgraph.store.base import BaseStore
+from langgraph.store.base import BaseStore, PutOp
 
 from analysis.memory.handle_patch_memory import handle_patch_memory
 from analysis.memory.models.school import SchoolInfo
 from analysis.models.profile import ProfileEducation
 from analysis.sub_graph.web_enrichment.state import (
     EducationState,
-    OutputEnrichmentState,
+    MainEnrichmentState,
 )
 
 tavily_tool = TavilySearchResults(
@@ -46,7 +46,7 @@ def format_information(
 
 def node_education_enrichment(
     state: EducationState, *, config: RunnableConfig, store: BaseStore
-) -> OutputEnrichmentState:
+) -> MainEnrichmentState:
     """Enrich the education of the candidate."""
     education = cast(ProfileEducation, state["education"])
 
@@ -67,41 +67,41 @@ def node_education_enrichment(
             return {"education_enrichment": [school_info]}
 
         # If the description is rich, we can enrich the school info
-        res = cast(
-            SchoolInfo,
+        op = cast(
+            PutOp,
             handle_patch_memory(
                 namespace,
                 key,
                 format_information(education),
+                existing_item=school,
                 prompt="memory-school",
                 schema_model=SchoolInfo,
                 config=config,
-                store=store,
             ),
         )
-        return {"education_enrichment": [res]}
+        return {
+            "education_enrichment": [cast(SchoolInfo, op.value)],
+            "batch_store_ops": [op],
+        }
     else:
         # If not in store or cast failed, perform Tavily search
         tavily_res = tavily_tool.invoke(
             {"query": f"school {education.school} ({education.linkedin_url})"}
         )
 
-        res = cast(
-            SchoolInfo,
+        op = cast(
+            PutOp,
             handle_patch_memory(
                 namespace,
                 key,
                 format_information(education, tavily_res),
+                existing_item=school,
                 prompt="memory-school",
                 schema_model=SchoolInfo,
                 config=config,
-                store=store,
             ),
         )
-
-        # Add the new school info to the store
-        school = store.get(namespace, key)
-        if not school:
-            raise ValueError("School not found in the store.")
-
-        return {"education_enrichment": [cast(SchoolInfo, school.value)]}
+        return {
+            "education_enrichment": [cast(SchoolInfo, op.value)],
+            "batch_store_ops": [op],
+        }

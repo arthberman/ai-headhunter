@@ -1,6 +1,7 @@
 import operator
-from typing import Annotated, List, Optional
+from typing import Annotated, List, Optional, Union
 
+from langgraph.store.base import Op
 from pydantic import BaseModel, Field
 
 from analysis.memory.models.company import CompanyInfo
@@ -18,6 +19,15 @@ from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import Scorecard
 
 
+def reducer_list(existing: list, updates: Union[list, str]) -> list:
+    """Reducer for a list with a CLEAR command."""
+    if updates == "CLEAR":
+        return []
+    elif isinstance(updates, list):
+        return existing + updates
+    return existing
+
+
 class InputGraphState(BaseModel):
     """State of the input graph."""
 
@@ -31,6 +41,8 @@ class MainGraphState(InputGraphState):
 
     education_enrichment: Annotated[List[SchoolInfo], operator.add]
     experience_enrichment: Annotated[List[CompanyInfo], operator.add]
+
+    batch_store_ops: Annotated[List[Op], reducer_list] = Field(default_factory=list)
 
     inferred_languages: Optional[List[LanguageProficiency]] = Field(default=None)
     inferred_sector: Optional[str] = Field(default=None)

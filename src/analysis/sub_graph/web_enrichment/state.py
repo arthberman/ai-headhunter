@@ -1,17 +1,12 @@
 import operator
 from typing import Annotated, List
 
+from langgraph.store.base import Op
 from pydantic import BaseModel, Field
 
 from analysis.memory.models.company import CompanyInfo
 from analysis.memory.models.school import SchoolInfo
 from analysis.models.profile import Profile, ProfileEducation, ProfileExperience
-
-
-class MainEnrichmentState(BaseModel):
-    """State for the analysis graph."""
-
-    profile: Profile = Field(...)
 
 
 class OutputEnrichmentState(BaseModel):
@@ -31,3 +26,11 @@ class ExperienceState(BaseModel):
     """State of the experience graph."""
 
     experience: ProfileExperience = Field(...)
+
+
+class MainEnrichmentState(OutputEnrichmentState):
+    """State for the analysis graph."""
+
+    profile: Profile = Field(...)
+
+    batch_store_ops: Annotated[List[Op], operator.add] = Field(default_factory=list)

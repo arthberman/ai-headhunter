@@ -2,14 +2,14 @@ from typing import Optional, cast
 
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import RunnableConfig
-from langgraph.store.base import BaseStore
+from langgraph.store.base import BaseStore, PutOp
 
 from analysis.memory.handle_patch_memory import handle_patch_memory
 from analysis.memory.models.company import CompanyInfo
 from analysis.models.profile import ProfileExperience
 from analysis.sub_graph.web_enrichment.state import (
     ExperienceState,
-    OutputEnrichmentState,
+    MainEnrichmentState,
 )
 
 tavily_tool = TavilySearchResults(
@@ -48,7 +48,7 @@ def format_information(
 
 def node_experience_enrichment(
     state: ExperienceState, *, config: RunnableConfig, store: BaseStore
-) -> OutputEnrichmentState:
+) -> MainEnrichmentState:
     """Enrich the experience of the candidate."""
     experience = cast(ProfileExperience, state["experience"])
 
@@ -69,41 +69,42 @@ def node_experience_enrichment(
             return {"experience_enrichment": [company_info]}
 
         # If the description is rich, we can enrich the company info
-        res = cast(
-            CompanyInfo,
+        op = cast(
+            PutOp,
             handle_patch_memory(
                 namespace,
                 key,
                 format_information(experience),
+                existing_item=company,
                 prompt="memory-company",
                 schema_model=CompanyInfo,
                 config=config,
-                store=store,
             ),
         )
-        return {"experience_enrichment": [res]}
+        return {
+            "experience_enrichment": [cast(CompanyInfo, op.value)],
+            "batch_store_ops": [op],
+        }
     else:
         # If not in store or cast failed, perform Tavily search
         tavily_res = tavily_tool.invoke(
             {"query": f"company {experience.company} ({experience.location})"}
         )
 
-        res = cast(
-            CompanyInfo,
+        op = cast(
+            PutOp,
             handle_patch_memory(
                 namespace,
                 key,
                 format_information(experience, tavily_res),
+                existing_item=company,
                 prompt="memory-company",
                 schema_model=CompanyInfo,
                 config=config,
-                store=store,
             ),
         )
 
-        # Add the new company info to the store
-        company = store.get(namespace, key)
-        if not company:
-            raise ValueError("Company not found in the store.")
-
-        return {"experience_enrichment": [cast(CompanyInfo, company.value)]}
+        return {
+            "experience_enrichment": [cast(CompanyInfo, op.value)],
+            "batch_store_ops": [op],
+        }
