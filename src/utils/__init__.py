@@ -11,6 +11,7 @@ from .get_profile_metadata import get_profile_metadata
 from .get_prompt import get_prompt
 from .init_model import init_model
 from .retry_policy import get_retry_policy
+from .safe_store_put import safe_store_put
 from .time import compute_duration, compute_status, format_date, is_valid_date
 
 __all__ = [
@@ -30,4 +31,5 @@ __all__ = [
     "FewShotConfig",
     "clean_message",
     "compute_must_score",
+    "safe_store_put",
 ]

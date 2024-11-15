@@ -6,12 +6,18 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from langgraph.store.base import BaseStore
 from pydantic import BaseModel
+from tenacity import retry, stop_after_attempt, wait_exponential
 from trustcall import create_extractor
 
 from analysis.configuration import Configuration
-from utils import get_prompt, init_model
+from utils import get_prompt, init_model, safe_store_put
 
 
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=1, max=10),
+    reraise=True,
+)
 def handle_patch_memory(
     namespace: tuple,
     key: str,
@@ -50,6 +56,6 @@ def handle_patch_memory(
     extracted = result["responses"][0].model_dump(mode="json")
 
     # Save to storage
-    store.put(namespace, key, extracted)
+    safe_store_put(store, namespace, key, extracted)
 
     return extracted
