@@ -3,7 +3,7 @@ from typing import Set
 from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
 
-from analysis.full.configuration import Configuration
+from analysis.configuration import Configuration
 from analysis.sub_graph.web_enrichment.education import node_education_enrichment
 from analysis.sub_graph.web_enrichment.experience import node_experience_enrichment
 from analysis.sub_graph.web_enrichment.state import (

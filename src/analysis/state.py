@@ -3,6 +3,8 @@ from typing import Annotated, List, Optional
 
 from pydantic import BaseModel, Field
 
+from analysis.memory.models.company import CompanyInfo
+from analysis.memory.models.school import SchoolInfo
 from analysis.models.language import LanguageProficiency
 from analysis.models.profile import Profile
 from analysis.models.synthesis import (
@@ -14,7 +16,6 @@ from analysis.models.synthesis import (
     Synthesis,
 )
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
-from memory_graph.models import CompanyInfo, SchoolInfo
 from scorecard.models.scorecard import Scorecard
 
 

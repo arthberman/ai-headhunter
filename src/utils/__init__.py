@@ -2,6 +2,7 @@
 
 from .candidate_timeline import get_candidate_timeline
 from .clean_message import clean_message
+from .compute_must_score import compute_must_score
 from .few_shot import FewShotConfig, get_few_shot_messages
 from .format_data import format_data
 from .get_dataset import get_dataset
@@ -28,4 +29,5 @@ __all__ = [
     "get_few_shot_messages",
     "FewShotConfig",
     "clean_message",
+    "compute_must_score",
 ]

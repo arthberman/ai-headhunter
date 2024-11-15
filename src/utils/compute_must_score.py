@@ -1,28 +1,20 @@
-from datetime import datetime
 from statistics import mean, median
-from typing import Optional, cast
+from typing import List
 
-from utils import get_prompt
-from langchain_core.runnables import RunnableConfig, RunnableLambda
-
-from analysis.full.state import MainGraphState
-from analysis.iterative.configuration import Configuration
 from analysis.models.synthesis import MustSynthesis, SynthesisScore
-from scorecard.models.scorecard import ImportanceLevel
-from utils import get_extended_scored_criterion, init_model
+from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
+from scorecard.models.scorecard import ImportanceLevel, Scorecard
+from utils.get_extended_scored_criterion import get_extended_scored_criterion
 
 
-def node_synthesis_must(
-    state: MainGraphState, config: RunnableConfig
-) -> MainGraphState:
-    """Synthesize the must criteria."""
-    # Load configuration from the provided RunnableConfig
-    configuration = Configuration.from_runnable_config(config)
-
+def compute_must_score(
+    scored_criterion: List[ScoredCriterion], scorecard: Scorecard
+) -> MustSynthesis:
+    """Compute the must score heuristically."""
     # Get scored criteria for Must
     scored_must_criteria = get_extended_scored_criterion(
-        state.scored_criterion,
-        state.scorecard,
+        scored_criterion,
+        scorecard,
         importance_level=ImportanceLevel.MUST_HAVE,
     )
 
@@ -60,26 +52,4 @@ def node_synthesis_must(
         heuristic_result.score = SynthesisScore.DOUBT
         heuristic_result.explanation += " (Low confidence in assessment)"
 
-    # Initialize the prompt
-    prompt = get_prompt("analysis-synthesis-must")
-
-    # Initialize the model
-    raw_model = init_model(configuration.analysis_model)
-    model = raw_model.with_structured_output(MustSynthesis)
-
-    # Create the chain
-    chain = cast(RunnableLambda, prompt | model)
-
-    ai_result = cast(
-        MustSynthesis,
-        chain.invoke(
-            {
-                "scored_must_criteria": scored_must_criteria,
-                "heuristic_result": heuristic_result.model_dump(),
-                "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
-            },
-        ),
-    )
-
-    return {"synthesis_must": ai_result}
+    return heuristic_result

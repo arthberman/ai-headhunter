@@ -1,13 +1,12 @@
 from datetime import datetime
-from typing import Optional, cast
+from typing import cast
 
-from utils import get_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
-from analysis.full.configuration import Configuration
+from analysis.configuration import Configuration
 from analysis.sub_graph.infer_enrichment.state import MainInferEnrichmentState
-from utils import format_data, init_model
+from utils import format_data, get_prompt, init_model
 from utils.candidate_timeline import get_candidate_timeline
 
 

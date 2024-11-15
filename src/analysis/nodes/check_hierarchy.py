@@ -1,16 +1,15 @@
 from datetime import datetime
-from typing import Optional, cast
+from typing import cast
 
-from utils import get_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 
-from analysis.full.configuration import Configuration
-from analysis.full.state import MainGraphState
+from analysis.configuration import Configuration
+from analysis.state import MainGraphState
 from analysis.models.synthesis import HierarchySynthesis
-from utils import get_candidate_timeline, init_model
+from utils import get_candidate_timeline, get_prompt, init_model
 
 
-def node_hierarchy(state: MainGraphState, config: RunnableConfig):
+def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):
     """Analyze the language proficiency of the candidate."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

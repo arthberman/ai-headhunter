@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Optional, cast
+from typing import cast
 
 from langchain_core.runnables import Runnable, RunnableConfig
 
-from analysis.full.configuration import Configuration
-from analysis.full.state import MainGraphState
+from analysis.configuration import Configuration
+from analysis.state import MainGraphState
 from analysis.models.synthesis import OpenToWorkSynthesis, SynthesisScore
 from utils import (
     FewShotConfig,
@@ -15,7 +15,7 @@ from utils import (
 )
 
 
-def node_open_to_work(state: MainGraphState, config: RunnableConfig):
+def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig):
     """Analyze the candidate's openess to work, awareness of new opportunities."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

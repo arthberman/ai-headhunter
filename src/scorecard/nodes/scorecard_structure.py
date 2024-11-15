@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List, Optional, cast
 
-from utils import get_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from pydantic import Field
@@ -11,7 +10,7 @@ from trustcall import create_extractor
 from scorecard.configuration import Configuration
 from scorecard.models.scorecard import BaseCriterion, Scorecard, ScoringDistribution
 from scorecard.state import ScorecardGraphState
-from utils import init_model
+from utils import get_prompt, init_model
 
 
 class LimitedBaseCriterion(BaseCriterion):

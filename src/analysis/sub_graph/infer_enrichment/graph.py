@@ -1,6 +1,6 @@
 from langgraph.graph import END, START, StateGraph
 
-from analysis.full.configuration import Configuration
+from analysis.configuration import Configuration
 from analysis.sub_graph.infer_enrichment.nodes.culture import node_infer_culture
 from analysis.sub_graph.infer_enrichment.nodes.employment_type import (
     node_infer_employment_type,

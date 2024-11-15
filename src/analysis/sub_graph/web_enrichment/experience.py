@@ -1,29 +1,26 @@
-from typing import Any, Dict, Optional, Tuple, cast
+from typing import Optional, cast
 
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import RunnableConfig
 from langgraph.store.base import BaseStore
-from langgraph_sdk import get_client
 
-from analysis.full.configuration import Configuration
+from analysis.memory.handle_patch_memory import handle_patch_memory
+from analysis.memory.models.company import CompanyInfo
 from analysis.models.profile import ProfileExperience
 from analysis.sub_graph.web_enrichment.state import (
     ExperienceState,
     OutputEnrichmentState,
 )
-from memory_graph.models.company import CompanyInfo
 
 tavily_tool = TavilySearchResults(
     max_results=10, include_answer=True, search_depth="advanced"
 )
 
 
-def format_input(
-    namespace: Tuple[str, str],
-    key: str,
+def format_information(
     experience: ProfileExperience,
     tavily_res: Optional[str] = None,
-) -> Dict[str, Any]:
+) -> str:
     """Format input for memory client with optional Tavily search results."""
     information = f"""
         <candidate_profile>
@@ -46,15 +43,10 @@ def format_input(
             </web_search>
             {information}"""
 
-    return {
-        "namespace": namespace,
-        "key": key,
-        "function_name": "CompanyInfo",
-        "information": information,
-    }
+    return information
 
 
-async def node_experience_enrichment(
+def node_experience_enrichment(
     state: ExperienceState, *, config: RunnableConfig, store: BaseStore
 ) -> OutputEnrichmentState:
     """Enrich the experience of the candidate."""
@@ -66,16 +58,10 @@ async def node_experience_enrichment(
     ):
         return {"experience_enrichment": []}
 
-    # Load configuration from the provided RunnableConfig
-    configuration = Configuration.from_runnable_config(config)
-
-    # Get the memory client
-    memory_client = get_client()
-
     # Access store
     namespace = ("company", "enrichment")
     key = experience.linkedin_url.rstrip("/").split("/")[-1].lower().strip()
-    company = await store.aget(namespace, key)
+    company = store.get(namespace, key)
 
     if company:
         company_info = cast(CompanyInfo, company.value)
@@ -83,27 +69,40 @@ async def node_experience_enrichment(
             return {"experience_enrichment": [company_info]}
 
         # If the description is rich, we can enrich the company info
-        await memory_client.runs.create(
-            thread_id=None,
-            assistant_id=configuration.mem_assistant_id,
-            input=format_input(namespace, key, experience),
+        res = cast(
+            CompanyInfo,
+            handle_patch_memory(
+                namespace,
+                key,
+                format_information(experience),
+                prompt="memory-company",
+                schema_model=CompanyInfo,
+                config=config,
+                store=store,
+            ),
         )
-        return {"experience_enrichment": [company_info]}
+        return {"experience_enrichment": [res]}
     else:
         # If not in store or cast failed, perform Tavily search
-        tavily_res = await tavily_tool.ainvoke(
+        tavily_res = tavily_tool.invoke(
             {"query": f"company {experience.company} ({experience.location})"}
         )
 
-        # Call the memory_graph
-        await memory_client.runs.wait(
-            thread_id=None,
-            assistant_id=configuration.mem_assistant_id,
-            input=format_input(namespace, key, experience, tavily_res),
+        res = cast(
+            CompanyInfo,
+            handle_patch_memory(
+                namespace,
+                key,
+                format_information(experience, tavily_res),
+                prompt="memory-company",
+                schema_model=CompanyInfo,
+                config=config,
+                store=store,
+            ),
         )
 
         # Add the new company info to the store
-        company = await store.aget(namespace, key)
+        company = store.get(namespace, key)
         if not company:
             raise ValueError("Company not found in the store.")
 
