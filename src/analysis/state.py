@@ -11,7 +11,6 @@ from analysis.models.synthesis import (
     HierarchySynthesis,
     IntentSynthesis,
     LocationSynthesis,
-    MustSynthesis,
     OpenToWorkSynthesis,
     Synthesis,
 )
