@@ -16,7 +16,7 @@ from analysis.sub_graph.criterion_analysis.dynamic_prompt import (
 from analysis.sub_graph.criterion_analysis.models import CotQuestions
 from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
 from analysis.sub_graph.criterion_analysis.tools import ScoredCriterion, get_tools
-from utils import clean_message, get_prompt, init_model
+from utils import clean_message, get_prompt, init_model, safe_store_put
 
 
 def init_agent(
@@ -55,7 +55,7 @@ def init_agent(
             ),
         )
         # Store the cot questions
-        store.put(namespace, key, cot_questions)
+        safe_store_put(store, namespace, key, cot_questions)
 
     hub_prompt = get_prompt("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate(hub_prompt.messages)
@@ -122,7 +122,7 @@ def call_model(
                 ):
                     # Store the last message (AI Message with tool calls)
                     last_message = AIMessage(**clean_message(response).model_dump())
-                    store.put(namespace, key, last_message)
+                    safe_store_put(store, namespace, key, last_message)
             else:
                 # Put the last message into the response
                 response = AIMessage(**init_tool_calls.value)
