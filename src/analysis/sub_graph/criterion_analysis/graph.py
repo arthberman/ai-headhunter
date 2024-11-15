@@ -9,7 +9,10 @@ from analysis.sub_graph.criterion_analysis.nodes import (
     respond,
     should_continue,
 )
-from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
+from analysis.sub_graph.criterion_analysis.state import (
+    AnalysisMainState,
+    InputAnalysisMainState,
+)
 from analysis.sub_graph.criterion_analysis.tools import get_tools
 from utils import get_retry_policy
 
@@ -18,7 +21,7 @@ def get_criterion_analysis_subgraph():
     """Get the criterion analysis subgraph."""
     workflow = StateGraph(
         AnalysisMainState,
-        input=AnalysisMainState,
+        input=InputAnalysisMainState,
         output=MainGraphState,
         config_schema=Configuration,
     )
