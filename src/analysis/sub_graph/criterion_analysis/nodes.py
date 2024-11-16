@@ -56,7 +56,7 @@ def init_agent(
             ),
         )
         # Store the cot questions
-        op = PutOp(namespace, key, cot_questions)
+        op = PutOp(namespace, key, cot_questions.model_dump(mode="json"))
 
     hub_prompt = get_prompt("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate(hub_prompt.messages)
@@ -127,7 +127,7 @@ def call_model(
                 ):
                     # Store the last message (AI Message with tool calls)
                     last_message = AIMessage(**clean_message(response).model_dump())
-                    op = PutOp(namespace, key, last_message)
+                    op = PutOp(namespace, key, last_message.model_dump(mode="json"))
             else:
                 # Put the last message into the response
                 response = AIMessage(**init_tool_calls.value)
