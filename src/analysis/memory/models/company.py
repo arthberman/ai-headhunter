@@ -1,6 +1,6 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class Technologies(BaseModel):
@@ -18,18 +18,19 @@ class Technologies(BaseModel):
     )
 
 
-class RoleInfo(BaseModel):
-    """Information about a specific role within a company.
+class Position(BaseModel):
+    """Information about a specific position within a company.
 
-    Store general patterns and context about what the role typically involves,
+    Store general patterns and context about what the position typically involves,
     not specific project details. Focus on the essence of the role.
 
-    Example: For a "Software Engineer" role, store "Works on backend systems using Python"
-    rather than "Developed feature X for product Y in team Z"
+    Example: For a "Software Engineer" role, store "Works on backend systems using NestJS and Prisma"
+    rather than "Developed feature X during Y quarter in team Z which increased Z by X%"
     """
 
-    context: str = Field(
-        description="General context about what this role typically involves, including common "
+    title: str = Field(description="The standardized job title")
+    description: str = Field(
+        description="General context about what this position typically involves, including common "
         "responsibilities, focus areas, and working patterns. Should be role-specific "
         "but not tied to individual projects or teams."
         "'meta' details that help understand the essence of the role.",
@@ -57,7 +58,20 @@ class CompanyInfo(BaseModel):
         default=None,
         description="Common software tools (e.g., Jira, Zendesk)",
     )
-    roles: Dict[str, RoleInfo] = Field(
-        default_factory=dict,
-        description="Dictionary of roles, where keys are role titles and values are role information",
+    positions: List[Position] = Field(
+        description="List of unique positions. Each position should have a title and context. Position titles must be unique, duplicates are not allowed."
     )
+
+    @model_validator(mode="after")
+    def check_duplicate_positions(self) -> "CompanyInfo":
+        """Check for duplicate position titles and raise error if found."""
+        position_titles = {}
+
+        for position in self.positions:
+            if position.title in position_titles:
+                raise ValueError(
+                    f"There are duplicate position titles : it must be unique. You should merge information of '{position.title}' positions by updating the context of the existing position and removing the duplicate (if any)."
+                )
+            position_titles[position.title] = True
+
+        return self

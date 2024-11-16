@@ -3,7 +3,7 @@ from langgraph.store.base import BaseStore
 from analysis.state import MainGraphState
 
 
-def node_sync_memory(state: MainGraphState, *, store: BaseStore):
+def node_write_memory(state: MainGraphState, *, store: BaseStore):
     """Save the memory."""
     if state.batch_store_ops:
         store.batch(state.batch_store_ops)

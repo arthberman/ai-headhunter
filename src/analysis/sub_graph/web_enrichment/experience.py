@@ -3,6 +3,7 @@ from typing import Optional, cast
 from langchain_community.tools import TavilySearchResults
 from langchain_core.runnables import RunnableConfig
 from langgraph.store.base import BaseStore, PutOp
+from pydantic import ValidationError
 
 from analysis.memory.handle_patch_memory import handle_patch_memory
 from analysis.memory.models.company import CompanyInfo
@@ -20,27 +21,39 @@ tavily_tool = TavilySearchResults(
 def format_information(
     experience: ProfileExperience,
     tavily_res: Optional[str] = None,
+    old_value: Optional[dict] = None,
 ) -> str:
-    """Format input for memory client with optional Tavily search results."""
+    """Format input for memory client with optional Tavily search results and old value."""
     information = f"""
-        <candidate_profile>
+        ***candidate_profile***
         Company: {experience.company}
         Location: {experience.location}"""
 
     # Add title and description only if description is rich
     if len(experience.description) >= 100:
         information += f"""
-        Title: {experience.title}
-        Description: {experience.description}"""
+        Position Title: {experience.title}
+        Position Description: {experience.description}"""
+    else:
+        information += """
+        Position Title: Not provided
+        Position Description: Not provided"""
 
-    information += "\n        </candidate_profile>"
+    information += "\n        ***candidate_profile***"
+
+    # Add old value if provided
+    if old_value:
+        information += f"""
+            ***old_value***
+            {old_value}
+            ***old_value***"""
 
     # Add Tavily results if provided
     if tavily_res:
         information = f"""
-            <web_search>
+            ***web_search***
             {tavily_res}
-            </web_search>
+            ***web_search***
             {information}"""
 
     return information
@@ -64,27 +77,55 @@ def node_experience_enrichment(
     company = store.get(namespace, key)
 
     if company:
-        company_info = cast(CompanyInfo, company.value)
-        if len(experience.description) < 100:
-            return {"experience_enrichment": [company_info]}
+        try:
+            # Try to validate against current schema
+            company_info = CompanyInfo.model_validate(company.value)
 
-        # If the description is rich, we can enrich the company info
-        op = cast(
-            PutOp,
-            handle_patch_memory(
-                namespace,
-                key,
-                format_information(experience),
-                existing_item=company,
-                prompt="memory-company",
-                schema_model=CompanyInfo,
-                config=config,
-            ),
-        )
-        return {
-            "experience_enrichment": [cast(CompanyInfo, op.value)],
-            "batch_store_ops": [op],
-        }
+            if len(experience.description) < 100:
+                return {"experience_enrichment": [company_info]}
+
+            # Update with rich description
+            op = cast(
+                PutOp,
+                handle_patch_memory(
+                    namespace,
+                    key,
+                    format_information(experience),
+                    existing_item=company,
+                    prompt="memory-company",
+                    schema_model=CompanyInfo,
+                    config=config,
+                ),
+            )
+            return {
+                "experience_enrichment": [cast(CompanyInfo, op.value)],
+                "batch_store_ops": [op],
+            }
+        except ValidationError:
+            # Schema mismatch - treat as if not in store and reprocess
+            tavily_res = tavily_tool.invoke(
+                {"query": f"company {experience.company} ({experience.location})"}
+            )
+
+            # Create new entry with current schema
+            op = cast(
+                PutOp,
+                handle_patch_memory(
+                    namespace,
+                    key,
+                    format_information(
+                        experience, tavily_res=tavily_res, old_value=company.value
+                    ),
+                    existing_item=None,  # Force new entry
+                    prompt="memory-company",
+                    schema_model=CompanyInfo,
+                    config=config,
+                ),
+            )
+            return {
+                "experience_enrichment": [cast(CompanyInfo, op.value)],
+                "batch_store_ops": [op],
+            }
     else:
         # If not in store or cast failed, perform Tavily search
         tavily_res = tavily_tool.invoke(
@@ -97,7 +138,7 @@ def node_experience_enrichment(
                 namespace,
                 key,
                 format_information(experience, tavily_res),
-                existing_item=company,
+                existing_item=None,
                 prompt="memory-company",
                 schema_model=CompanyInfo,
                 config=config,
