@@ -58,5 +58,6 @@ class CompanyInfo(BaseModel):
         description="Common software tools (e.g., Jira, Zendesk)",
     )
     roles: Dict[str, RoleInfo] = Field(
-        description="Dictionary of roles, where keys are role titles and values are role information"
+        default_factory=dict,
+        description="Dictionary of roles, where keys are role titles and values are role information",
     )

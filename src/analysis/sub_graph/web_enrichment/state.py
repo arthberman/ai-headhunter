@@ -13,8 +13,12 @@ from utils import reducer_list
 class OutputEnrichmentState(BaseModel):
     """Output state for the enrichment subgraph."""
 
-    education_enrichment: Annotated[List[SchoolInfo], operator.add]
-    experience_enrichment: Annotated[List[CompanyInfo], operator.add]
+    education_enrichment: Annotated[List[SchoolInfo], operator.add] = Field(
+        default_factory=list
+    )
+    experience_enrichment: Annotated[List[CompanyInfo], operator.add] = Field(
+        default_factory=list
+    )
 
 
 class EducationState(BaseModel):
