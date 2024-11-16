@@ -104,13 +104,11 @@ def compile_analysis_graph() -> CompiledGraph:
     workflow.add_node(
         "score_nice_criteria",
         get_criterion_analysis_subgraph(),
-        input=InputAnalysisMainState,
     )
 
     workflow.add_node(
         "score_must_criteria",
         get_criterion_analysis_subgraph(),
-        input=InputAnalysisMainState,
     )
 
     workflow.add_node(
