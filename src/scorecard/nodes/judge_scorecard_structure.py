@@ -1,6 +1,5 @@
-from typing import Optional, cast
+from typing import cast
 
-from utils import get_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from trustcall import create_extractor
@@ -9,7 +8,7 @@ from scorecard.configuration import Configuration
 from scorecard.models.scorecard import BaseCriterion, Scorecard
 from scorecard.nodes.scorecard_structure import LimitedScorecard
 from scorecard.state import ScorecardGraphState
-from utils import init_model
+from utils import get_prompt, init_model
 
 
 def node_judge_scorecard_structure(

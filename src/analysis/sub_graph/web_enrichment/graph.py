@@ -28,8 +28,8 @@ def continue_to_education_enrichment(state: MainEnrichmentState):
                     )
                 )
 
-        return enrichment_tasks if enrichment_tasks else "node_sync_memory"
-    return "node_sync_memory"
+        return enrichment_tasks if enrichment_tasks else "node_write_memory"
+    return "node_write_memory"
 
 
 def continue_to_experience_enrichment(state: MainEnrichmentState):
@@ -48,11 +48,11 @@ def continue_to_experience_enrichment(state: MainEnrichmentState):
                     )
                 )
 
-        return enrichment_tasks if enrichment_tasks else "node_sync_memory"
-    return "node_sync_memory"
+        return enrichment_tasks if enrichment_tasks else "node_write_memory"
+    return "node_write_memory"
 
 
-def node_sync_memory(
+def node_write_memory(
     state: MainEnrichmentState, *, store: BaseStore
 ) -> OutputEnrichmentState:
     """Save the memory."""
@@ -80,22 +80,22 @@ def get_web_enrichment_subgraph():
         retry=get_retry_policy(),
     )
 
-    workflow.add_node("node_sync_memory", node_sync_memory, retry=get_retry_policy())
+    workflow.add_node("node_write_memory", node_write_memory, retry=get_retry_policy())
 
     workflow.add_conditional_edges(
         START,
         continue_to_education_enrichment,
-        ["node_education_enrichment", "node_sync_memory"],
+        ["node_education_enrichment", "node_write_memory"],
     )
     workflow.add_conditional_edges(
         START,
         continue_to_experience_enrichment,
-        ["node_experience_enrichment", "node_sync_memory"],
+        ["node_experience_enrichment", "node_write_memory"],
     )
 
-    workflow.add_edge("node_experience_enrichment", "node_sync_memory")
-    workflow.add_edge("node_education_enrichment", "node_sync_memory")
-    workflow.add_edge("node_sync_memory", END)
+    workflow.add_edge("node_experience_enrichment", "node_write_memory")
+    workflow.add_edge("node_education_enrichment", "node_write_memory")
+    workflow.add_edge("node_write_memory", END)
 
     # Compile the graph
     graph = workflow.compile()
