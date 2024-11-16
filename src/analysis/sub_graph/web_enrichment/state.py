@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from analysis.memory.models.company import CompanyInfo
 from analysis.memory.models.school import SchoolInfo
 from analysis.models.profile import Profile, ProfileEducation, ProfileExperience
+from utils import reducer_list
 
 
 class OutputEnrichmentState(BaseModel):
@@ -33,4 +34,4 @@ class MainEnrichmentState(OutputEnrichmentState):
 
     profile: Profile = Field(...)
 
-    batch_store_ops: Annotated[List[Op], operator.add] = Field(default_factory=list)
+    batch_store_ops: Annotated[List[Op], reducer_list] = Field(default_factory=list)

@@ -17,15 +17,7 @@ from analysis.models.synthesis import (
 )
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import Scorecard
-
-
-def reducer_list(existing: list, updates: Union[list, str]) -> list:
-    """Reducer for a list with a CLEAR command."""
-    if updates == "CLEAR":
-        return []
-    elif isinstance(updates, list):
-        return existing + updates
-    return existing
+from utils import reducer_list
 
 
 class InputGraphState(BaseModel):

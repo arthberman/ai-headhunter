@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 from analysis.state import MainGraphState
 from scorecard.models.scorecard import BaseCriterion
+from utils import reducer_list
 
 
 class InputAnalysisMainState(BaseModel):
@@ -23,4 +24,4 @@ class AnalysisMainState(InputAnalysisMainState):
         default_factory=list
     )
     loop_step: Annotated[int, operator.add] = Field(default=0)
-    batch_store_ops: Annotated[List[Op], operator.add] = Field(default_factory=list)
+    batch_store_ops: Annotated[List[Op], reducer_list] = Field(default_factory=list)
