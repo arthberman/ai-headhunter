@@ -1,0 +1,24 @@
+volumes:
+  langgraph-data:
+    driver: local
+services:
+  langgraph-redis:
+    image: redis:6
+    healthcheck:
+      test: redis-cli ping
+      interval: 5s
+      timeout: 1s
+      retries: 5
+  langgraph-api:
+    image: ${IMAGE_NAME}
+    ports:
+      - "8123:8000"
+    depends_on:
+      langgraph-redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      REDIS_URI: redis://langgraph-redis:6379
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY}
+      DATABASE_URI: ${DATABASE_URI}
