@@ -12,7 +12,6 @@ def clean_message(message: BaseMessage) -> BaseMessage:
         "example",
         "response_metadata",
     ]
-    print("clean_message")
     # Remove fields from additional_kwargs if they exist
     if hasattr(updated_message, "additional_kwargs"):
         for field in fields_to_remove:
