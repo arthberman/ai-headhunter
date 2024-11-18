@@ -1,5 +1,5 @@
 import operator
-from typing import Annotated, List, Optional, Union
+from typing import Annotated, List, Optional
 
 from langgraph.store.base import Op
 from pydantic import BaseModel, Field
