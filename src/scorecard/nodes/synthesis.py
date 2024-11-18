@@ -1,12 +1,11 @@
-from typing import Optional, cast
+from typing import cast
 
-from utils import get_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 
 from scorecard.configuration import Configuration
 from scorecard.models.synthesis import Synthesis
 from scorecard.state import ScorecardGraphState
-from utils import init_model
+from utils import get_prompt, init_model
 
 
 def node_synthesis(

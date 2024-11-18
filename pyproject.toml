@@ -20,17 +20,28 @@ dependencies = [
   "python-dotenv>=1.0.1",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.uv]
-dev-dependencies = [
+[project.optional-dependencies]
+dev = [
   "git-filter-repo>=2.45.0",
   "ipykernel>=6.29.5",
   "langgraph-sdk>=0.1.33",
+  "mypy>=1.13.0",
   "ruff>=0.6.6",
 ]
+
+[build-system]
+requires = ["setuptools>=73.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["analysis", "scorecard"]
+
+[tool.setuptools.package-dir]
+"analysis" = "src/analysis"
+"scorecard" = "src/scorecard"
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
 
 [tool.ruff]
 include = ["*.py", "*.pyi", "*.ipynb"]
@@ -45,6 +56,3 @@ ignore = ["UP006", "UP007", "UP035", "D417", "E501", "D100"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/analysis", "src/scorecard"]

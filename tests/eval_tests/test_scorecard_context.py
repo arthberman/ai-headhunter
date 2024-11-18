@@ -1,7 +1,6 @@
 from typing import List, cast
 
 from dotenv import load_dotenv
-from utils import get_prompt
 from langchain_core.runnables import Runnable
 from langsmith.evaluation import evaluate
 from langsmith.schemas import Example, Run
@@ -9,6 +8,7 @@ from pydantic import BaseModel, Field
 
 from scorecard.nodes.context import node_context
 from scorecard.state import ScorecardGraphState
+from utils import get_prompt
 from utils.init_model import init_model
 
 load_dotenv(dotenv_path=".env.studio")

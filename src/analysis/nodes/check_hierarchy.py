@@ -4,8 +4,8 @@ from typing import cast
 from langchain_core.runnables import Runnable, RunnableConfig
 
 from analysis.configuration import Configuration
-from analysis.state import MainGraphState
 from analysis.models.synthesis import HierarchySynthesis
+from analysis.state import MainGraphState
 from utils import get_candidate_timeline, get_prompt, init_model
 
 

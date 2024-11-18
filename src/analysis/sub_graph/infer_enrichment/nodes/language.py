@@ -1,7 +1,6 @@
 from datetime import datetime
-from typing import List, Optional, cast
+from typing import List, cast
 
-from utils import get_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
@@ -11,7 +10,7 @@ from analysis.sub_graph.infer_enrichment.state import (
     MainInferEnrichmentState,
     OutputInferEnrichmentState,
 )
-from utils import format_data, init_model
+from utils import format_data, get_prompt, init_model
 
 
 class LanguageProficiency(BaseModel):
