@@ -3,14 +3,14 @@ from typing import Any, Dict, List
 from langsmith import Client
 
 # Cache dictionary to store datasets
-_dataset_cache: Dict[str, List[Any]] = {}
+# _dataset_cache: Dict[str, List[Any]] = {}
 
 
 def get_dataset(dataset_name: str) -> List[Any]:
     """Get a dataset from LangSmith with caching."""
     # Check if dataset is already in cache
-    if dataset_name in _dataset_cache:
-        return _dataset_cache[dataset_name]
+    """ if dataset_name in _dataset_cache:
+        return _dataset_cache[dataset_name] """
 
     try:
         # Initialize LangSmith client
@@ -20,7 +20,7 @@ def get_dataset(dataset_name: str) -> List[Any]:
         examples = list(ls_client.list_examples(dataset_name=dataset_name))
 
         # Store in cache
-        _dataset_cache[dataset_name] = examples
+        # _dataset_cache[dataset_name] = examples
 
         return examples
 

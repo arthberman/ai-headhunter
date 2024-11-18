@@ -4,8 +4,8 @@ from typing import cast
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.configuration import Configuration
-from analysis.state import MainGraphState
 from analysis.models.synthesis import LocationSynthesis, SynthesisScore
+from analysis.state import MainGraphState
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import CriterionType, ImportanceLevel
 from utils import get_prompt, init_model

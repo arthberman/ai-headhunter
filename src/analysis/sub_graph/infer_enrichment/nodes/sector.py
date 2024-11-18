@@ -1,7 +1,6 @@
 from datetime import datetime
-from typing import Optional, cast
+from typing import cast
 
-from utils import get_prompt
 from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
@@ -10,7 +9,7 @@ from analysis.sub_graph.infer_enrichment.state import (
     MainInferEnrichmentState,
     OutputInferEnrichmentState,
 )
-from utils import format_data, init_model
+from utils import format_data, get_prompt, init_model
 
 
 class SectorSynthesis(BaseModel):
@@ -46,7 +45,6 @@ def node_infer_sector(
         chain.invoke(
             {
                 "candidate": format_data(state.profile),
-                "output_schema": SectorSynthesis.model_json_schema(),
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
             }
