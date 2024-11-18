@@ -1,7 +1,6 @@
 from typing import List, cast
 
 from dotenv import load_dotenv
-from utils import get_prompt
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import Runnable
 from langsmith.evaluation import evaluate
@@ -10,6 +9,7 @@ from pydantic import BaseModel, Field
 from trustcall import create_extractor
 
 from scorecard.models.question import ListQuestions
+from utils import get_prompt
 from utils.init_model import init_model
 
 load_dotenv(dotenv_path=".env.studio")

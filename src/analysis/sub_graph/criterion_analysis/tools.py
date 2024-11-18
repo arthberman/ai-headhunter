@@ -1,5 +1,3 @@
-# First we initialize the model we want to use.
-import os
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union, cast

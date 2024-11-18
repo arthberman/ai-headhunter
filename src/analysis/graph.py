@@ -10,11 +10,10 @@ from analysis.nodes.assess_open_to_work import node_assess_open_to_work
 from analysis.nodes.check_hierarchy import node_check_hierarchy
 from analysis.nodes.check_location import node_check_location
 from analysis.nodes.conclude import node_conclude
-from analysis.nodes.write_memory import node_write_memory
 from analysis.nodes.synthetize_intent import node_synthetize_intent
+from analysis.nodes.write_memory import node_write_memory
 from analysis.state import InputGraphState, MainGraphState
 from analysis.sub_graph.criterion_analysis.graph import get_criterion_analysis_subgraph
-from analysis.sub_graph.criterion_analysis.state import InputAnalysisMainState
 from analysis.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgraph
 from analysis.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
 from scorecard.models.scorecard import CriterionType, ImportanceLevel
