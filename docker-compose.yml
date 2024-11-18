@@ -22,4 +22,3 @@ services:
       REDIS_URI: redis://langgraph-redis:6379
       LANGSMITH_API_KEY: ${LANGSMITH_API_KEY}
       DATABASE_URI: ${DATABASE_URI}
-    command: sh -c "env | grep -E 'LANGSMITH_API_KEY|DATABASE_URI|REDIS_URI'"
