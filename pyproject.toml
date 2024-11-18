@@ -34,12 +34,12 @@ requires = ["setuptools>=73.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["analysis", "scorecard"]
+packages = ["analysis", "scorecard", "utils"]
 
 [tool.setuptools.package-dir]
 "analysis" = "src/analysis"
 "scorecard" = "src/scorecard"
-
+"utils" = "src/utils"
 [tool.setuptools.package-data]
 "*" = ["py.typed"]
 
