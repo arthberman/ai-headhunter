@@ -118,3 +118,18 @@ class Scorecard(BaseModel):
                 )
 
         return self
+
+    @model_validator(mode="after")
+    def validate_unique_ids(self) -> "Scorecard":
+        """Validate that all criteria have unique IDs if they are present."""
+        if not self.is_updating:
+            # Collect all non-None IDs
+            ids = [
+                criterion.id for criterion in self.criteria if criterion.id is not None
+            ]
+
+            # Check for duplicates using set comparison
+            if len(ids) != len(set(ids)):
+                raise ValueError("All criteria must have unique IDs")
+
+        return self

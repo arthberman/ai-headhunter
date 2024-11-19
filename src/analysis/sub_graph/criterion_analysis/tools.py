@@ -13,6 +13,7 @@ from analysis.configuration import Configuration
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
 from utils import format_data, get_prompt, init_model
+from utils.candidate_timeline import get_candidate_timeline
 
 
 class CandidateInfoType(Enum):
@@ -26,8 +27,8 @@ class CandidateInfoType(Enum):
     LANGUAGES = "LANGUAGES"
     PROJECTS = "PROJECTS"
     VOLUNTEERINGS = "VOLUNTEERINGS"
-    CULTURE = "CULTURE"
-    SECTOR = "SECTOR"
+    INDUSTRY_SECTOR = "INDUSTRY_SECTOR"
+    COMPANY_CULTURE = "COMPANY_CULTURE"
 
 
 def get_candidate_info(
@@ -37,10 +38,11 @@ def get_candidate_info(
     """Get specific information about the candidate."""
     info_map = {
         CandidateInfoType.EXPERIENCES: {
-            "experiences": [
-                experience.model_dump()
-                for experience in state.main_state.profile.experiences
-            ],
+            "experiences": get_candidate_timeline(
+                profile=state.main_state.profile,
+                with_detail=True,
+                filter_type="experiences",
+            ),
             "experience_enrichment": [
                 experience_enrichment.model_dump()
                 for experience_enrichment in state.main_state.experience_enrichment
@@ -52,10 +54,11 @@ def get_candidate_info(
             for certification in state.main_state.profile.certifications
         ],
         CandidateInfoType.EDUCATIONS: {
-            "educations": [
-                education.model_dump()
-                for education in state.main_state.profile.educations
-            ],
+            "educations": get_candidate_timeline(
+                profile=state.main_state.profile,
+                with_detail=True,
+                filter_type="educations",
+            ),
             "education_enrichment": [
                 education_enrichment.model_dump()
                 for education_enrichment in state.main_state.education_enrichment
@@ -80,8 +83,8 @@ def get_candidate_info(
             volunteering.model_dump()
             for volunteering in state.main_state.profile.volunteerings
         ],
-        CandidateInfoType.CULTURE: state.main_state.inferred_culture,
-        CandidateInfoType.SECTOR: state.main_state.inferred_sector,
+        CandidateInfoType.COMPANY_CULTURE: state.main_state.inferred_culture,
+        CandidateInfoType.INDUSTRY_SECTOR: state.main_state.inferred_sector,
     }
 
     if infotype not in info_map:
@@ -91,7 +94,6 @@ def get_candidate_info(
 
     if not data:
         return f"No information available for {infotype.value.upper()}. The candidate's profile does not contain any data for this category."
-
     return format_data(data)
 
 

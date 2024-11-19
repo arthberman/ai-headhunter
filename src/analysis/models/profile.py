@@ -8,7 +8,7 @@ class ProfileEducation(BaseModel):
     """Profile education."""
 
     starts_at: Annotated[
-        Optional[datetime], Field(description="Start date of education")
+        Optional[datetime], Field(default=None, description="Start date of education")
     ]
     ends_at: Annotated[
         Optional[datetime], Field(default=None, description="End date of education")
@@ -35,7 +35,7 @@ class ProfileExperience(BaseModel):
     """Profile experience."""
 
     starts_at: Annotated[
-        Optional[datetime], Field(description="Start date of experience")
+        Optional[datetime], Field(default=None, description="Start date of experience")
     ]
     ends_at: Annotated[
         Optional[datetime], Field(default=None, description="End date of experience")
@@ -111,13 +111,18 @@ class ProfileProject(BaseModel):
 class ProfileCertification(BaseModel):
     """Profile certification."""
 
-    title: Annotated[Optional[str], Field(description="Certification title")]
-    description: Annotated[
-        Optional[str], Field(description="Certification description")
+    title: Annotated[
+        Optional[str], Field(default=None, description="Certification title")
     ]
-    issuer: Annotated[Optional[str], Field(description="Certification issuer")]
+    description: Annotated[
+        Optional[str], Field(default=None, description="Certification description")
+    ]
+    issuer: Annotated[
+        Optional[str], Field(default=None, description="Certification issuer")
+    ]
     issue_at: Annotated[
-        Optional[datetime], Field(description="Date of certification issuance")
+        Optional[datetime],
+        Field(default=None, description="Date of certification issuance"),
     ]
 
 
@@ -144,18 +149,32 @@ class Profile(BaseModel):
 
     id: Annotated[str, Field(description="Unique identifier for the profile")]
     country: Annotated[str, Field(description="Country of the profile")]
-    city: Annotated[Optional[str], Field(description="City of the profile")]
-    state: Annotated[Optional[str], Field(description="State of the profile")]
-    headline: Annotated[Optional[str], Field(description="Headline of the profile")]
-    summary: Annotated[Optional[str], Field(description="Summary of the profile")]
-    connection_count: Annotated[
-        Optional[int], Field(description="Number of connections")
+    city: Annotated[
+        Optional[str], Field(default=None, description="City of the profile")
     ]
-    followers_count: Annotated[Optional[int], Field(description="Number of followers")]
-    is_creator: Annotated[Optional[bool], Field(description="Is the profile a creator")]
-    is_hiring: Annotated[Optional[bool], Field(description="Is the profile hiring")]
+    state: Annotated[
+        Optional[str], Field(default=None, description="State of the profile")
+    ]
+    headline: Annotated[
+        Optional[str], Field(default=None, description="Headline of the profile")
+    ]
+    summary: Annotated[
+        Optional[str], Field(default=None, description="Summary of the profile")
+    ]
+    connection_count: Annotated[
+        Optional[int], Field(default=None, description="Number of connections")
+    ]
+    followers_count: Annotated[
+        Optional[int], Field(default=None, description="Number of followers")
+    ]
+    is_creator: Annotated[
+        Optional[bool], Field(default=None, description="Is the profile a creator")
+    ]
+    is_hiring: Annotated[
+        Optional[bool], Field(default=None, description="Is the profile hiring")
+    ]
     is_open_to_work: Annotated[
-        Optional[bool], Field(description="Is the profile open to work")
+        Optional[bool], Field(default=None, description="Is the profile open to work")
     ]
     linkedin_id: Annotated[str, Field(description="LinkedIn ID of the profile")]
     skills: Annotated[List[str], Field(description="List of skills")]
