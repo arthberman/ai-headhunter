@@ -8,7 +8,7 @@ from analysis.models.synthesis import LocationSynthesis, SynthesisScore
 from analysis.state import MainGraphState
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import CriterionType, ImportanceLevel
-from utils import get_prompt, init_model
+from utils import format_data, get_prompt, init_model
 from utils.candidate_timeline import get_candidate_timeline
 from utils.few_shot import FewShotConfig, get_few_shot_messages
 
@@ -53,7 +53,7 @@ def node_check_location(
         LocationSynthesis,
         chain.invoke(
             {
-                "job_location_criteria": criterion,
+                "job_location_criteria": format_data(criterion),
                 "candidate_timeline": get_candidate_timeline(state.profile),
                 "candidate_headline_location": f"{state.profile.city}, {state.profile.state}, {state.profile.country}",
                 "examples": few_shot_messages,

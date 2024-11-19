@@ -4,9 +4,15 @@ from typing import cast
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.configuration import Configuration
-from analysis.models.synthesis import Synthesis
+from analysis.models.synthesis import SynthesisOverall
 from analysis.state import MainGraphState
-from utils import format_data, get_extended_scored_criterion, get_prompt, init_model
+from utils import (
+    format_data,
+    format_scored_criteria,
+    get_extended_scored_criterion,
+    get_prompt,
+    init_model,
+)
 
 
 def node_conclude(state: MainGraphState, config: RunnableConfig) -> MainGraphState:
@@ -15,11 +21,11 @@ def node_conclude(state: MainGraphState, config: RunnableConfig) -> MainGraphSta
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the prompt
-    prompt = get_prompt("generate-analysis-synthesis")
+    prompt = get_prompt("analysis-conclusion")
 
     # Initialize the model
     raw_model = init_model(configuration.synthesis_model)
-    model = raw_model.with_structured_output(Synthesis)
+    model = raw_model.with_structured_output(SynthesisOverall)
 
     # Create the chain
     chain = cast(RunnableLambda, prompt | model)
@@ -31,13 +37,17 @@ def node_conclude(state: MainGraphState, config: RunnableConfig) -> MainGraphSta
 
     # Invoke the chain
     res = cast(
-        Synthesis,
+        SynthesisOverall,
         chain.invoke(
             {
-                "profile": format_data(state.profile),
-                "extended_scored_criterion": extended_scored_criterion,
-                "job_synthesis": state.job_synthesis,
-                "output_schema": Synthesis.model_json_schema(),
+                "extended_scored_criterion": format_scored_criteria(
+                    extended_scored_criterion,
+                    state.scored_criterion,
+                    state.scorecard,
+                ),
+                "job_synthesis": format_data(state.job_synthesis),
+                "synthesis_hierarchy": format_data(state.synthesis_hierarchy),
+                "synthesis_open_to_work": format_data(state.synthesis_open_to_work),
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
             }

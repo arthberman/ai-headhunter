@@ -5,6 +5,7 @@ from .clean_message import clean_message
 from .compute_must_score import compute_must_score
 from .few_shot import FewShotConfig, get_few_shot_messages
 from .format_data import format_data
+from .format_scored_criteria import format_scored_criteria
 from .get_dataset import get_dataset
 from .get_extended_scored_criterion import get_extended_scored_criterion
 from .get_profile_metadata import get_profile_metadata
@@ -32,4 +33,5 @@ __all__ = [
     "clean_message",
     "compute_must_score",
     "reducer_list",
+    "format_scored_criteria",
 ]

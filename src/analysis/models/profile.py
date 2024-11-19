@@ -136,10 +136,10 @@ class ProfileLanguage(BaseModel):
 class ProfileAge(BaseModel):
     """Profile age."""
 
-    range_lower_bound: Annotated[int, Field(description="Lower bound of the age range")]
-    range_upper_bound: Annotated[int, Field(description="Upper bound of the age range")]
+    lower: Annotated[int, Field(description="Lower bound of the age range")]
+    upper: Annotated[int, Field(description="Upper bound of the age range")]
     explanation: Annotated[str, Field(description="Explanation for the age range")]
-    confidence_score: Annotated[
+    confidence: Annotated[
         float, Field(description="Confidence score for the age range")
     ]
 

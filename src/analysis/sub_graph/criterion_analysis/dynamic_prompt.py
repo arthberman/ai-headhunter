@@ -24,15 +24,16 @@ def prepare_evaluation_steps(cot_questions: CotQuestions, instructions: str) -> 
     # Continue with remaining steps
     next_step = 3
     remaining_steps = [
-        f"{next_step}. If necessary, use `search_web` to gather additional context available on a web search (maximum 2 call to the `search_web` tool)",
-        f"{next_step + 1}. Evaluate how well the candidate meets the criterion based on all gathered information and reasonable inferences.",
-        f"{next_step + 2}. Apply the scoring instructions to assign a numerical score:",
+        f"{next_step}. You can call tools to gather additional context if needed and if not already done.",
+        f"{next_step + 1}. If necessary, use `search_web` to gather additional context available on a web search (maximum 2 call to the `search_web` tool)",
+        f"{next_step + 2}. Evaluate how well the candidate meets the criterion based on all gathered information and reasonable inferences.",
+        f"{next_step + 3}. Apply the scoring instructions to assign a numerical score:",
         f"{instructions}",
-        f"{next_step + 3}. Determine your confidence level based on whether the information was directly available or inferred.",
-        f"{next_step + 4}. Write a brief explanation for your evaluation (max 400 characters), including:",
+        f"{next_step + 4}. Determine your confidence level based on whether the information was directly available or inferred.",
+        f"{next_step + 5}. Write a brief explanation for your evaluation (max 400 characters), including:",
         "   - Key factors that influenced your scoring",
         "   - Any inferences you made and how they affected your score and confidence level",
-        f"{next_step + 5}. Use `ScoredCriterion` tool to submit your final score, explanation, and confidence level.",
+        f"{next_step + 6}. Use `ScoredCriterion` tool to submit your final score, explanation, and confidence level.",
     ]
 
     steps.extend(remaining_steps)
