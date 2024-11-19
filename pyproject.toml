@@ -7,18 +7,19 @@ requires-python = ">=3.12"
 dependencies = [
   "langchain>=0.3.7",
   "langchain-community>=0.3.7",
-  "langchainhub>=0.1.21",
   "langchain-anthropic>=0.3.0",
   "langchain-core>=0.3.19",
-  "langgraph>=0.2.50",
-  "langchain-openai>=0.2.8",
+  "langgraph>=0.2.52",
+  "langchain-openai>=0.2.9",
   "pydantic>=2.9.2",
-  "toml>=0.10.2",
-  "ipykernel>=6.29.5",
   "langchain-aws>=0.2.7",
   "trustcall>=0.0.26",
   "python-dotenv>=1.0.1",
 ]
+
+[build-system]
+requires = ["setuptools>=73.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
 dev = [
@@ -27,24 +28,22 @@ dev = [
   "langgraph-sdk>=0.1.33",
   "mypy>=1.13.0",
   "ruff>=0.6.6",
+  "toml>=0.10.2",
 ]
-
-[build-system]
-requires = ["setuptools>=73.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["analysis", "scorecard", "utils"]
 
-[tool.setuptools.package-dir]
-"analysis" = "src/analysis"
-"scorecard" = "src/scorecard"
-"utils" = "src/utils"
-[tool.setuptools.package-data]
-"*" = ["py.typed"]
-
 [tool.ruff]
 include = ["*.py", "*.pyi", "*.ipynb"]
+
+[tool.setuptools.package-dir]
+analysis = "src/analysis"
+scorecard = "src/scorecard"
+utils = "src/utils"
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "D", "D401", "T201", "UP"]
