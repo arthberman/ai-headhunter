@@ -16,7 +16,10 @@ class SectorSynthesis(BaseModel):
     """Sector analysis synthesis."""
 
     synthesis: str = Field(
-        description="Synthesis of the analysis of the sector of the candidate. (max 600 characters)"
+        description="""Synthesis of the analysis of the sector of the candidate.
+        Always start with 'The candidate shows a deep specialization in ...' or
+        'The candidate shows diverse experience with no deep specialization ...'
+        accordingly. (max 600 characters)"""
     )
 
 

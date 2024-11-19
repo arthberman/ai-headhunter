@@ -60,5 +60,21 @@ class OpenToWorkSynthesis(BaseModel):
 class Synthesis(BaseModel):
     """Synthesis of the candidate matcher."""
 
-    strengths: List[str] = Field(description="List of strengths of the profile")
-    weaknesses: List[str] = Field(description="List of weaknesses of the profile")
+    strengths: List[str] = Field(..., description="List of strengths of the profile")
+    weaknesses: List[str] = Field(..., description="List of weaknesses of the profile")
+
+
+class SynthesisOverall(BaseModel):
+    """Overall synthesis of the candidate matcher."""
+
+    score: SynthesisScore = Field(..., description="Score of the synthesis")
+    explanation: str = Field(
+        ...,
+        description="Explanation of the score in one-line paragraph (max 600 characters)",
+    )
+    summary: List[str] = Field(
+        ...,
+        description="""Summary of the synthesis as a list of bullet points.
+        Use an emoji at the beginning of each element. Focus on the elements
+        that were structural in your decisions. Max 70 characters per item""",
+    )

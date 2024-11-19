@@ -13,7 +13,7 @@ from analysis.models.synthesis import (
     IntentSynthesis,
     LocationSynthesis,
     OpenToWorkSynthesis,
-    Synthesis,
+    SynthesisOverall,
 )
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import Scorecard
@@ -46,4 +46,4 @@ class MainGraphState(InputGraphState):
     synthesis_hierarchy: Optional[HierarchySynthesis] = Field(default=None)
     synthesis_open_to_work: Optional[OpenToWorkSynthesis] = Field(default=None)
     synthesis_intent: Optional[IntentSynthesis] = Field(default=None)
-    synthesis_overall: Optional[Synthesis] = Field(default=None)
+    synthesis_overall: Optional[SynthesisOverall] = Field(default=None)

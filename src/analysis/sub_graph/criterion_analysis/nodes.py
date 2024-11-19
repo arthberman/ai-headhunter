@@ -49,7 +49,6 @@ def init_agent(
                     "description": state.criterion.description,
                     "importance_level": state.criterion.importance_level.value,
                     "context": state.criterion.context,
-                    "output_schema": CotQuestions.model_json_schema(),
                     "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
                     "output_language": configuration.output_language,
                 }
