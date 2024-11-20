@@ -57,13 +57,6 @@ class OpenToWorkSynthesis(BaseModel):
     )
 
 
-class Synthesis(BaseModel):
-    """Synthesis of the candidate matcher."""
-
-    strengths: List[str] = Field(..., description="List of strengths of the profile")
-    weaknesses: List[str] = Field(..., description="List of weaknesses of the profile")
-
-
 class SynthesisOverall(BaseModel):
     """Overall synthesis of the candidate matcher."""
 
