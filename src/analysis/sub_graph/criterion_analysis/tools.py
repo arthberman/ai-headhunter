@@ -38,11 +38,10 @@ def get_candidate_info(
     """Get specific information about the candidate."""
     info_map = {
         CandidateInfoType.EXPERIENCES: {
-            "experiences": get_candidate_timeline(
-                profile=state.main_state.profile,
-                with_detail=True,
-                filter_type="experiences",
-            ),
+            "experiences": [
+                experience.model_dump()
+                for experience in state.main_state.profile.experiences
+            ],
             "experience_enrichment": [
                 experience_enrichment.model_dump()
                 for experience_enrichment in state.main_state.experience_enrichment
@@ -54,11 +53,10 @@ def get_candidate_info(
             for certification in state.main_state.profile.certifications
         ],
         CandidateInfoType.EDUCATIONS: {
-            "educations": get_candidate_timeline(
-                profile=state.main_state.profile,
-                with_detail=True,
-                filter_type="educations",
-            ),
+            "educations": [
+                education.model_dump()
+                for education in state.main_state.profile.educations
+            ],
             "education_enrichment": [
                 education_enrichment.model_dump()
                 for education_enrichment in state.main_state.education_enrichment
