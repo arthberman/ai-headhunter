@@ -9,9 +9,9 @@ dependencies = [
   "langchain-community>=0.3.7",
   "langchain-anthropic>=0.3.0",
   "langchain-core>=0.3.19",
-  "langgraph>=0.2.52",
+  "langgraph>=0.2.53",
   "langchain-openai>=0.2.9",
-  "pydantic>=2.9.2",
+  "pydantic>=2.10.0",
   "langchain-aws>=0.2.7",
   "trustcall>=0.0.26",
   "python-dotenv>=1.0.1",
@@ -21,8 +21,8 @@ dependencies = [
 requires = ["setuptools>=73.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[project.optional-dependencies]
-dev = [
+[tool.uv]
+dev-dependencies = [
   "git-filter-repo>=2.45.0",
   "ipykernel>=6.29.5",
   "langgraph-sdk>=0.1.33",
