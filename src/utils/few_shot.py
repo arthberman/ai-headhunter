@@ -38,8 +38,10 @@ def get_few_shot_messages(config: FewShotConfig) -> List[BaseMessage]:
     # Create prompt template
     example_prompt = ChatPromptTemplate.from_messages(
         [
-            ("human", config.input_template),
-            ("ai", config.output_template),
+            (
+                "human",
+                f"Few shot example\n\nInput:\n{config.input_template}\n\nOutput:\n{config.output_template}",
+            ),
         ]
     )
 

@@ -6,25 +6,41 @@ from pydantic import BaseModel, Field
 
 from analysis.configuration import Configuration
 from analysis.sub_graph.infer_enrichment.state import MainInferEnrichmentState
-from utils import format_data, get_prompt, init_model
+from utils import (
+    FewShotConfig,
+    format_data,
+    get_few_shot_messages,
+    get_prompt,
+    init_model,
+)
 from utils.candidate_timeline import get_candidate_timeline
 
 
 class EmploymentType(BaseModel):
     """Employment type detection."""
 
+    id: int = Field(..., description="ID of the experience.")
+
     type: str = Field(
         ...,
-        description="The employment type of the experience (Full-time, Part-time, Internship, Apprenticeship, Freelance, Non-Executive Role)",
+        description="Employment type of the experience (Full-time, Part-time, Internship, Apprenticeship, Freelance, Non-Executive Role)",
     )
 
     explanation: str = Field(
-        ..., description="The explanation for the employment type, max 200 characters."
+        ..., description="Explanation for the employment type, max 200 characters."
     )
 
     confidence: float = Field(
         ...,
-        description="The confidence score of the employment type (LOW: 0.2 - MEDIUM: 0.5 - HIGH: 0.8).",
+        description="Confidence score of the employment type (LOW: 0.2 - MEDIUM: 0.5 - HIGH: 0.8).",
+    )
+
+
+class ListEmploymentType(BaseModel):
+    """List of employment types."""
+
+    employments: list[EmploymentType] = Field(
+        ..., description="List of employment types."
     )
 
 
@@ -44,37 +60,82 @@ def node_infer_employment_type(
     prompt = get_prompt("analysis-find-employment-type")
 
     # Bind the model to the structured output
-    model = raw_model.with_structured_output(EmploymentType)
+    model = raw_model.with_structured_output(ListEmploymentType)
 
     # Create the chain
     chain = cast(Runnable, prompt | model)
 
+    # Few shot
+    few_shot_config = FewShotConfig(
+        dataset_name="fs-find-employment-type",
+        input_keys=["experience"],
+        output_keys=["employment_type", "confidence", "explanation"],
+        input_template="Experience: {experience}",
+        output_template="""
+                Employment type: {employment_type}
+                Confidence: {confidence}
+                Explanation: {explanation}
+                """,
+    )
+
+    few_shot_messages = get_few_shot_messages(few_shot_config)
+
     # Loop through experiences and update employment types
     updated_experiences = []
-    for experience in state.profile.experiences:
-        if not experience.employment_type:
-            # Invoke the chain for experiences without employment type
-            res = cast(
-                EmploymentType,
-                chain.invoke(
-                    {
-                        "experience": format_data(experience),
-                        "candidate_timeline": get_candidate_timeline(state.profile),
-                        "output_language": configuration.output_language,
-                        "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
-                    }
+
+    # Experiences without employment type
+    experiences_without_employment_type = [
+        (i, experience)
+        for i, experience in enumerate(state.profile.experiences)
+        if not experience.employment_type
+    ]
+
+    if not experiences_without_employment_type:
+        return {"profile": state.profile}
+
+    # Format experiences with their IDs for the LLM
+    formatted_experiences = [
+        {"id": idx, "experience": format_data(exp)}
+        for idx, exp in experiences_without_employment_type
+    ]
+
+    res = cast(
+        ListEmploymentType,
+        chain.invoke(
+            {
+                "experiences": format_data(formatted_experiences),
+                "candidate_timeline": format_data(
+                    get_candidate_timeline(state.profile)
                 ),
+                "examples": few_shot_messages,
+                "output_language": configuration.output_language,
+                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
+            }
+        ),
+    )
+
+    for employment_type in res.employments:
+        if employment_type.confidence >= 0.5:
+            # find experience by ID
+            experience = next(
+                (
+                    exp
+                    for idx, exp in experiences_without_employment_type
+                    if idx == employment_type.id
+                ),
+                None,
             )
+            if experience is None:
+                raise ValueError(f"Experience with ID {employment_type.id} not found")
 
-            # Update employment type if confidence score is higher than 70%
-            if res.confidence >= 0.5:
-                experience.employment_type = res.type
-
-        updated_experiences.append(experience)
+            # Create a copy of the experience with the updated employment type
+            updated_exp = experience.model_copy(
+                update={"employment_type": employment_type.type}
+            )
+            updated_experiences.append(updated_exp)
 
     # Update the state with the modified experiences
     updated_profile = state.profile.model_copy(
         update={"experiences": updated_experiences}
     )
-
     return {"profile": updated_profile}
