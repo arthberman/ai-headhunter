@@ -54,7 +54,9 @@ def node_check_location(
         chain.invoke(
             {
                 "job_location_criteria": format_data(criterion),
-                "candidate_timeline": get_candidate_timeline(state.profile),
+                "candidate_timeline": format_data(
+                    get_candidate_timeline(state.profile)
+                ),
                 "candidate_headline_location": f"{state.profile.city}, {state.profile.state}, {state.profile.country}",
                 "examples": few_shot_messages,
                 "output_language": configuration.output_language,

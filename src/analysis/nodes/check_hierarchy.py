@@ -6,7 +6,7 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from analysis.configuration import Configuration
 from analysis.models.synthesis import HierarchySynthesis
 from analysis.state import MainGraphState
-from utils import get_candidate_timeline, get_prompt, init_model
+from utils import format_data, get_candidate_timeline, get_prompt, init_model
 
 
 def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):
@@ -31,8 +31,8 @@ def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):
         HierarchySynthesis,
         chain.invoke(
             {
-                "candidate_timeline": get_candidate_timeline(
-                    state.profile, with_detail=True
+                "candidate_timeline": format_data(
+                    get_candidate_timeline(state.profile, with_detail=True)
                 ),
                 "target_role": state.job_synthesis,
                 "output_language": configuration.output_language,
