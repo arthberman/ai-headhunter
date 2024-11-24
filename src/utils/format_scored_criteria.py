@@ -1,17 +1,38 @@
-from typing import List
+from typing import List, Optional
 
+from pydantic import BaseModel, Field
+
+from analysis.models.synthesis import MustSynthesis
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import Scorecard
 from utils.compute_must_score import compute_must_score
 from utils.get_extended_scored_criterion import ExtendedScoredCriterion
 
 
+class CriterionDetail(BaseModel):
+    """Details for a single criterion."""
+
+    type: str
+    description: str
+    score: float = Field(..., description="Score as percentage (0-100)")
+    confidence: float = Field(..., description="Confidence as percentage (0-100)")
+    explanation: Optional[str] = None
+
+
+class ScoredCriteriaOutput(BaseModel):
+    """Structured output for scored criteria analysis."""
+
+    must_synthesis: MustSynthesis
+    must_have_criteria: List[CriterionDetail]
+    nice_to_have_criteria: List[CriterionDetail]
+
+
 def format_scored_criteria(
     extended_criteria: List[ExtendedScoredCriterion],
     scored_criterion: List[ScoredCriterion],
     scorecard: Scorecard,
-) -> str:
-    """Format extended scored criterion in a readable format.
+) -> ScoredCriteriaOutput:
+    """Format extended scored criterion as structured JSON.
 
     Args:
         extended_criteria: List of extended scored criteria
@@ -19,17 +40,10 @@ def format_scored_criteria(
         scorecard: Scorecard for must score computation
 
     Returns:
-        Formatted string representation
+        Pydantic model containing structured criteria analysis
     """
-    output = []
-    output.append("Scored Criteria Analysis")
-
-    # Compute and add must synthesis
+    # Compute must synthesis
     must_synthesis = compute_must_score(scored_criterion, scorecard)
-    output.append("\nMust-Have Analysis:")
-    output.append(f"Score: {must_synthesis.score.value}")
-    output.append(f"Explanation: {must_synthesis.explanation}")
-    output.append("")
 
     # Group criteria by importance level
     must_have = [c for c in extended_criteria if c.importance_level == "MUST_HAVE"]
@@ -41,32 +55,31 @@ def format_scored_criteria(
     must_have.sort(key=lambda x: x.score, reverse=True)
     nice_to_have.sort(key=lambda x: x.score, reverse=True)
 
-    # Format MUST_HAVE criteria
-    if must_have:
-        output.append("MUST-HAVE Criteria:")
-        for criterion in must_have:
-            score_percentage = f"{criterion.score * 100:.1f}%"
-            confidence_percentage = f"{criterion.confidence * 100:.1f}%"
-            output.append(
-                f"• [{criterion.criterion_type.value}] {criterion.description} "
-                f"(Score: {score_percentage} | Confidence: {confidence_percentage})"
-            )
-            if criterion.explanation:
-                output.append(f"    ↳ {criterion.explanation}")
-            output.append("")
+    # Format criteria lists
+    must_have_criteria = [
+        CriterionDetail(
+            type=criterion.criterion_type.value,
+            description=criterion.description,
+            score=round(criterion.score * 100, 1),
+            confidence=round(criterion.confidence * 100, 1),
+            explanation=criterion.explanation,
+        )
+        for criterion in must_have
+    ]
 
-    # Format NICE_TO_HAVE criteria
-    if nice_to_have:
-        output.append("NICE-TO-HAVE Criteria:")
-        for criterion in nice_to_have:
-            score_percentage = f"{criterion.score * 100:.1f}%"
-            confidence_percentage = f"{criterion.confidence * 100:.1f}%"
-            output.append(
-                f"• [{criterion.criterion_type.value}] {criterion.description} "
-                f"(Score: {score_percentage} | Confidence: {confidence_percentage})"
-            )
-            if criterion.explanation:
-                output.append(f"    ↳ {criterion.explanation}")
-            output.append("")
+    nice_to_have_criteria = [
+        CriterionDetail(
+            type=criterion.criterion_type.value,
+            description=criterion.description,
+            score=round(criterion.score * 100, 1),
+            confidence=round(criterion.confidence * 100, 1),
+            explanation=criterion.explanation,
+        )
+        for criterion in nice_to_have
+    ]
 
-    return "\n".join(output).rstrip()
+    return ScoredCriteriaOutput(
+        must_synthesis=must_synthesis,
+        must_have_criteria=must_have_criteria,
+        nice_to_have_criteria=nice_to_have_criteria,
+    )
