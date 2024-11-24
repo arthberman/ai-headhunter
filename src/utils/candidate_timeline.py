@@ -1,6 +1,8 @@
 from datetime import UTC, datetime
 from enum import Enum
-from typing import List, Optional, Tuple
+from typing import List, Optional
+
+from pydantic import BaseModel, Field
 
 from analysis.models.profile import Profile
 from utils.get_profile_metadata import format_date
@@ -14,43 +16,54 @@ class TimelineFilter(Enum):
     EXPERIENCES = "experiences"
 
 
+class TimelineOverlap(BaseModel):
+    """Represents an overlapping event in the timeline."""
+
+    category: str
+    description: str
+
+
+class TimelineDates(BaseModel):
+    """Date information for a timeline entry."""
+
+    start: str = Field(..., description="ISO format date YYYY-MM-DD")
+    end: str = Field(..., description="ISO format date YYYY-MM-DD or 'Present'")
+    duration: Optional[str] = None
+
+
+class TimelineEntry(BaseModel):
+    """A single entry in the candidate's timeline."""
+
+    category: str
+    description: str
+    dates: TimelineDates
+    status: Optional[str] = None
+    location: Optional[str] = None
+    details: Optional[str] = None
+    employment_type: Optional[str] = None
+    grade: Optional[str] = None
+    overlaps: Optional[List[TimelineOverlap]] = None
+
+
+class CandidateTimelineOutput(BaseModel):
+    """Complete structured output for candidate timeline."""
+
+    headline: Optional[str] = None
+    summary: Optional[str] = None
+    timeline: List[TimelineEntry]
+
+
 def get_candidate_timeline(
     profile: Profile,
     with_detail: bool = False,
     filter_type: str = TimelineFilter.ALL.value,
-) -> str:
-    """Get a chronological timeline of the candidate's profile."""
-    output = []
-    output.append("Candidate Timeline")
+) -> CandidateTimelineOutput:
+    """Get a chronological timeline of the candidate's profile as structured JSON.
 
-    # Add headline if available
-    if profile.headline:
-        output.append(f"Headline: {profile.headline}")
-        output.append("")
-
-    # Add summary if available
-    if profile.summary:
-        output.append("Summary:")
-        summary_lines = profile.summary.split("\n")
-        for line in summary_lines:
-            if line.strip():
-                output.append(f"    {line.strip()}")
-        output.append("")
-
-    timeline_events: List[
-        Tuple[
-            datetime,
-            datetime,
-            str,
-            str,
-            Optional[str],
-            Optional[str],
-            Optional[str],
-            Optional[str],
-            Optional[str],
-            Optional[str],  # grade
-        ]
-    ] = []
+    Returns:
+        Pydantic model containing structured timeline data
+    """
+    timeline_events = []
 
     # Add educations if filter allows
     if filter_type in [TimelineFilter.ALL.value, TimelineFilter.EDUCATIONS.value]:
@@ -103,7 +116,8 @@ def get_candidate_timeline(
     # Sort by start date (reverse chronological)
     timeline_events.sort(key=lambda x: x[0], reverse=True)
 
-    # Generate output
+    # Generate structured timeline entries
+    timeline_entries = []
     for i, (
         start,
         end,
@@ -116,60 +130,40 @@ def get_candidate_timeline(
         employment_type,
         grade,
     ) in enumerate(timeline_events):
-        # Format date range for display and bracket
-        end_date_str = "Present" if end == datetime.now(UTC) else end.strftime("%b %Y")
-        date_bracket = f"[{start.strftime('%b %Y')} - {end_date_str}]"
+        # Create timeline entry
+        entry_data = {
+            "category": category,
+            "description": description,
+            "dates": {
+                "start": start.strftime("%Y-%m-%d"),
+                "end": "Present"
+                if end == datetime.now(UTC)
+                else end.strftime("%Y-%m-%d"),
+                "duration": duration,
+            },
+            "status": status,
+            "location": location,
+            "details": details if with_detail else None,
+            "employment_type": employment_type if category == "Experience" else None,
+            "grade": grade if category == "Education" else None,
+        }
 
-        # Build the entry line with all available metadata
-        entry_parts = [f"• [{category}] {description}"]
-
-        if location:
-            entry_parts.append(f"- {location}")
-        if category == "Experience" and employment_type:
-            entry_parts.append(f"({employment_type})")
-        if category == "Education" and grade:
-            entry_parts.append(f"[Grade: {grade}]")
-
-        entry_parts.append(date_bracket)
-        output.append(" ".join(entry_parts))
-
-        # Add metadata on a new line if available
-        metadata_parts = []
-        if duration:
-            metadata_parts.append(f"Duration: {duration}")
-        if status:
-            metadata_parts.append(f"Status: {status}")
-        if metadata_parts:
-            output.append(f"    ⌊ {' | '.join(metadata_parts)}")
-
-        # Add description if with_detail is True
-        if with_detail and details:
-            detail_lines = details.split("\n")
-            for line in detail_lines:
-                if line.strip():
-                    output.append(f"    ↳ {line.strip()}")
-
-        # Check for overlaps only if showing all entries
-        if filter_type == TimelineFilter.ALL:
+        # Check for overlaps if showing all entries
+        if filter_type == TimelineFilter.ALL.value:
             overlaps = []
-            for (
-                next_start,
-                next_end,
-                next_cat,
-                next_desc,
-                _,
-                _,
-                _,
-                _,
-                _,
-                _,
-            ) in timeline_events[i + 1 :]:
+            for next_start, next_end, next_cat, next_desc, *_ in timeline_events[
+                i + 1 :
+            ]:
                 if (next_start < end) and (start < next_end):
-                    overlaps.append(f"[{next_cat}] {next_desc}")
+                    overlaps.append(
+                        TimelineOverlap(category=next_cat, description=next_desc)
+                    )
 
             if overlaps:
-                output.append(f"  (Overlaps with: {', '.join(overlaps)})")
+                entry_data["overlaps"] = overlaps
 
-        output.append("")
+        timeline_entries.append(TimelineEntry(**entry_data))
 
-    return "\n".join(output).rstrip()
+    return CandidateTimelineOutput(
+        headline=profile.headline, summary=profile.summary, timeline=timeline_entries
+    )
