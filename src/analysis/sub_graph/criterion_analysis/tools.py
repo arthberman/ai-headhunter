@@ -12,8 +12,13 @@ from typing_extensions import Annotated
 from analysis.configuration import Configuration
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from analysis.sub_graph.criterion_analysis.state import AnalysisMainState
-from utils import format_data, get_prompt, init_model
-from utils.candidate_timeline import get_candidate_timeline
+from utils import (
+    FewShotConfig,
+    format_data,
+    get_few_shot_messages,
+    get_prompt,
+    init_model,
+)
 
 
 class CandidateInfoType(Enum):
@@ -109,27 +114,49 @@ def search_web(query: str, *, config: RunnableConfig) -> Optional[list[dict[str,
     """
 
     class JudgeWebSearch(BaseModel):
-        is_relevant: bool = Field(
+        """Judge if a query is relevant to a web search."""
+
+        relevant: bool = Field(
             ..., description="Whether the query is relevant to the search results"
         )
 
+    # Initialize the configuration
     configuration = Configuration.from_runnable_config(config)
+
+    # Initialize the prompt
     prompt = get_prompt("judge-web-search")
-    raw_model = init_model("openai/gpt-4o-mini")
+
+    # Initialize the model
+    raw_model = init_model(configuration.default_model)
     model = raw_model.with_structured_output(JudgeWebSearch)
+
+    # Create the chain
     chain = cast(Runnable, prompt | model)
+
+    # Few shots
+    few_shot_config = FewShotConfig(
+        dataset_name="fs-judge-web-search",
+        input_keys=["web_query"],
+        output_keys=["is_relevant", "explanation"],
+        input_template="Web query: {web_query}",
+        output_template="Is relevant: {is_relevant}\nExplanation: {explanation}",
+    )
+    few_shot_messages = get_few_shot_messages(few_shot_config)
+
+    # Invoke the chain
     res = cast(
         JudgeWebSearch,
         chain.invoke(
             {
                 "web_query": query,
+                "examples": few_shot_messages,
                 "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
                 "output_language": configuration.output_language,
             }
         ),
     )
 
-    if not res.is_relevant:
+    if not res.relevant:
         return "The query is not relevant for a web search."
 
     wrapped = TavilySearchResults(max_results=configuration.max_search_results)
