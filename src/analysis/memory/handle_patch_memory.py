@@ -46,6 +46,10 @@ def handle_patch_memory(
     result = extractor.invoke(
         {"messages": formatted_messages, "existing": existing}, config
     )
+
+    if not result.get("responses"):
+        raise ValueError("No responses from the extractor")
+
     extracted = result["responses"][0].model_dump(mode="json")
 
     return PutOp(namespace, key, extracted)
