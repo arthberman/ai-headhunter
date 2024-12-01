@@ -24,16 +24,16 @@ from utils import (
 class CandidateInfoType(Enum):
     """The type of information to get about the candidate."""
 
-    EXPERIENCES = "EXPERIENCES"
-    SKILLS = "SKILLS"
-    CERTIFICATIONS = "CERTIFICATIONS"
-    EDUCATIONS = "EDUCATIONS"
-    HONORS = "HONORS"
-    LANGUAGES = "LANGUAGES"
-    PROJECTS = "PROJECTS"
-    VOLUNTEERINGS = "VOLUNTEERINGS"
-    INDUSTRY_SECTOR = "INDUSTRY_SECTOR"
-    COMPANY_CULTURE = "COMPANY_CULTURE"
+    EXPERIENCES = "experiences"
+    SKILLS = "skills"
+    CERTIFICATIONS = "certifications"
+    EDUCATIONS = "educations"
+    HONORS = "honors"
+    LANGUAGES = "languages"
+    PROJECTS = "projects"
+    VOLUNTEERINGS = "volunteerings"
+    INDUSTRY_SECTOR = "industry_sector"
+    COMPANY_CULTURE = "company_culture"
 
 
 def get_candidate_info(
@@ -150,7 +150,7 @@ def search_web(query: str, *, config: RunnableConfig) -> Optional[list[dict[str,
             {
                 "web_query": query,
                 "examples": few_shot_messages,
-                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
+                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
                 "output_language": configuration.output_language,
             }
         ),

@@ -3,50 +3,48 @@ from typing import List, Optional, Union
 from pydantic import Field
 
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
-from scorecard.models.scorecard import CriterionType, ImportanceLevel, Scorecard
+from scorecard.models.scorecard import Category, Priority, Scorecard
 
 
 class ExtendedScoredCriterion(ScoredCriterion):
     """Extended scored criterion."""
 
     description: str = Field(description="Description of the criterion")
-    importance_level: ImportanceLevel = Field(
-        description="Importance level of the criterion"
-    )
-    criterion_type: CriterionType = Field(description="Type of the criterion")
+    priority: Priority = Field(description="Priority of the criterion")
+    category: Category = Field(description="Category of the criterion")
 
 
 def get_extended_scored_criterion(
     scored_criterion: ScoredCriterion,
     scorecard: Scorecard,
-    importance_level: Optional[Union[ImportanceLevel, List[ImportanceLevel]]] = None,
-    criterion_type: Optional[Union[CriterionType, List[CriterionType]]] = None,
+    priority: Optional[Union[Priority, List[Priority]]] = None,
+    category: Optional[Union[Category, List[Category]]] = None,
 ):
     """Get the extended scored criterion with the scorecard.
 
     Args:
         scored_criterion: The scored criterion to extend
         scorecard: The scorecard containing the criteria
-        importance_level: Optional filter for importance level(s). Can be a single ImportanceLevel or a list
-        criterion_type: Optional filter for criterion type(s). Can be a single CriterionType or a list
+        priority: Optional filter for priority(s). Can be a single Priority or a list
+        category: Optional filter for category(s). Can be a single Category or a list
 
     Returns:
         List of extended scored criteria matching the filters
     """
     # Convert single values to lists for consistent handling
-    importance_levels = (
-        [importance_level]
-        if isinstance(importance_level, ImportanceLevel)
-        else importance_level
-        if isinstance(importance_level, list)
+    priority_levels = (
+        [priority]
+        if isinstance(priority, Priority)
+        else priority
+        if isinstance(priority, list)
         else None
     )
 
-    criterion_types = (
-        [criterion_type]
-        if isinstance(criterion_type, CriterionType)
-        else criterion_type
-        if isinstance(criterion_type, list)
+    categories = (
+        [category]
+        if isinstance(category, Category)
+        else category
+        if isinstance(category, list)
         else None
     )
 
@@ -57,23 +55,20 @@ def get_extended_scored_criterion(
             None,
         )
         if criterion:
-            # Skip if importance_level filter is set and doesn't match
-            if (
-                importance_levels
-                and criterion.importance_level not in importance_levels
-            ):
+            # Skip if priority filter is set and doesn't match
+            if priority_levels and criterion.priority not in priority_levels:
                 continue
 
-            # Skip if criterion_type filter is set and doesn't match
-            if criterion_types and criterion.type not in criterion_types:
+            # Skip if category filter is set and doesn't match
+            if categories and criterion.category not in categories:
                 continue
 
             extended_scored_criterion.append(
                 ExtendedScoredCriterion(
                     **scored_criterion.model_dump(),
                     description=criterion.description,
-                    importance_level=criterion.importance_level.value,
-                    criterion_type=criterion.type.value,
+                    priority=criterion.priority.value,
+                    category=criterion.category.value,
                 )
             )
 

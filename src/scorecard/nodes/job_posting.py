@@ -26,8 +26,8 @@ def node_job_posting(
     prompt = get_prompt("generate-scorecard-job-posting")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
     formatted_messages = chat_prompt.format_messages(
-        raw_job_posting=state.raw_job_posting,
-        web_context=state.web_context,
+        context_initial=state.context_initial,
+        context_enriched=state.context_enriched,
     )
     # Invoke the extractor with the formatted messages
     res = cast(

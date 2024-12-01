@@ -50,9 +50,9 @@ def judge_evaluator_criteria(root_run: Run, example: Example) -> dict:
         chain.invoke(
             {
                 "scorecard": root_run.outputs["scorecard"],
-                "raw_job_posting": example.inputs["raw_job_posting"],
-                "human_context": example.inputs["human_context"],
-                "web_context": example.inputs["web_context"],
+                "context_initial": example.inputs["context_initial"],
+                "context_additional": example.inputs["context_additional"],
+                "context_enriched": example.inputs["context_enriched"],
             }
         ),
     )

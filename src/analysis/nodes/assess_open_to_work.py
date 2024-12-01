@@ -66,7 +66,7 @@ def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig):
                 "examples": few_shot_messages,
                 "target_role": state.job_synthesis,
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
+                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
             }
         ),
     )

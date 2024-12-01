@@ -21,17 +21,7 @@ class JobPosting(BaseModel):
 
     title: str = Field(description="Title of the job")
     company: str = Field(description="Name of the company offering the job")
-    department: Optional[str] = Field(
-        None, description="Department or division within the company"
-    )
-
     missions: List[str] = Field(description="List of missions for the job")
-    responsibilities: List[str] = Field(
-        description="Detailed list of responsibilities for the role"
-    )
-    typical_profile: str = Field(
-        description="Typical profile required for the job (ex: a Data Scientist with +5y of experiences, with a Master Degree in CS)"
-    )
     company_spirit: str = Field(
         description="Description of the company spirit (what the company does, why they do it, what they believe in)"
     )
@@ -39,27 +29,9 @@ class JobPosting(BaseModel):
         None,
         description="Type of company (e.g., fast-growing startup, well-established group)",
     )
-    contract_type: str = Field(description="Type of contract for the job")
-    location: LocationInfo = Field(
-        description="Detailed location information for the job"
-    )
-    remote_policy: str = Field(description="Remote policy for the job")
     compensation: Optional[str] = Field(
         None, description="Compensation for the job, if specified"
     )
     benefits: Optional[List[str]] = Field(
         None, description="List of benefits for the job, if any"
-    )
-    application_instructions: Optional[str] = Field(
-        None, description="Instructions for applying to the job"
-    )
-    career_progression: Optional[str] = Field(
-        None, description="Information about career progression opportunities"
-    )
-    diversity_statement: Optional[str] = Field(
-        None, description="Company's statement on diversity and inclusion"
-    )
-    additional_information: Optional[str] = Field(
-        None,
-        description="Any additional important information about the job or company",
     )

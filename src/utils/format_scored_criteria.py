@@ -12,7 +12,7 @@ from utils.get_extended_scored_criterion import ExtendedScoredCriterion
 class CriterionDetail(BaseModel):
     """Details for a single criterion."""
 
-    type: str
+    category: str
     description: str
     score: float = Field(..., description="Score as percentage (0-100)")
     confidence: float = Field(..., description="Confidence as percentage (0-100)")
@@ -45,11 +45,9 @@ def format_scored_criteria(
     # Compute must synthesis
     must_synthesis = compute_must_score(scored_criterion, scorecard)
 
-    # Group criteria by importance level
-    must_have = [c for c in extended_criteria if c.importance_level == "MUST_HAVE"]
-    nice_to_have = [
-        c for c in extended_criteria if c.importance_level == "NICE_TO_HAVE"
-    ]
+    # Group criteria by priority
+    must_have = [c for c in extended_criteria if c.priority.value == "must_have"]
+    nice_to_have = [c for c in extended_criteria if c.priority.value == "nice_to_have"]
 
     # Sort each group by score (descending)
     must_have.sort(key=lambda x: x.score, reverse=True)
@@ -58,7 +56,7 @@ def format_scored_criteria(
     # Format criteria lists
     must_have_criteria = [
         CriterionDetail(
-            type=criterion.criterion_type.value,
+            category=criterion.category,
             description=criterion.description,
             score=round(criterion.score * 100, 1),
             confidence=round(criterion.confidence * 100, 1),
@@ -69,7 +67,7 @@ def format_scored_criteria(
 
     nice_to_have_criteria = [
         CriterionDetail(
-            type=criterion.criterion_type.value,
+            category=criterion.category.value,
             description=criterion.description,
             score=round(criterion.score * 100, 1),
             confidence=round(criterion.confidence * 100, 1),

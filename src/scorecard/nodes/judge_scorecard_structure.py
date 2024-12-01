@@ -51,8 +51,8 @@ def node_judge_scorecard_structure(
         criteria=[
             BaseCriterion(
                 description=criterion.description,
-                type=criterion.type,
-                importance_level=criterion.importance_level,
+                category=criterion.category,
+                priority=criterion.priority,
                 context=existing_criteria.get(criterion.description, (None, None))[0],
                 scoring_distribution=existing_criteria.get(
                     criterion.description, (None, None)
