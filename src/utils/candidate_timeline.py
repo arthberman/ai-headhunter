@@ -70,19 +70,19 @@ def get_candidate_timeline(
     # Add educations if filter allows
     if filter_type in [TimelineFilter.ALL.value, TimelineFilter.EDUCATIONS.value]:
         for edu in profile.educations:
-            starts_at = format_date(edu.starts_at)
-            if starts_at:
-                ends_at = format_date(edu.ends_at)
+            start_date = format_date(edu.start_date)
+            if start_date:
+                end_date = format_date(edu.end_date)
                 # Store None for computation if no end date
                 computation_end = (
                     datetime.now(UTC)
-                    if not ends_at or ends_at.year <= 1900
-                    else ends_at
+                    if not end_date or end_date.year <= 1900
+                    else end_date
                 )
 
                 timeline_events.append(
                     (
-                        starts_at,
+                        start_date,
                         computation_end,  # Use for overlap calculations
                         "Education",
                         f"{edu.degree or 'Study'} in {edu.field_of_study or 'N/A'} @ {edu.school}",
@@ -92,8 +92,8 @@ def get_candidate_timeline(
                         edu.description,
                         None,  # employment_type
                         edu.grade,
-                        ends_at
-                        and ends_at.year
+                        end_date
+                        and end_date.year
                         > 1900,  # Flag for whether we have a real end date
                     )
                 )
@@ -101,19 +101,19 @@ def get_candidate_timeline(
     # Add experiences if filter allows
     if filter_type in [TimelineFilter.ALL.value, TimelineFilter.EXPERIENCES.value]:
         for exp in profile.experiences:
-            starts_at = format_date(exp.starts_at)
-            if starts_at:
-                ends_at = format_date(exp.ends_at)
+            start_date = format_date(exp.start_date)
+            if start_date:
+                end_date = format_date(exp.end_date)
                 # Store None for computation if no end date
                 computation_end = (
                     datetime.now(UTC)
-                    if not ends_at or ends_at.year <= 1900
-                    else ends_at
+                    if not end_date or end_date.year <= 1900
+                    else end_date
                 )
 
                 timeline_events.append(
                     (
-                        starts_at,
+                        start_date,
                         computation_end,  # Use for overlap calculations
                         "Experience",
                         f"{exp.title or 'Role'} @ {exp.company}",
@@ -123,8 +123,8 @@ def get_candidate_timeline(
                         exp.description,
                         exp.employment_type,
                         None,  # grade
-                        ends_at
-                        and ends_at.year
+                        end_date
+                        and end_date.year
                         > 1900,  # Flag for whether we have a real end date
                     )
                 )

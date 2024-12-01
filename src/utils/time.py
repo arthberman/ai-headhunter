@@ -4,15 +4,17 @@ from typing import Optional
 from dateutil import parser
 
 
-def compute_duration(starts_at: Optional[datetime], ends_at: Optional[datetime]) -> str:
+def compute_duration(
+    start_date: Optional[datetime], end_date: Optional[datetime]
+) -> str:
     """Compute the duration between two dates."""
-    if not starts_at or starts_at.year <= 1900:
+    if not start_date or start_date.year <= 1900:
         return "Unknown duration"
 
-    if not ends_at or ends_at.year <= 1900:
-        ends_at = datetime.now(UTC)
+    if not end_date or end_date.year <= 1900:
+        end_date = datetime.now(UTC)
 
-    delta = ends_at - starts_at
+    delta = end_date - start_date
     years, remainder = divmod(delta.days, 365)
     months = remainder // 30
 
@@ -56,23 +58,23 @@ def format_date(date: Optional[str | datetime]) -> Optional[datetime]:
     return parser.parse(date)
 
 
-def compute_status(starts_at: Optional[datetime], ends_at: Optional[datetime]) -> str:
+def compute_status(start_date: Optional[datetime], end_date: Optional[datetime]) -> str:
     """Compute the status of an experience or other time-based entry."""
     now = datetime.now(UTC)
 
-    if not starts_at or starts_at.year <= 1900:
+    if not start_date or start_date.year <= 1900:
         return "Unknown status"
 
-    if not ends_at or ends_at.year <= 1900:
+    if not end_date or end_date.year <= 1900:
         # Still ongoing
         return "Ongoing"
 
-    if ends_at > now:
+    if end_date > now:
         # Future end date
-        time_until_start = compute_duration(now, starts_at)
+        time_until_start = compute_duration(now, start_date)
         return f"Starting in {time_until_start}"
 
     # Completed in the past
-    duration = compute_duration(starts_at, ends_at)
-    time_since_end = compute_duration(ends_at, now)
+    duration = compute_duration(start_date, end_date)
+    time_since_end = compute_duration(end_date, now)
     return f"Lasted {duration} and ended {time_since_end} ago"

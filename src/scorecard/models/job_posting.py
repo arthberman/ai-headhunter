@@ -3,19 +3,6 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
-class LocationInfo(BaseModel):
-    """Detailed location information."""
-
-    city: Optional[str] = Field(None, description="City where the job is located")
-    region: Optional[str] = Field(
-        None, description="State, province, or region where the job is located"
-    )
-    country: str = Field(description="Country where the job is located (full name)")
-    country_code: str = Field(
-        description="ISO 3166-1 alpha-2 country code (e.g., 'FR' for France)"
-    )
-
-
 class JobPosting(BaseModel):
     """Structured output of the job posting."""
 
