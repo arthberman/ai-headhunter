@@ -57,7 +57,7 @@ def node_check_location(
                 "candidate_timeline": format_data(
                     get_candidate_timeline(state.profile)
                 ),
-                "candidate_headline_location": f"{state.profile.city}, {state.profile.state}, {state.profile.country}",
+                "candidate_headline_location": state.profile.location,
                 "examples": few_shot_messages,
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
