@@ -16,7 +16,7 @@ from analysis.state import InputGraphState, MainGraphState
 from analysis.sub_graph.criterion_analysis.graph import get_criterion_analysis_subgraph
 from analysis.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgraph
 from analysis.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
-from scorecard.models.scorecard import CriterionType, ImportanceLevel
+from scorecard.models.scorecard import Category, Priority
 from utils import compute_must_score, get_retry_policy
 from utils.get_profile_metadata import get_profile_metadata
 
@@ -40,8 +40,8 @@ def continue_to_analysis(state: MainGraphState):
     sends_must: List[Send] = []
     for criterion in state.scorecard.criteria:
         if (
-            criterion.importance_level == ImportanceLevel.MUST_HAVE
-            and criterion.type != CriterionType.LOCATION
+            criterion.priority == Priority.REQUIRED
+            and criterion.category != Category.LOCATION
             and criterion.id not in processed_criterion_ids
         ):
             sends_must.append(
@@ -54,8 +54,8 @@ def continue_to_analysis(state: MainGraphState):
     sends_nice: List[Send] = []
     for criterion in state.scorecard.criteria:
         if (
-            criterion.importance_level == ImportanceLevel.NICE_TO_HAVE
-            and criterion.type != CriterionType.LOCATION
+            criterion.priority == Priority.PREFERRED
+            and criterion.category != Category.LOCATION
             and criterion.id not in processed_criterion_ids
         ):
             sends_nice.append(

@@ -36,9 +36,9 @@ def node_scoring_distribution(
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
-        raw_job_posting=state.raw_job_posting,
-        web_context=state.web_context,
-        human_context=state.human_context,
+        context_initial=state.context_initial,
+        context_enriched=state.context_enriched,
+        context_additional=state.context_additional,
     )
 
     raw_model = init_model(configuration.structure_model)

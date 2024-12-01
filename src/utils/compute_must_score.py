@@ -3,7 +3,7 @@ from typing import List
 
 from analysis.models.synthesis import MustSynthesis, SynthesisScore
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
-from scorecard.models.scorecard import ImportanceLevel, Scorecard
+from scorecard.models.scorecard import Priority, Scorecard
 from utils.get_extended_scored_criterion import get_extended_scored_criterion
 
 
@@ -15,7 +15,7 @@ def compute_must_score(
     scored_must_criteria = get_extended_scored_criterion(
         scored_criterion,
         scorecard,
-        importance_level=ImportanceLevel.MUST_HAVE,
+        priority=Priority.REQUIRED,
     )
 
     # Calculate scores

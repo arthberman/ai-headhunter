@@ -21,7 +21,8 @@ def predict_questions(example: dict):
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
-        raw_job_posting=example["raw_job_posting"], web_context=example["web_context"]
+        context_initial=example["context_initial"],
+        context_enriched=example["context_enriched"],
     )
 
     raw_model = init_model("openai/gpt-4o")

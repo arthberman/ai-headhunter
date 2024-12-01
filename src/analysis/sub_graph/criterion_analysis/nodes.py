@@ -47,9 +47,9 @@ def init_agent(
             chain.invoke(
                 {
                     "description": state.criterion.description,
-                    "importance_level": state.criterion.importance_level.value,
+                    "priority": state.criterion.priority.value,
                     "context": state.criterion.context,
-                    "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
+                    "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
                     "output_language": configuration.output_language,
                 }
             ),
@@ -66,13 +66,13 @@ def init_agent(
     formatted_messages = chat_prompt.format_messages(
         id=state.criterion.id,
         description=state.criterion.description,
-        importance_level=state.criterion.importance_level.value,
-        type=state.criterion.type.value,
+        priority=state.criterion.priority.value,
+        category=state.criterion.category.value,
         scoring_distribution=state.criterion.scoring_distribution.value,
         context=state.criterion.context,
         evaluation_steps=evaluation_steps,
         output_language=configuration.output_language,
-        system_time=datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
+        system_time=datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
     )
 
     return {

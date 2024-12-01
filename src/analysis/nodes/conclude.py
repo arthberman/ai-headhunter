@@ -99,7 +99,7 @@ def node_conclude(state: MainGraphState, config: RunnableConfig) -> MainGraphSta
                 "synthesis_hierarchy": format_data(state.synthesis_hierarchy),
                 "synthesis_open_to_work": format_data(state.synthesis_open_to_work),
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
+                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
             }
         ),
     )

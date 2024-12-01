@@ -7,7 +7,7 @@ from analysis.configuration import Configuration
 from analysis.models.synthesis import LocationSynthesis, SynthesisScore
 from analysis.state import MainGraphState
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
-from scorecard.models.scorecard import CriterionType, ImportanceLevel
+from scorecard.models.scorecard import Category, Priority
 from utils import format_data, get_prompt, init_model
 from utils.candidate_timeline import get_candidate_timeline
 from utils.few_shot import FewShotConfig, get_few_shot_messages
@@ -45,8 +45,8 @@ def node_check_location(
     criterion = next(
         criterion
         for criterion in state.scorecard.criteria
-        if criterion.type == CriterionType.LOCATION
-        and criterion.importance_level == ImportanceLevel.MUST_HAVE
+        if criterion.category == Category.LOCATION
+        and criterion.priority == Priority.REQUIRED
     )
 
     res = cast(
@@ -60,7 +60,7 @@ def node_check_location(
                 "candidate_headline_location": f"{state.profile.city}, {state.profile.state}, {state.profile.country}",
                 "examples": few_shot_messages,
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
+                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
             }
         ),
     )

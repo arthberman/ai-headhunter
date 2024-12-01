@@ -12,7 +12,7 @@ from scorecard.configuration import Configuration
 class WebContext(BaseModel):
     """Respond to the user with this tool."""
 
-    web_context: List[str] = Field(
+    context_enriched: List[str] = Field(
         description="List of context elements (results from the web search)"
     )
 

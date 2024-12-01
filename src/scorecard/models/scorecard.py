@@ -4,32 +4,32 @@ from typing import List, Optional
 from pydantic import BaseModel, Field, model_validator
 
 
-class ImportanceLevel(str, Enum):
-    """Importance level of the criterion."""
+class Priority(str, Enum):
+    """Priority of the criterion."""
 
-    MUST_HAVE = "MUST_HAVE"
-    NICE_TO_HAVE = "NICE_TO_HAVE"
+    REQUIRED = "required"
+    PREFERRED = "preferred"
 
 
-class CriterionType(str, Enum):
-    """Criterion type."""
+class Category(str, Enum):
+    """Category."""
 
-    LOCATION = "LOCATION"
-    EDUCATION = "EDUCATION"
-    EXPERIENCE = "EXPERIENCE"
-    HARD_SKILL = "HARD_SKILL"
-    SOFT_SKILL = "SOFT_SKILL"
-    LANGUAGE = "LANGUAGE"
-    INDUSTRY_SECTOR = "INDUSTRY_SECTOR"
-    COMPANY_CULTURE = "COMPANY_CULTURE"
+    LOCATION = "location"
+    EDUCATION = "education"
+    EXPERIENCE = "experience"
+    HARD_SKILL = "hard_skill"
+    SOFT_SKILL = "soft_skill"
+    LANGUAGE = "language"
+    INDUSTRY_SECTOR = "industry_sector"
+    COMPANY_CULTURE = "company_culture"
 
 
 class ScoringDistribution(str, Enum):
     """Scoring distribution."""
 
-    BINARY = "BINARY"
-    CONTINUOUS = "CONTINUOUS"
-    GAUSSIAN = "GAUSSIAN"
+    BINARY = "binary"
+    CONTINUOUS = "continuous"
+    GAUSSIAN = "gaussian"
 
 
 class BaseCriterion(BaseModel):
@@ -39,13 +39,13 @@ class BaseCriterion(BaseModel):
         None, description="Unique identifier for the criterion (UUID)"
     )
     description: str = Field(..., description="Detailed description of the criterion")
-    type: CriterionType = Field(
+    category: Category = Field(
         ...,
-        description="Type of the criterion (EDUCATION, EXPERIENCE, LANGUAGE, HARD_SKILL, SOFT_SKILL, INDUSTRY_SECTOR, COMPANY_CULTURE, LOCATION)",
+        description="Category of the criterion (education, experience, language, hard_skill, soft_skill, industry_sector, company_culture, location)",
     )
-    importance_level: ImportanceLevel = Field(
+    priority: Priority = Field(
         ...,
-        description="Importance level of the criterion (MUST_HAVE, NICE_TO_HAVE)",
+        description="Priority of the criterion (must_have, nice_to_have)",
     )
     context: Optional[str] = Field(
         None,
@@ -70,51 +70,45 @@ class Scorecard(BaseModel):
     )
 
     @model_validator(mode="after")
-    def validate_importance_levels(self) -> "Scorecard":
-        """Validate the importance levels only when not updating."""
+    def validate_priority_levels(self) -> "Scorecard":
+        """Validate the priority levels only when not updating."""
         if not self.is_updating:
             must_have_count = sum(
-                1
-                for c in self.criteria
-                if c.importance_level == ImportanceLevel.MUST_HAVE
+                1 for c in self.criteria if c.priority == Priority.REQUIRED
             )
             nice_to_have_count = sum(
-                1
-                for c in self.criteria
-                if c.importance_level == ImportanceLevel.NICE_TO_HAVE
+                1 for c in self.criteria if c.priority == Priority.PREFERRED
             )
 
             if must_have_count < 2:
-                raise ValueError("There must be at least 2 MUST_HAVE criteria")
+                raise ValueError("There must be at least 2 must_have criteria")
             if nice_to_have_count < 2:
-                raise ValueError("There must be at least 2 NICE_TO_HAVE criteria")
+                raise ValueError("There must be at least 2 nice_to_have criteria")
 
         return self
 
     @model_validator(mode="after")
     def validate_required_criterion_types(self) -> "Scorecard":
-        """Validate that there is exactly one MUST_HAVE LOCATION criterion and at least one LANGUAGE criterion."""
+        """Validate that there is exactly one must_have location criterion and at least one language criterion."""
         if not self.is_updating:
-            # Check for exactly one MUST_HAVE LOCATION criterion
+            # Check for exactly one must_have location criterion
             location_must_have_criteria = [
                 c
                 for c in self.criteria
-                if c.type == CriterionType.LOCATION
-                and c.importance_level == ImportanceLevel.MUST_HAVE
+                if c.category == Category.LOCATION and c.priority == Priority.REQUIRED
             ]
             if len(location_must_have_criteria) != 1:
                 raise ValueError(
-                    "There must be exactly 1 MUST_HAVE criterion of type LOCATION"
+                    "There must be exactly 1 must_have criterion of type location"
                 )
 
-            # Check for at least one LANGUAGE MUST_HAVE criterion
+            # Check for at least one language must_have criterion
             if not any(
-                c.type == CriterionType.LANGUAGE
-                and c.importance_level == ImportanceLevel.MUST_HAVE
+                c.category == Category.LANGUAGE and c.priority == Priority.REQUIRED
                 for c in self.criteria
             ):
                 raise ValueError(
-                    "There must be at least 1 MUST_HAVE criterion of type LANGUAGE"
+                    "There must be at least 1 must_have criterion of type language"
                 )
 
         return self

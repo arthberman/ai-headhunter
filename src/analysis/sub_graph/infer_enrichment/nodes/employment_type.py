@@ -109,7 +109,7 @@ def node_infer_employment_type(
                 ),
                 "examples": few_shot_messages,
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
+                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
             }
         ),
     )

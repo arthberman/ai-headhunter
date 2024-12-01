@@ -24,9 +24,9 @@ def node_synthesis(
         Synthesis,
         chain.invoke(
             {
-                "raw_job_posting": state.raw_job_posting,
-                "web_context": state.web_context,
-                "human_context": (state.human_context or [])
+                "context_initial": state.context_initial,
+                "context_enriched": state.context_enriched,
+                "context_additional": (state.context_additional or [])
                 + (state.human_feedback or []),
                 "generated_questions": state.generated_questions,
             }

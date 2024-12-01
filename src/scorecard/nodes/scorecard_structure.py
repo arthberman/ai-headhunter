@@ -68,16 +68,16 @@ def node_scorecard_structure(
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
-        raw_job_posting=state.raw_job_posting,
-        web_context=state.web_context,
-        human_context=state.human_context,
+        context_initial=state.context_initial,
+        context_enriched=state.context_enriched,
+        context_additional=state.context_additional,
         iterative_instruction=(
             prompt_iterative_instruction.format(human_feedback=state.human_feedback)
             if state.scorecard and state.human_feedback
             else ""
         ),
         output_language="en",
-        system_time=datetime.now().strftime("%Y-%m-%d (Y-m-d)"),
+        system_time=datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
     )
 
     res = cast(
@@ -107,8 +107,8 @@ def node_scorecard_structure(
         criteria=[
             BaseCriterion(
                 description=criterion.description,
-                type=criterion.type,
-                importance_level=criterion.importance_level,
+                category=criterion.category,
+                priority=criterion.priority,
                 context=existing_criteria.get(criterion.description, (None, None))[0],
                 scoring_distribution=existing_criteria.get(
                     criterion.description, (None, None)
@@ -120,6 +120,7 @@ def node_scorecard_structure(
 
     return {
         "scorecard": scorecard_new,
-        "human_context": (state.human_context or []) + (state.human_feedback or []),
+        "context_additional": (state.context_additional or [])
+        + (state.human_feedback or []),
         "human_feedback": [],
     }

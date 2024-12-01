@@ -1,7 +1,7 @@
 from analysis.sub_graph.criterion_analysis.models import CotQuestions
 from scorecard.models.scorecard import (
     BaseCriterion,
-    ImportanceLevel,
+    Priority,
     ScoringDistribution,
 )
 
@@ -44,20 +44,20 @@ def prepare_evaluation_steps(cot_questions: CotQuestions, instructions: str) -> 
 def prepare_scoring_instructions(
     criterion: BaseCriterion,
 ) -> str:
-    """Prepare scoring instructions for a criterion and return the importance level."""
+    """Prepare scoring instructions for a criterion and return the priority."""
     instructions = []
     current_letter = "a"
 
-    # Add importance level instruction
+    # Add priority instruction
     instructions.append(
-        f"{current_letter}. Consider the importance level of the criterion: {criterion.importance_level.value}"
+        f"{current_letter}. Consider the priority of the criterion: {criterion.priority.value}"
     )
 
-    if criterion.importance_level == ImportanceLevel.MUST_HAVE:
+    if criterion.priority == Priority.REQUIRED:
         instructions.append(
             "   - This criterion is essential. A score strictly below 0.6 should disqualify the candidate."
         )
-    elif criterion.importance_level == ImportanceLevel.NICE_TO_HAVE:
+    elif criterion.priority == Priority.PREFERRED:
         instructions.append(
             "   - This criterion is beneficial but not critical for the role."
         )
@@ -86,7 +86,7 @@ def prepare_scoring_instructions(
         current_letter = chr(ord(current_letter) + 1)  # Increment to next letter
 
     # Add experience-specific instructions if criterion type is EXPERIENCE
-    if criterion.type == "EXPERIENCE":
+    if criterion.category == "EXPERIENCE":
         instructions.append(
             f"{current_letter}. When evaluating experience-based criteria, carefully analyze the candidate's career trajectory:"
         )
@@ -104,19 +104,19 @@ def prepare_scoring_instructions(
             "      - Duration of transitions: Whether changes are temporary or represent a sustained new direction"
         )
         instructions.append(
-            "   iii. For MUST_HAVE criteria (primary skills for the role):"
+            "   iii. For REQUIRED criteria (primary skills for the role):"
         )
         instructions.append(
             "      - If the candidate has permanently moved to different domains, earlier experience becomes less relevant, even if substantial"
         )
         instructions.append(
-            "   iv. For NICE_TO_HAVE criteria (secondary/complementary skills):"
+            "   iv. For PREFERRED criteria (secondary/complementary skills):"
         )
         instructions.append(
             "      - Past experience remains valuable for evaluation even if not recently practiced"
         )
         instructions.append("\n   Examples:")
-        instructions.append("   Technical Case (MUST_HAVE Java Backend experience):")
+        instructions.append("   Technical Case (REQUIRED Java Backend experience):")
         instructions.append(
             "   Career path: Java Backend (3y) → Flutter (2y) → React Native (Current, 3y)"
         )
@@ -124,7 +124,7 @@ def prepare_scoring_instructions(
             "   Analysis: Clear trajectory away from backend development into mobile, indicating Java experience is not relevant anymore"
         )
         instructions.append(
-            "\n   Same Technical Case (NICE_TO_HAVE Java Backend experience):"
+            "\n   Same Technical Case (PREFERRED Java Backend experience):"
         )
         instructions.append(
             "   Career path: Java Backend (3y) → Flutter (2y) → React Native (Current, 3y)"
@@ -132,7 +132,7 @@ def prepare_scoring_instructions(
         instructions.append(
             "   Analysis: Past Java experience is valuable as complementary knowledge, even if candidate moved to mobile development"
         )
-        instructions.append("\n   Non-Technical Case (MUST_HAVE Sales experience):")
+        instructions.append("\n   Non-Technical Case (REQUIRED Sales experience):")
         instructions.append(
             "   Career path: Sales Representative (4y) → Sales Manager (1y) → HR Manager (2y) → HR Director (Current, 3y)"
         )

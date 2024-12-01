@@ -8,18 +8,18 @@ class ExtendedCriterionType(str, Enum):
     """Extended criterion type for questions."""
 
     # Base criteria
-    EDUCATION = "EDUCATION"
-    EXPERIENCE = "EXPERIENCE"
-    LANGUAGE = "LANGUAGE"
-    HARD_SKILL = "HARD_SKILL"
-    SOFT_SKILL = "SOFT_SKILL"
-    INDUSTRY_KNOWLEDGE = "INDUSTRY_KNOWLEDGE"
-    ADDITIONAL_QUALIFICATION = "ADDITIONAL_QUALIFICATION"
+    EDUCATION = "education"
+    EXPERIENCE = "experience"
+    LANGUAGE = "language"
+    HARD_SKILL = "hard_skill"
+    SOFT_SKILL = "soft_skill"
+    INDUSTRY_KNOWLEDGE = "industry_knowledge"
+    ADDITIONAL_QUALIFICATION = "additional_qualification"
 
     # Additional criteria
-    JOB_LOCATION_REMOTE_POLICY = "JOB_LOCATION_REMOTE_POLICY"
-    CANDIDATE_AGE_RANGE = "CANDIDATE_AGE_RANGE"
-    SALARY_RANGE = "SALARY_RANGE"
+    JOB_LOCATION_REMOTE_POLICY = "job_location_remote_policy"
+    CANDIDATE_AGE_RANGE = "candidate_age_range"
+    SALARY_RANGE = "salary_range"
 
 
 class Question(BaseModel):
