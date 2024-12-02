@@ -7,9 +7,9 @@ from pydantic import BaseModel, Field
 class SynthesisScore(Enum):
     """Score of the synthesis."""
 
-    PASS = "PASS"
-    FAIL = "FAIL"
-    DOUBT = "DOUBT"
+    PASS = "pass"
+    FAIL = "fail"
+    DOUBT = "doubt"
 
 
 class LocationSynthesis(BaseModel):
