@@ -59,15 +59,13 @@ def node_education_enrichment(
     """Enrich the education of the candidate."""
     education = cast(ProfileEducation, state["education"])
 
-    # If no linkedin_url or invalid format, return empty
-    if not education.linkedin_url or not education.linkedin_url.startswith(
-        "https://www.linkedin.com/school/"
-    ):
+    # If no linkedin_id, return empty
+    if not education.linkedin_id:
         return {"education_enrichment": []}
 
     # Access store
     namespace = ("school", "enrichment")
-    key = education.linkedin_url.rstrip("/").split("/")[-1].lower().strip()
+    key = education.linkedin_id.lower().strip()
     school = store.get(namespace, key)
 
     if school:
@@ -98,7 +96,7 @@ def node_education_enrichment(
         except ValidationError:
             # Schema mismatch - treat as if not in store and reprocess
             tavily_res = tavily_tool.invoke(
-                {"query": f"school {education.school} ({education.linkedin_url})"}
+                {"query": f"school {education.school} ({education.linkedin_id})"}
             )
 
             # Create new entry with current schema
@@ -123,7 +121,7 @@ def node_education_enrichment(
     else:
         # If not in store or cast failed, perform Tavily search
         tavily_res = tavily_tool.invoke(
-            {"query": f"school {education.school} ({education.linkedin_url})"}
+            {"query": f"school {education.school} ({education.linkedin_id})"}
         )
 
         op = cast(
