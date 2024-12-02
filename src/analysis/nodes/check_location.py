@@ -4,7 +4,11 @@ from typing import cast
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from analysis.configuration import Configuration
-from analysis.models.synthesis import LocationSynthesis, SynthesisScore
+from analysis.models.synthesis import (
+    LocationSynthesis,
+    SynthesisOverall,
+    SynthesisScore,
+)
 from analysis.state import MainGraphState
 from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
 from scorecard.models.scorecard import Category, Priority
@@ -81,4 +85,21 @@ def node_check_location(
         else 0,
     )
 
-    return {"synthesis_location": res, "scored_criterion": [scored_criterion]}
+    # Create a state update dictionary
+    state_update = {
+        "synthesis_location": res,
+        "scored_criterion": [scored_criterion],
+    }
+
+    # Only update synthesis_overall if location check fails
+    if res.score == SynthesisScore.FAIL:
+        state_update["synthesis_overall"] = SynthesisOverall(
+            score=SynthesisScore.FAIL,
+            explanation=f"Required location criteria not met: {res.explanation}",
+            summary=[
+                "🚫 Location requirements not satisfied",
+                "📍 Candidate location incompatible with job requirements",
+            ],
+        )
+
+    return state_update
