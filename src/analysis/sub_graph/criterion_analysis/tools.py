@@ -87,7 +87,7 @@ def get_candidate_info(
             for volunteering in state.main_state.profile.volunteerings
         ],
         CandidateInfoType.COMPANY_CULTURE: state.main_state.inferred_culture,
-        CandidateInfoType.INDUSTRY_SECTOR: state.main_state.inferred_sector,
+        CandidateInfoType.INDUSTRY_SECTOR: state.main_state.inferred_industry_sector,
     }
 
     if infotype not in info_map:
