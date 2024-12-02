@@ -98,6 +98,7 @@ def node_conclude(state: MainGraphState, config: RunnableConfig) -> MainGraphSta
                 "job_synthesis": format_data(state.job_synthesis),
                 "synthesis_hierarchy": format_data(state.synthesis_hierarchy),
                 "synthesis_open_to_work": format_data(state.synthesis_open_to_work),
+                "inferred_role_trajectory": format_data(state.inferred_role_trajectory),
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
             }

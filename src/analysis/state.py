@@ -37,8 +37,9 @@ class MainGraphState(InputGraphState):
     batch_store_ops: Annotated[List[Op], reducer_list] = Field(default_factory=list)
 
     inferred_languages: Optional[List[LanguageProficiency]] = Field(default=None)
-    inferred_sector: Optional[str] = Field(default=None)
+    inferred_industry_sector: Optional[str] = Field(default=None)
     inferred_culture: Optional[str] = Field(default=None)
+    inferred_role_trajectory: Optional[str] = Field(default=None)
 
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
 

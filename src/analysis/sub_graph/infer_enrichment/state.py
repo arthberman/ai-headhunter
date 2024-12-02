@@ -15,7 +15,7 @@ class MainInferEnrichmentState(BaseModel):
 class OutputInferEnrichmentState(MainInferEnrichmentState):
     """Output state for the enrichment subgraph."""
 
-    inferred_sector: str = Field(default=None)
+    inferred_industry_sector: str = Field(default=None)
     inferred_culture: str = Field(default=None)
-    infer_intent: str = Field(default=None)
     inferred_languages: List[LanguageProficiency] = Field(default=None)
+    inferred_role_trajectory: str = Field(default=None)
