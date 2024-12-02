@@ -15,12 +15,12 @@ from utils import get_retry_policy
 def continue_to_education_enrichment(state: MainEnrichmentState):
     """Continue to education enrichment."""
     if state.profile.educations:
-        unique_urls = set()
+        unique_ids = set()
         enrichment_tasks = []
 
         for education in state.profile.educations:
-            if education.linkedin_url and education.linkedin_url not in unique_urls:
-                unique_urls.add(education.linkedin_url)
+            if education.linkedin_id and education.linkedin_id not in unique_ids:
+                unique_ids.add(education.linkedin_id)
                 enrichment_tasks.append(
                     Send(
                         "node_education_enrichment",
@@ -35,12 +35,12 @@ def continue_to_education_enrichment(state: MainEnrichmentState):
 def continue_to_experience_enrichment(state: MainEnrichmentState):
     """Continue to experience enrichment."""
     if state.profile.experiences:
-        unique_urls = set()
+        unique_ids = set()
         enrichment_tasks = []
 
         for experience in state.profile.experiences:
-            if experience.linkedin_url and experience.linkedin_url not in unique_urls:
-                unique_urls.add(experience.linkedin_url)
+            if experience.linkedin_id and experience.linkedin_id not in unique_ids:
+                unique_ids.add(experience.linkedin_id)
                 enrichment_tasks.append(
                     Send(
                         "node_experience_enrichment",

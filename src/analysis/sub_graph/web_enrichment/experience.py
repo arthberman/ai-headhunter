@@ -65,15 +65,13 @@ def node_experience_enrichment(
     """Enrich the experience of the candidate."""
     experience = cast(ProfileExperience, state["experience"])
 
-    # If no linkedin_url or invalid format, return empty
-    if not experience.linkedin_url or not experience.linkedin_url.startswith(
-        "https://www.linkedin.com/company/"
-    ):
+    # If no linkedin_id, return empty
+    if not experience.linkedin_id:
         return {"experience_enrichment": []}
 
     # Access store
     namespace = ("company", "enrichment")
-    key = experience.linkedin_url.rstrip("/").split("/")[-1].lower().strip()
+    key = experience.linkedin_id.lower().strip()
     company = store.get(namespace, key)
 
     if company:

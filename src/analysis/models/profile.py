@@ -20,7 +20,7 @@ class ProfileEducation(BaseModel):
     )
     grade: Optional[str] = Field(default=None, description="Grade obtained")
     degree: Optional[str] = Field(default=None, description="Degree obtained")
-    linkedin_url: str = Field(description="LinkedIn URL of the school")
+    linkedin_id: str = Field(description="LinkedIn ID of the school")
     metadata_duration: Optional[str] = Field(
         default=None, description="Education duration"
     )
@@ -42,7 +42,7 @@ class ProfileExperience(BaseModel):
     )
     title: Optional[str] = Field(default=None, description="Job title")
     location: Optional[str] = Field(default=None, description="Job location")
-    linkedin_url: str = Field(description="LinkedIn URL of the company")
+    linkedin_id: str = Field(description="LinkedIn ID of the company")
     employment_type: Optional[str] = Field(default=None, description="Employment type")
     metadata_duration: Optional[str] = Field(
         default=None, description="Education duration"
