@@ -28,10 +28,11 @@ def format_information(
         ***candidate_profile***
         School: {education.school}"""
 
-    # Add description only if rich
-    if len(education.description) >= 100:
+    # Add description only if it exists and is rich
+    description = education.description or ""  # Handle None case
+    if len(description) >= 100:
         information += f"""
-        Description: {education.description}"""
+        Description: {description}"""
 
     information += "\n        ***candidate_profile***"
 
@@ -73,7 +74,9 @@ def node_education_enrichment(
             # Try to validate against current schema
             school_info = SchoolInfo.model_validate(school.value)
 
-            if len(education.description) < 100:
+            # Add null check for description
+            description = education.description or ""
+            if len(description) < 100:
                 return {"education_enrichment": [school_info]}
 
             # Update with rich description
