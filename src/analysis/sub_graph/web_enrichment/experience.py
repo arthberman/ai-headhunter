@@ -29,11 +29,12 @@ def format_information(
         Company: {experience.company}
         Location: {experience.location}"""
 
-    # Add title and description only if description is rich
-    if len(experience.description) >= 100:
+    # Add title and description only if description exists and is rich
+    description = experience.description or ""  # Handle None case
+    if len(description) >= 100:
         information += f"""
         Position Title: {experience.title}
-        Position Description: {experience.description}"""
+        Position Description: {description}"""
     else:
         information += """
         Position Title: Not provided
