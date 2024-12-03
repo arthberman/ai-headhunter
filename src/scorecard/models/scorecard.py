@@ -45,7 +45,7 @@ class BaseCriterion(BaseModel):
     )
     priority: Priority = Field(
         ...,
-        description="Priority of the criterion (must_have, nice_to_have)",
+        description="Priority of the criterion (required, preferred)",
     )
     context: Optional[str] = Field(
         None,
@@ -73,42 +73,42 @@ class Scorecard(BaseModel):
     def validate_priority_levels(self) -> "Scorecard":
         """Validate the priority levels only when not updating."""
         if not self.is_updating:
-            must_have_count = sum(
+            required_count = sum(
                 1 for c in self.criteria if c.priority == Priority.REQUIRED
             )
-            nice_to_have_count = sum(
+            preferred_count = sum(
                 1 for c in self.criteria if c.priority == Priority.PREFERRED
             )
 
-            if must_have_count < 2:
-                raise ValueError("There must be at least 2 must_have criteria")
-            if nice_to_have_count < 2:
-                raise ValueError("There must be at least 2 nice_to_have criteria")
+            if required_count < 2:
+                raise ValueError("There must be at least 2 required criteria")
+            if preferred_count < 2:
+                raise ValueError("There must be at least 2 preferred criteria")
 
         return self
 
     @model_validator(mode="after")
     def validate_required_criterion_types(self) -> "Scorecard":
-        """Validate that there is exactly one must_have location criterion and at least one language criterion."""
+        """Validate that there is exactly one required location criterion and at least one language criterion."""
         if not self.is_updating:
-            # Check for exactly one must_have location criterion
-            location_must_have_criteria = [
+            # Check for exactly one required location criterion
+            location_required_criteria = [
                 c
                 for c in self.criteria
                 if c.category == Category.LOCATION and c.priority == Priority.REQUIRED
             ]
-            if len(location_must_have_criteria) != 1:
+            if len(location_required_criteria) != 1:
                 raise ValueError(
-                    "There must be exactly 1 must_have criterion of type location"
+                    "There must be exactly 1 required criterion of type location"
                 )
 
-            # Check for at least one language must_have criterion
+            # Check for at least one language required criterion
             if not any(
                 c.category == Category.LANGUAGE and c.priority == Priority.REQUIRED
                 for c in self.criteria
             ):
                 raise ValueError(
-                    "There must be at least 1 must_have criterion of type language"
+                    "There must be at least 1 required criterion of type language"
                 )
 
         return self

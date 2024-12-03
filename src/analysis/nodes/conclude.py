@@ -20,7 +20,7 @@ def get_evaluation_guidelines(must: bool) -> str:
     """Get the evaluation guidelines for the overall analysis."""
     if not must:
         return (
-            "3. In this case, the candidate has failed MUST HAVE criteria, "
+            "3. In this case, the candidate has failed required criteria, "
             "so the final output is FAIL"
         )
 
@@ -31,7 +31,7 @@ def get_evaluation_guidelines(must: bool) -> str:
      * Career progression makes sense
      * No major blockers in availability
      * Demonstrates alignment with role expectations
-     * Satisfactory performance on NICE TO HAVE criteria
+     * Satisfactory performance on preferred criteria
 
    - FAIL: 
      * Only possible for career alignment issues:
@@ -41,17 +41,17 @@ def get_evaluation_guidelines(must: bool) -> str:
    - DOUBT: 
      * Unclear motivation or timing issues
      * Potential concerns about career fit
-     * Mixed performance on NICE TO HAVE criteria (some low, some acceptable)
+     * Mixed performance on preferred criteria (some low, some acceptable)
      * Uncertainty about overall skill alignment
      * Minor concerns about availability or progression
 
    Evaluation Balance:
-   - Poor performance on NICE TO HAVE criteria can only lead to DOUBT, not FAIL
+   - Poor performance on preferred criteria can only lead to DOUBT, not FAIL
    - Career misalignment (hierarchy/openness) are the only FAIL triggers
-   - NICE TO HAVE criteria help differentiate between PASS and DOUBT cases
+   - Preferred criteria help differentiate between PASS and DOUBT cases
    - Consider overall profile for PASS vs DOUBT decisions
 
-    Note: Since MUST HAVE criteria are satisfied, only major career misalignment 
+    Note: Since required criteria are satisfied, only major career misalignment 
          (hierarchy or openness to work) can result in FAIL status."""
 
 

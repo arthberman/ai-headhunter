@@ -23,8 +23,8 @@ class ScoredCriteriaOutput(BaseModel):
     """Structured output for scored criteria analysis."""
 
     must_synthesis: MustSynthesis
-    must_have_criteria: List[CriterionDetail]
-    nice_to_have_criteria: List[CriterionDetail]
+    required_criteria: List[CriterionDetail]
+    preferred_criteria: List[CriterionDetail]
 
 
 def format_scored_criteria(
@@ -46,15 +46,15 @@ def format_scored_criteria(
     must_synthesis = compute_must_score(scored_criterion, scorecard)
 
     # Group criteria by priority
-    must_have = [c for c in extended_criteria if c.priority.value == "must_have"]
-    nice_to_have = [c for c in extended_criteria if c.priority.value == "nice_to_have"]
+    required = [c for c in extended_criteria if c.priority.value == "required"]
+    preferred = [c for c in extended_criteria if c.priority.value == "preferred"]
 
     # Sort each group by score (descending)
-    must_have.sort(key=lambda x: x.score, reverse=True)
-    nice_to_have.sort(key=lambda x: x.score, reverse=True)
+    required.sort(key=lambda x: x.score, reverse=True)
+    preferred.sort(key=lambda x: x.score, reverse=True)
 
     # Format criteria lists
-    must_have_criteria = [
+    required_criteria = [
         CriterionDetail(
             category=criterion.category,
             description=criterion.description,
@@ -62,10 +62,10 @@ def format_scored_criteria(
             confidence=round(criterion.confidence * 100, 1),
             explanation=criterion.explanation,
         )
-        for criterion in must_have
+        for criterion in required
     ]
 
-    nice_to_have_criteria = [
+    preferred_criteria = [
         CriterionDetail(
             category=criterion.category.value,
             description=criterion.description,
@@ -73,11 +73,11 @@ def format_scored_criteria(
             confidence=round(criterion.confidence * 100, 1),
             explanation=criterion.explanation,
         )
-        for criterion in nice_to_have
+        for criterion in preferred
     ]
 
     return ScoredCriteriaOutput(
         must_synthesis=must_synthesis,
-        must_have_criteria=must_have_criteria,
-        nice_to_have_criteria=nice_to_have_criteria,
+        required_criteria=required_criteria,
+        preferred_criteria=preferred_criteria,
     )

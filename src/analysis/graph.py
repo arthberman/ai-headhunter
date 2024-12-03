@@ -37,30 +37,30 @@ def continue_to_analysis(state: MainGraphState):
     # Get set of already processed criterion IDs
     processed_criterion_ids = {sc.id for sc in state.scored_criterion}
 
-    sends_must: List[Send] = []
+    sends_required: List[Send] = []
     for criterion in state.scorecard.criteria:
         if (
             criterion.priority == Priority.REQUIRED
             and criterion.category != Category.LOCATION
             and criterion.id not in processed_criterion_ids
         ):
-            sends_must.append(
+            sends_required.append(
                 Send(
-                    "score_must_criteria",
+                    "score_required_criteria",
                     {"main_state": state, "messages": [], "criterion": criterion},
                 )
             )
 
-    sends_nice: List[Send] = []
+    sends_preferred: List[Send] = []
     for criterion in state.scorecard.criteria:
         if (
             criterion.priority == Priority.PREFERRED
             and criterion.category != Category.LOCATION
             and criterion.id not in processed_criterion_ids
         ):
-            sends_nice.append(
+            sends_preferred.append(
                 Send(
-                    "score_nice_criteria",
+                    "score_preferred_criteria",
                     {"main_state": state, "messages": [], "criterion": criterion},
                 )
             )
@@ -68,8 +68,8 @@ def continue_to_analysis(state: MainGraphState):
     if state.batch_store_ops:
         return ["write_memory"]
 
-    if sends_must:
-        return sends_must
+    if sends_required:
+        return sends_required
 
     if (
         compute_must_score(state.scored_criterion, state.scorecard).score
@@ -77,8 +77,8 @@ def continue_to_analysis(state: MainGraphState):
     ):
         return ["synthetize_scored_criteria"]
 
-    if sends_nice:
-        return sends_nice
+    if sends_preferred:
+        return sends_preferred
 
     return ["synthetize_scored_criteria"]
 
@@ -101,12 +101,12 @@ def compile_analysis_graph() -> CompiledGraph:
     workflow.add_node("check_location", node_check_location, retry=get_retry_policy())
 
     workflow.add_node(
-        "score_nice_criteria",
+        "score_preferred_criteria",
         get_criterion_analysis_subgraph(),
     )
 
     workflow.add_node(
-        "score_must_criteria",
+        "score_required_criteria",
         get_criterion_analysis_subgraph(),
     )
 
@@ -154,15 +154,15 @@ def compile_analysis_graph() -> CompiledGraph:
         "supervisor",
         continue_to_analysis,
         [
-            "score_must_criteria",
-            "score_nice_criteria",
+            "score_required_criteria",
+            "score_preferred_criteria",
             "synthetize_scored_criteria",
             "write_memory",
         ],
     )
 
-    workflow.add_edge("score_must_criteria", "supervisor")
-    workflow.add_edge("score_nice_criteria", "supervisor")
+    workflow.add_edge("score_required_criteria", "supervisor")
+    workflow.add_edge("score_preferred_criteria", "supervisor")
     workflow.add_edge("write_memory", "supervisor")
 
     workflow.add_edge("synthetize_scored_criteria", "assess_open_to_work")
