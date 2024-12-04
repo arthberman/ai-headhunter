@@ -5,8 +5,8 @@ from langchain_core.runnables import Runnable
 from langsmith.evaluation import evaluate
 from langsmith.schemas import Example, Run
 
-from analysis.models.language import LanguageProficiency
-from analysis.nodes.enrichment.language import StructuredOutput
+from matcher.models.language import LanguageProficiency
+from matcher.nodes.enrichment.language import StructuredOutput
 from utils import format_data, get_prompt
 from utils.init_model import init_model
 

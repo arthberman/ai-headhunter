@@ -1,1 +1,0 @@
-"""Criterion analysis sub-graph."""

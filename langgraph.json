@@ -1,7 +1,6 @@
 {
   "graphs": {
-    "analysis_full": "./src/analysis/graph.py:compile_analysis_graph",
-    "match": "./src/analysis/graph.py:compile_analysis_graph",
+    "match": "./src/matcher/graph.py:compile_matcher_graph",
     "scorecard": "./src/scorecard/graph.py:compile_scorecard_graph"
   },
   "env": ".env.studio",

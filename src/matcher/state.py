@@ -1,0 +1,50 @@
+import operator
+from typing import Annotated, List, Optional
+
+from langgraph.store.base import Op
+from pydantic import BaseModel, Field
+
+from matcher.memory.models.company import CompanyInfo
+from matcher.memory.models.school import SchoolInfo
+from matcher.models.language import LanguageProficiency
+from matcher.models.profile import Profile
+from matcher.models.synthesis import (
+    HierarchySynthesis,
+    IntentSynthesis,
+    LocationSynthesis,
+    OpenToWorkSynthesis,
+    SynthesisOverall,
+)
+from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
+from scorecard.models.scorecard import Scorecard
+from utils import reducer_list
+
+
+class InputGraphState(BaseModel):
+    """State of the input graph."""
+
+    profile: Profile = Field(...)
+    scorecard: Scorecard = Field(...)
+    job_synthesis: str = Field(...)
+
+
+class MainGraphState(InputGraphState):
+    """State of the main graph."""
+
+    education_enrichment: Annotated[List[SchoolInfo], operator.add]
+    experience_enrichment: Annotated[List[CompanyInfo], operator.add]
+
+    batch_store_ops: Annotated[List[Op], reducer_list] = Field(default_factory=list)
+
+    inferred_languages: Optional[List[LanguageProficiency]] = Field(default=None)
+    inferred_industry_sector: Optional[str] = Field(default=None)
+    inferred_culture: Optional[str] = Field(default=None)
+    inferred_role_trajectory: Optional[str] = Field(default=None)
+
+    scored_criterion: Annotated[List[ScoredCriterion], operator.add]
+
+    synthesis_location: Optional[LocationSynthesis] = Field(default=None)
+    synthesis_hierarchy: Optional[HierarchySynthesis] = Field(default=None)
+    synthesis_open_to_work: Optional[OpenToWorkSynthesis] = Field(default=None)
+    synthesis_intent: Optional[IntentSynthesis] = Field(default=None)
+    synthesis_overall: Optional[SynthesisOverall] = Field(default=None)

@@ -6,7 +6,7 @@ This project implements a powerful matcher and scorecard generator, both hosted 
 
 ## Features
 
-- **Matcher**: Advanced matching algorithm for data comparison and analysis.
+- **Matcher**: Advanced matching algorithm for data comparison and matcher.
 - **Scorecard Generator**: Generates comprehensive scorecards based on matching results.
 - **LangGraph API Integration**: Utilizes LangGraph API for robust hosting and scalability.
 

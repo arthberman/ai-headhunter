@@ -2,7 +2,7 @@ from typing import List, Optional, Union
 
 from pydantic import Field
 
-from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
+from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
 from scorecard.models.scorecard import Category, Priority, Scorecard
 
 

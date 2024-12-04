@@ -1,8 +1,8 @@
 from statistics import mean, median
 from typing import List
 
-from analysis.models.synthesis import MustSynthesis, SynthesisScore
-from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
+from matcher.models.synthesis import MustSynthesis, SynthesisScore
+from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
 from scorecard.models.scorecard import Priority, Scorecard
 from utils.get_extended_scored_criterion import get_extended_scored_criterion
 
