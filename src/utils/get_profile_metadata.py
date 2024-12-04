@@ -1,4 +1,4 @@
-from analysis.models.profile import Profile
+from matcher.models.profile import Profile
 from utils.time import compute_duration, compute_status, format_date
 
 

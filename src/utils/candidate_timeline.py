@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-from analysis.models.profile import Profile
+from matcher.models.profile import Profile
 from utils.get_profile_metadata import format_date
 
 

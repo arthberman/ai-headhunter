@@ -2,8 +2,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-from analysis.models.synthesis import MustSynthesis
-from analysis.sub_graph.criterion_analysis.models import ScoredCriterion
+from matcher.models.synthesis import MustSynthesis
+from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
 from scorecard.models.scorecard import Scorecard
 from utils.compute_must_score import compute_must_score
 from utils.get_extended_scored_criterion import ExtendedScoredCriterion
@@ -20,7 +20,7 @@ class CriterionDetail(BaseModel):
 
 
 class ScoredCriteriaOutput(BaseModel):
-    """Structured output for scored criteria analysis."""
+    """Structured output for scored criteria matcher."""
 
     must_synthesis: MustSynthesis
     required_criteria: List[CriterionDetail]
@@ -40,7 +40,7 @@ def format_scored_criteria(
         scorecard: Scorecard for must score computation
 
     Returns:
-        Pydantic model containing structured criteria analysis
+        Pydantic model containing structured criteria matcher
     """
     # Compute must synthesis
     must_synthesis = compute_must_score(scored_criterion, scorecard)

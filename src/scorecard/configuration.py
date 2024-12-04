@@ -32,7 +32,7 @@ class Configuration(BaseModel):
 
     max_loops: int = Field(
         default=5,
-        description="The maximum number of loops to run the analysis for.",
+        description="The maximum number of loops to run the matcher for.",
     )
 
     @classmethod
