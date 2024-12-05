@@ -1,8 +1,8 @@
 from typing import List
 
-from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.graph import CompiledGraph
+from langgraph.types import Send
 
 from matcher.configuration import Configuration
 from matcher.models.synthesis import SynthesisScore
