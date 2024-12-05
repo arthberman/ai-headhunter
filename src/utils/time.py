@@ -7,7 +7,14 @@ from dateutil import parser
 def compute_duration(
     start_date: Optional[datetime], end_date: Optional[datetime]
 ) -> str:
-    """Compute the duration between two dates."""
+    """Compute the duration between two dates in years and months format.
+
+    Examples:
+        - 1 year and 2 months -> "1y2m"
+        - 2 years -> "2y"
+        - 1 year and 11 months -> "1y11m"
+        - 3 months -> "3m"
+    """
     if not start_date or start_date.year <= 1900:
         return "Unknown duration"
 
@@ -16,21 +23,21 @@ def compute_duration(
 
     delta = end_date - start_date
     years, remainder = divmod(delta.days, 365)
-    months = remainder // 30
+    months = round(remainder / 30.44)  # Average days in a month
 
-    # Adjust for potential rounding issues
+    # Adjust for rounding up to 12 months
     if months == 12:
         years += 1
         months = 0
 
     if years > 0 and months > 0:
-        return f"{years} year{'s' if years > 1 else ''} {months} month{'s' if months > 1 else ''}"
+        return f"{years}y{months}m"
     elif years > 0:
-        return f"{years} year{'s' if years > 1 else ''}"
+        return f"{years}y"
     elif months > 0:
-        return f"{months} month{'s' if months > 1 else ''}"
+        return f"{months}m"
     else:
-        return "Less than a month"
+        return "1m"  # Minimum duration shown
 
 
 def is_valid_date(date: str) -> bool:

@@ -1,6 +1,6 @@
-from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
 from langgraph.store.base import BaseStore
+from langgraph.types import Send
 
 from matcher.configuration import Configuration
 from matcher.sub_graph.web_enrichment.education import node_education_enrichment
