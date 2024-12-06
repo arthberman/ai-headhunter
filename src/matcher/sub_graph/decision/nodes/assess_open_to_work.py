@@ -15,7 +15,7 @@ from utils import (
 )
 
 
-def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig):
+async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig):
     """Analyze the candidate's openess to work, awareness of new opportunities."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
@@ -47,7 +47,7 @@ def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig):
                 """,
     )
 
-    few_shot_messages = get_few_shot_messages(few_shot_config)
+    few_shot_messages = await get_few_shot_messages(few_shot_config)
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(OpenToWorkSynthesis)
@@ -58,7 +58,7 @@ def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig):
     # Invoke the chain
     res = cast(
         OpenToWorkSynthesis,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "candidate_timeline": get_candidate_timeline(
                     state.profile, with_detail=True

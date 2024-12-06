@@ -17,7 +17,9 @@ class WebContext(BaseModel):
     )
 
 
-def search_web(query: str, *, config: RunnableConfig) -> Optional[list[dict[str, Any]]]:
+async def search_web(
+    query: str, *, config: RunnableConfig
+) -> Optional[list[dict[str, Any]]]:
     """Query a search engine.
 
     This function queries the web to fetch comprehensive, accurate, and trusted results. It's particularly useful
@@ -25,7 +27,7 @@ def search_web(query: str, *, config: RunnableConfig) -> Optional[list[dict[str,
     """
     configuration = Configuration.from_runnable_config(config)
     wrapped = TavilySearchResults(max_results=configuration.max_search_results)
-    result = wrapped.invoke({"query": query})
+    result = await wrapped.ainvoke({"query": query})
     return cast(list[dict[str, Any]], result)
 
 
