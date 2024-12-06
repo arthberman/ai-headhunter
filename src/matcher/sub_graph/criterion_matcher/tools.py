@@ -100,7 +100,9 @@ def get_candidate_info(
     return format_data(data)
 
 
-def search_web(query: str, *, config: RunnableConfig) -> Optional[list[dict[str, Any]]]:
+async def search_web(
+    query: str, *, config: RunnableConfig
+) -> Optional[list[dict[str, Any]]]:
     """Query a search engine.
 
     This function queries the web to fetch comprehensive, accurate, and trusted results. It's particularly useful
@@ -141,7 +143,7 @@ def search_web(query: str, *, config: RunnableConfig) -> Optional[list[dict[str,
         input_template="Web query: {web_query}",
         output_template="Is relevant: {is_relevant}\nExplanation: {explanation}",
     )
-    few_shot_messages = get_few_shot_messages(few_shot_config)
+    few_shot_messages = await get_few_shot_messages(few_shot_config)
 
     # Invoke the chain
     res = cast(
@@ -160,7 +162,7 @@ def search_web(query: str, *, config: RunnableConfig) -> Optional[list[dict[str,
         return "The query is not relevant for a web search."
 
     wrapped = TavilySearchResults(max_results=configuration.max_search_results)
-    result = wrapped.invoke({"query": query})
+    result = await wrapped.ainvoke({"query": query})
     return cast(list[dict[str, Any]], result)
 
 
