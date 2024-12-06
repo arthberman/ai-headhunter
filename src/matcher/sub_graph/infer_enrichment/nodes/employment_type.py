@@ -71,11 +71,7 @@ async def node_infer_employment_type(
         input_keys=["experience"],
         output_keys=["employment_type", "confidence", "explanation"],
         input_template="Experience: {experience}",
-        output_template="""
-                Employment type: {employment_type}
-                Confidence: {confidence}
-                Explanation: {explanation}
-                """,
+        output_template="""Employment type: {employment_type}\nConfidence: {confidence}\nExplanation: {explanation}""",
     )
 
     few_shot_messages = await get_few_shot_messages(few_shot_config)

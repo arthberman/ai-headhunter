@@ -40,9 +40,7 @@ async def node_infer_role_trajectory(
         input_keys=["profile_detail"],
         output_keys=["explanation"],
         input_template="Profile details: {profile_detail}",
-        output_template="""
-                Explanation: {explanation}
-                """,
+        output_template="""Explanation: {explanation}""",
     )
 
     few_shot_messages = await get_few_shot_messages(few_shot_config)
