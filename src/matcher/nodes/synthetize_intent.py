@@ -9,7 +9,7 @@ from matcher.state import MainGraphState
 from utils import format_data, get_prompt, init_model
 
 
-def node_synthetize_intent(
+async def node_synthetize_intent(
     state: MainGraphState, config: RunnableConfig
 ) -> MainGraphState:
     """Synthesize the intent of the profile."""
@@ -38,7 +38,7 @@ def node_synthetize_intent(
     # Invoke the chain
     res = cast(
         IntentSynthesis,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "profile": format_data(state.profile),
                 "synthesis_hierarchy": format_data(state.synthesis_hierarchy),

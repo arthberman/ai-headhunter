@@ -9,7 +9,7 @@ from matcher.sub_graph.infer_enrichment.state import MainInferEnrichmentState
 from utils import format_data, get_prompt, init_model
 
 
-def node_infer_age(
+async def node_infer_age(
     state: MainInferEnrichmentState,
     *,
     config: RunnableConfig,
@@ -25,7 +25,7 @@ def node_infer_age(
     # Initialize the raw model with the provided configuration
     raw_model = init_model(configuration.default_model)
 
-    # Initialize the prompt
+    # Initialize the prompt (sync function)
     prompt = get_prompt("analysis-find-age")
 
     # Bind the model to the structured output
@@ -36,7 +36,7 @@ def node_infer_age(
 
     res = cast(
         ProfileAge,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "profile": format_data(state.profile),
                 "output_language": configuration.output_language,

@@ -17,7 +17,7 @@ from utils.candidate_timeline import get_candidate_timeline
 from utils.few_shot import FewShotConfig, get_few_shot_messages
 
 
-def node_check_location(
+async def node_check_location(
     state: MainGraphState, config: RunnableConfig
 ) -> MainGraphState:
     """Analyze the candidate's location."""
@@ -36,7 +36,7 @@ def node_check_location(
         output_template="Score: {score}\nExplanation: {explanation}",
     )
 
-    few_shot_messages = get_few_shot_messages(few_shot_config)
+    few_shot_messages = await get_few_shot_messages(few_shot_config)
 
     # Initialize the model
     raw_model = init_model(configuration.matcher_model)
@@ -55,7 +55,7 @@ def node_check_location(
 
     res = cast(
         LocationSynthesis,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "job_location_criteria": format_data(criterion),
                 "candidate_timeline": format_data(

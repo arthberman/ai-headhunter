@@ -54,7 +54,7 @@ def format_information(
     return information
 
 
-def node_education_enrichment(
+async def node_education_enrichment(
     state: EducationState, *, config: RunnableConfig, store: BaseStore
 ) -> MainEnrichmentState:
     """Enrich the education of the candidate."""
@@ -67,7 +67,7 @@ def node_education_enrichment(
     # Access store
     namespace = ("school", "enrichment")
     key = education.linkedin_id.lower().strip()
-    school = store.get(namespace, key)
+    school = await store.aget(namespace, key)
 
     if school:
         try:
@@ -82,7 +82,7 @@ def node_education_enrichment(
             # Update with rich description
             op = cast(
                 PutOp,
-                handle_patch_memory(
+                await handle_patch_memory(
                     namespace,
                     key,
                     format_information(education),
@@ -98,14 +98,14 @@ def node_education_enrichment(
             }
         except ValidationError:
             # Schema mismatch - treat as if not in store and reprocess
-            tavily_res = tavily_tool.invoke(
+            tavily_res = await tavily_tool.ainvoke(
                 {"query": f"school {education.school} ({education.linkedin_id})"}
             )
 
             # Create new entry with current schema
             op = cast(
                 PutOp,
-                handle_patch_memory(
+                await handle_patch_memory(
                     namespace,
                     key,
                     format_information(
@@ -123,13 +123,13 @@ def node_education_enrichment(
             }
     else:
         # If not in store or cast failed, perform Tavily search
-        tavily_res = tavily_tool.invoke(
+        tavily_res = await tavily_tool.ainvoke(
             {"query": f"school {education.school} ({education.linkedin_id})"}
         )
 
         op = cast(
             PutOp,
-            handle_patch_memory(
+            await handle_patch_memory(
                 namespace,
                 key,
                 format_information(education, tavily_res),

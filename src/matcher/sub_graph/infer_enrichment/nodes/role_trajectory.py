@@ -19,7 +19,7 @@ class RoleTrajectory(BaseModel):
     )
 
 
-def node_infer_role_trajectory(
+async def node_infer_role_trajectory(
     state: MainInferEnrichmentState,
     *,
     config: RunnableConfig,
@@ -45,7 +45,7 @@ def node_infer_role_trajectory(
                 """,
     )
 
-    few_shot_messages = get_few_shot_messages(few_shot_config)
+    few_shot_messages = await get_few_shot_messages(few_shot_config)
 
     # Bind the model to the structured output
     model = raw_model.with_structured_output(RoleTrajectory)
@@ -55,7 +55,7 @@ def node_infer_role_trajectory(
 
     res = cast(
         RoleTrajectory,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "profile": format_data(state.profile),
                 "examples": few_shot_messages,

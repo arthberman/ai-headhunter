@@ -9,7 +9,7 @@ from matcher.state import MainGraphState
 from utils import format_data, get_candidate_timeline, get_prompt, init_model
 
 
-async def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):
+def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):
     """Analyze the language proficiency of the candidate."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
@@ -29,7 +29,7 @@ async def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):
     # Invoke the chain
     res = cast(
         HierarchySynthesis,
-        await chain.ainvoke(
+        chain.invoke(
             {
                 "candidate_timeline": format_data(
                     get_candidate_timeline(state.profile, with_detail=True)
