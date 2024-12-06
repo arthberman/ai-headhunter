@@ -12,7 +12,7 @@ from matcher.configuration import Configuration
 from utils import get_prompt, init_model
 
 
-def handle_patch_memory(
+async def handle_patch_memory(
     namespace: tuple,
     key: str,
     information: str,
@@ -40,10 +40,10 @@ def handle_patch_memory(
     prompt = get_prompt(prompt)
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
-    formatted_messages = chat_prompt.format_messages(information=information)
+    formatted_messages = await chat_prompt.aformat_messages(information=information)
 
     # Extract and update the patch memory
-    result = extractor.invoke(
+    result = await extractor.ainvoke(
         {"messages": formatted_messages, "existing": existing}, config
     )
 

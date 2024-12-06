@@ -21,7 +21,7 @@ class LanguageProficiency(BaseModel):
     )
 
 
-def node_infer_languages(
+async def node_infer_languages(
     state: MainInferEnrichmentState, config: RunnableConfig
 ) -> OutputInferEnrichmentState:
     """Analyze the language proficiency of the candidate."""
@@ -31,7 +31,7 @@ def node_infer_languages(
     # Initialize the raw model with the provided configuration
     raw_model = init_model(configuration.matcher_model)
 
-    # Initialize the prompt
+    # Initialize the prompt (sync function)
     prompt = get_prompt("analysis-candidate-language")
 
     # Bind the model to the structured output
@@ -43,7 +43,7 @@ def node_infer_languages(
     # Invoke the chain
     res = cast(
         LanguageProficiency,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "profile": format_data(state.profile),
                 "output_language": configuration.output_language,

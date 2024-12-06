@@ -52,12 +52,12 @@ def continue_to_experience_enrichment(state: MainEnrichmentState):
     return "node_write_memory"
 
 
-def node_write_memory(
+async def node_write_memory(
     state: MainEnrichmentState, *, store: BaseStore
 ) -> OutputEnrichmentState:
     """Save the memory."""
     if state.batch_store_ops:
-        store.batch(state.batch_store_ops)
+        await store.abatch(state.batch_store_ops)
 
     pass
 

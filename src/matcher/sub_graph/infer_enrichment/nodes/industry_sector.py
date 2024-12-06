@@ -23,7 +23,7 @@ class IndustrySectorSynthesis(BaseModel):
     )
 
 
-def node_infer_industry_sector(
+async def node_infer_industry_sector(
     state: MainInferEnrichmentState, config: RunnableConfig
 ) -> OutputInferEnrichmentState:
     """Analyze the industry sector of the candidate."""
@@ -33,7 +33,7 @@ def node_infer_industry_sector(
     # Initialize the raw model with the provided configuration
     raw_model = init_model(configuration.matcher_model)
 
-    # Initialize the prompt
+    # Initialize the prompt (sync function)
     prompt = get_prompt("analysis-candidate-sector")
 
     # Bind the model to the structured output
@@ -45,7 +45,7 @@ def node_infer_industry_sector(
     # Invoke the chain
     res = cast(
         IndustrySectorSynthesis,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "candidate": format_data(state.profile),
                 "output_language": configuration.output_language,

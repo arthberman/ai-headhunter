@@ -55,7 +55,9 @@ def get_evaluation_guidelines(must: bool) -> str:
          (hierarchy or openness to work) can result in FAIL status."""
 
 
-def node_conclude(state: MainGraphState, config: RunnableConfig) -> MainGraphState:
+async def node_conclude(
+    state: MainGraphState, config: RunnableConfig
+) -> MainGraphState:
     """Conclude the overall matcher."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
@@ -81,7 +83,7 @@ def node_conclude(state: MainGraphState, config: RunnableConfig) -> MainGraphSta
     # Invoke the chain
     res = cast(
         SynthesisOverall,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "extended_scored_criterion": format_data(
                     format_scored_criteria(

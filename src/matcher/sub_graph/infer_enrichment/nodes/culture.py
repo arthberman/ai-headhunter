@@ -20,7 +20,7 @@ class CultureSynthesis(BaseModel):
     )
 
 
-def node_infer_culture(
+async def node_infer_culture(
     state: MainInferEnrichmentState, config: RunnableConfig
 ) -> OutputInferEnrichmentState:
     """Analyze the culture of the candidate."""
@@ -30,7 +30,7 @@ def node_infer_culture(
     # Initialize the raw model with the provided configuration
     raw_model = init_model(configuration.matcher_model)
 
-    # Initialize the prompt
+    # Initialize the prompt (sync function)
     prompt = get_prompt("analysis-candidate-culture")
 
     # Bind the model to the structured output
@@ -42,7 +42,7 @@ def node_infer_culture(
     # Invoke the chain
     res = cast(
         CultureSynthesis,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "candidate": format_data(state.profile),
                 "output_language": configuration.output_language,

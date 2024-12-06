@@ -44,7 +44,7 @@ class ListEmploymentType(BaseModel):
     )
 
 
-def node_infer_employment_type(
+async def node_infer_employment_type(
     state: MainInferEnrichmentState,
     *,
     config: RunnableConfig,
@@ -56,7 +56,7 @@ def node_infer_employment_type(
     # Initialize the raw model with the provided configuration
     raw_model = init_model(configuration.default_model)
 
-    # Initialize the prompt
+    # Initialize the prompt (sync function)
     prompt = get_prompt("analysis-find-employment-type")
 
     # Bind the model to the structured output
@@ -78,7 +78,7 @@ def node_infer_employment_type(
                 """,
     )
 
-    few_shot_messages = get_few_shot_messages(few_shot_config)
+    few_shot_messages = await get_few_shot_messages(few_shot_config)
 
     # Loop through experiences and update employment types
     updated_experiences = []
@@ -93,7 +93,7 @@ def node_infer_employment_type(
     if not experiences_without_employment_type:
         return {"profile": state.profile}
 
-    # Format experiences with their IDs for the LLM
+    # Format experiences with their IDs for the LLM (format_data is sync)
     formatted_experiences = [
         {"id": idx, "experience": format_data(exp)}
         for idx, exp in experiences_without_employment_type
@@ -101,7 +101,7 @@ def node_infer_employment_type(
 
     res = cast(
         ListEmploymentType,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "experiences": format_data(formatted_experiences),
                 "candidate_timeline": format_data(

@@ -18,7 +18,7 @@ class FewShotConfig:
     output_template: str
 
 
-def get_few_shot_messages(config: FewShotConfig) -> List[BaseMessage]:
+async def get_few_shot_messages(config: FewShotConfig) -> List[BaseMessage]:
     """Generate few-shot example messages based on configuration."""
     # Load dataset
     fs_dataset = get_dataset(config.dataset_name)
@@ -51,4 +51,4 @@ def get_few_shot_messages(config: FewShotConfig) -> List[BaseMessage]:
         examples=examples,
     )
 
-    return few_shot_prompt.invoke({}).to_messages()
+    return (await few_shot_prompt.ainvoke({})).to_messages()

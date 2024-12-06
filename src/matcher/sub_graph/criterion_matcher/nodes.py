@@ -19,7 +19,7 @@ from matcher.sub_graph.criterion_matcher.tools import ScoredCriterion, get_tools
 from utils import clean_message, get_prompt, init_model
 
 
-def init_agent(
+async def init_agent(
     state: AnalysisMainState, *, config: RunnableConfig, store: BaseStore
 ) -> AnalysisMainState:
     """Initialize the agent with the provided state."""
@@ -28,7 +28,7 @@ def init_agent(
 
     namespace = ("scorecard", "criterion", state.criterion.id)
     key = "cot_questions"
-    stored_questions = store.get(namespace, key)
+    stored_questions = await store.aget(namespace, key)
 
     cot_questions = None
     op = None
@@ -44,7 +44,7 @@ def init_agent(
 
         cot_questions = cast(
             CotQuestions,
-            chain.invoke(
+            await chain.ainvoke(
                 {
                     "description": state.criterion.description,
                     "priority": state.criterion.priority.value,
@@ -63,7 +63,7 @@ def init_agent(
     instructions = prepare_scoring_instructions(state.criterion)
     evaluation_steps = prepare_evaluation_steps(cot_questions, instructions)
 
-    formatted_messages = chat_prompt.format_messages(
+    formatted_messages = await chat_prompt.aformat_messages(
         id=state.criterion.id,
         description=state.criterion.description,
         priority=state.criterion.priority.value,
@@ -81,8 +81,7 @@ def init_agent(
     }
 
 
-# Define the function that calls the model
-def call_model(
+async def call_model(
     state: AnalysisMainState, *, config: RunnableConfig, store: BaseStore
 ) -> AnalysisMainState:
     """Call the model with the provided state and configuration."""
@@ -105,19 +104,21 @@ def call_model(
         )
         # Bind the tools to the model
         model = raw_model.bind_tools([ScoredCriterion], tool_choice="ScoredCriterion")
-        response = model.invoke(messages.invoke({"message_content": message_content}))
+        response = await model.ainvoke(
+            await messages.ainvoke({"message_content": message_content})
+        )
     else:
         if state.loop_step == 0:
             # First iteration, push pre tool call result directly to the model
             namespace = ("scorecard", "criterion", state.criterion.id)
             key = "init_tool_calls"
-            init_tool_calls = store.get(namespace, key)
+            stored_calls = await store.aget(namespace, key)
 
-            if not init_tool_calls:
+            if not stored_calls:
                 # Bind the tools to the model
                 model = raw_model.bind_tools(get_tools(), tool_choice="any")
                 # Call the model with the provided state
-                response = model.invoke(state.messages)
+                response = await model.ainvoke(state.messages)
 
                 # Check if response is a tool call
                 if (
@@ -129,12 +130,12 @@ def call_model(
                     op = PutOp(namespace, key, last_message.model_dump(mode="json"))
             else:
                 # Put the last message into the response
-                response = AIMessage(**init_tool_calls.value)
+                response = AIMessage(**stored_calls.value)
         else:
             # Bind the tools to the model
             model = raw_model.bind_tools(get_tools(), tool_choice="any")
             # Call the model with the provided state
-            response = model.invoke(state.messages)
+            response = await model.ainvoke(state.messages)
 
     return {
         "messages": [response],
@@ -143,8 +144,7 @@ def call_model(
     }
 
 
-# Define the function that responds to the user
-def respond(state: AnalysisMainState) -> MainGraphState:
+async def respond(state: AnalysisMainState) -> MainGraphState:
     """Respond to the user with the scored criterion."""
     response = ScoredCriterion(**state.messages[-1].tool_calls[0]["args"])
     response.id = state.criterion.id  # prevent id mismatch
@@ -152,7 +152,6 @@ def respond(state: AnalysisMainState) -> MainGraphState:
     return {"scored_criterion": [response]}
 
 
-# Define the function that determines whether to continue or not
 def should_continue(
     state: AnalysisMainState, config: RunnableConfig
 ) -> AnalysisMainState:

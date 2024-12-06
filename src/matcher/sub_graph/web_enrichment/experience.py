@@ -60,7 +60,7 @@ def format_information(
     return information
 
 
-def node_experience_enrichment(
+async def node_experience_enrichment(
     state: ExperienceState, *, config: RunnableConfig, store: BaseStore
 ) -> MainEnrichmentState:
     """Enrich the experience of the candidate."""
@@ -73,7 +73,7 @@ def node_experience_enrichment(
     # Access store
     namespace = ("company", "enrichment")
     key = experience.linkedin_id.lower().strip()
-    company = store.get(namespace, key)
+    company = await store.aget(namespace, key)
 
     if company:
         try:
@@ -86,7 +86,7 @@ def node_experience_enrichment(
             # Update with rich description
             op = cast(
                 PutOp,
-                handle_patch_memory(
+                await handle_patch_memory(
                     namespace,
                     key,
                     format_information(experience),
@@ -102,14 +102,14 @@ def node_experience_enrichment(
             }
         except ValidationError:
             # Schema mismatch - treat as if not in store and reprocess
-            tavily_res = tavily_tool.invoke(
+            tavily_res = await tavily_tool.ainvoke(
                 {"query": f"company {experience.company} ({experience.location})"}
             )
 
             # Create new entry with current schema
             op = cast(
                 PutOp,
-                handle_patch_memory(
+                await handle_patch_memory(
                     namespace,
                     key,
                     format_information(
@@ -127,13 +127,13 @@ def node_experience_enrichment(
             }
     else:
         # If not in store or cast failed, perform Tavily search
-        tavily_res = tavily_tool.invoke(
+        tavily_res = await tavily_tool.ainvoke(
             {"query": f"company {experience.company} ({experience.location})"}
         )
 
         op = cast(
             PutOp,
-            handle_patch_memory(
+            await handle_patch_memory(
                 namespace,
                 key,
                 format_information(experience, tavily_res),
