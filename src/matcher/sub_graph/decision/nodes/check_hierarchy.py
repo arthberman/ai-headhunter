@@ -36,7 +36,7 @@ async def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):
                 ).model_dump(mode="json"),
                 "target_role": state.job_synthesis,
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
+                "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }
         ),
     )

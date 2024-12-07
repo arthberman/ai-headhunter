@@ -152,7 +152,7 @@ async def search_web(
             {
                 "web_query": query,
                 "examples": few_shot_messages,
-                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
+                "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
                 "output_language": configuration.output_language,
             }
         ),

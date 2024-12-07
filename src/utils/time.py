@@ -74,7 +74,7 @@ def compute_status(start_date: Optional[datetime], end_date: Optional[datetime])
 
     if not end_date or end_date.year <= 1900:
         # Still ongoing
-        return "Ongoing"
+        return f"Ongoing, started {compute_duration(start_date, now)} ago"
 
     if end_date > now:
         # Future end date

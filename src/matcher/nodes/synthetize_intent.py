@@ -43,7 +43,7 @@ async def node_synthetize_intent(
                 "profile": format_data(state.profile),
                 "synthesis_hierarchy": format_data(state.synthesis_hierarchy),
                 "synthesis_open_to_work": format_data(state.synthesis_open_to_work),
-                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
+                "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
                 "output_language": configuration.output_language,
                 "score": heuristic_score,
             }

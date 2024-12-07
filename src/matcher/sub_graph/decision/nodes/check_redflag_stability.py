@@ -52,7 +52,7 @@ async def node_check_redflag_stability(state: MainGraphState, config: RunnableCo
                 ).model_dump(mode="json"),
                 "examples": few_shot_messages,
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
+                "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }
         ),
     )

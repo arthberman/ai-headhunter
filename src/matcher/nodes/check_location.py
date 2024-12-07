@@ -64,7 +64,7 @@ async def node_check_location(
                 "candidate_headline_location": state.profile.location,
                 "examples": few_shot_messages,
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
+                "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }
         ),
     )
