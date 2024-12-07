@@ -31,9 +31,9 @@ async def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):
         HierarchySynthesis,
         await chain.ainvoke(
             {
-                "candidate_timeline": format_data(
-                    get_candidate_timeline(state.profile, with_detail=True)
-                ),
+                "candidate_timeline": get_candidate_timeline(
+                    state.profile, with_detail=True
+                ).model_dump(mode="json"),
                 "target_role": state.job_synthesis,
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
