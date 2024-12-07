@@ -100,8 +100,8 @@ async def node_infer_employment_type(
         await chain.ainvoke(
             {
                 "experiences": format_data(formatted_experiences),
-                "candidate_timeline": format_data(
-                    get_candidate_timeline(state.profile)
+                "candidate_timeline": get_candidate_timeline(state.profile).model_dump(
+                    mode="json"
                 ),
                 "examples": few_shot_messages,
                 "output_language": configuration.output_language,

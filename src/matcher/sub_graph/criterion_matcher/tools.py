@@ -148,7 +148,7 @@ async def search_web(
     # Invoke the chain
     res = cast(
         JudgeWebSearch,
-        chain.invoke(
+        await chain.ainvoke(
             {
                 "web_query": query,
                 "examples": few_shot_messages,

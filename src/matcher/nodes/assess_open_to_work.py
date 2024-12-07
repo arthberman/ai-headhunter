@@ -59,7 +59,7 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
             {
                 "candidate_timeline": get_candidate_timeline(
                     state.profile, with_detail=True
-                ),
+                ).model_dump(mode="json"),
                 "examples": few_shot_messages,
                 "target_role": state.job_synthesis,
                 "output_language": configuration.output_language,

@@ -57,9 +57,9 @@ async def node_check_location(
         LocationSynthesis,
         await chain.ainvoke(
             {
-                "job_location_criteria": format_data(criterion),
-                "candidate_timeline": format_data(
-                    get_candidate_timeline(state.profile)
+                "job_location_criteria": criterion.model_dump(mode="json"),
+                "candidate_timeline": get_candidate_timeline(state.profile).model_dump(
+                    mode="json"
                 ),
                 "candidate_headline_location": state.profile.location,
                 "examples": few_shot_messages,
