@@ -4,7 +4,6 @@ from .candidate_timeline import get_candidate_timeline
 from .clean_message import clean_message
 from .compute_must_score import compute_must_score
 from .few_shot import FewShotConfig, get_few_shot_messages
-from .format_data import format_data
 from .format_scored_criteria import format_scored_criteria
 from .get_dataset import get_dataset
 from .get_extended_scored_criterion import get_extended_scored_criterion
@@ -18,7 +17,6 @@ from .time import compute_duration, compute_status, format_date, is_valid_date
 __all__ = [
     "init_model",
     "get_retry_policy",
-    "format_data",
     "get_extended_scored_criterion",
     "get_candidate_timeline",
     "get_profile_metadata",

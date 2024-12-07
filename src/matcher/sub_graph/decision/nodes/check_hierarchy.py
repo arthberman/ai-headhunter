@@ -6,7 +6,7 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from matcher.configuration import Configuration
 from matcher.models.synthesis import HierarchySynthesis
 from matcher.state import MainGraphState
-from utils import format_data, get_candidate_timeline, get_prompt, init_model
+from utils import get_candidate_timeline, get_prompt, init_model
 
 
 async def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):

@@ -14,7 +14,6 @@ from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
 from matcher.sub_graph.criterion_matcher.state import AnalysisMainState
 from utils import (
     FewShotConfig,
-    format_data,
     get_few_shot_messages,
     get_prompt,
     init_model,
@@ -44,46 +43,48 @@ def get_candidate_info(
     info_map = {
         CandidateInfoType.EXPERIENCES: {
             "experiences": [
-                experience.model_dump()
+                experience.model_dump(mode="json")
                 for experience in state.main_state.profile.experiences
             ],
             "experience_enrichment": [
-                experience_enrichment.model_dump()
+                experience_enrichment.model_dump(mode="json")
                 for experience_enrichment in state.main_state.experience_enrichment
             ],
         },
         CandidateInfoType.SKILLS: state.main_state.profile.skills,
         CandidateInfoType.CERTIFICATIONS: [
-            certification.model_dump()
+            certification.model_dump(mode="json")
             for certification in state.main_state.profile.certifications
         ],
         CandidateInfoType.EDUCATIONS: {
             "educations": [
-                education.model_dump()
+                education.model_dump(mode="json")
                 for education in state.main_state.profile.educations
             ],
             "education_enrichment": [
-                education_enrichment.model_dump()
+                education_enrichment.model_dump(mode="json")
                 for education_enrichment in state.main_state.education_enrichment
             ],
         },
         CandidateInfoType.HONORS: [
-            honor.model_dump() for honor in state.main_state.profile.honors
+            honor.model_dump(mode="json") for honor in state.main_state.profile.honors
         ],
         CandidateInfoType.LANGUAGES: {
             "languages": [
-                language.model_dump() for language in state.main_state.profile.languages
+                language.model_dump(mode="json")
+                for language in state.main_state.profile.languages
             ],
             "inferred_languages": [
-                inferred_languages.model_dump()
+                inferred_languages.model_dump(mode="json")
                 for inferred_languages in state.main_state.inferred_languages
             ],
         },
         CandidateInfoType.PROJECTS: [
-            project.model_dump() for project in state.main_state.profile.projects
+            project.model_dump(mode="json")
+            for project in state.main_state.profile.projects
         ],
         CandidateInfoType.VOLUNTEERINGS: [
-            volunteering.model_dump()
+            volunteering.model_dump(mode="json")
             for volunteering in state.main_state.profile.volunteerings
         ],
         CandidateInfoType.COMPANY_CULTURE: state.main_state.inferred_culture,
@@ -97,7 +98,7 @@ def get_candidate_info(
 
     if not data:
         return f"No information available for {infotype.value.upper()}. The candidate's profile does not contain any data for this category."
-    return format_data(data)
+    return data
 
 
 async def search_web(

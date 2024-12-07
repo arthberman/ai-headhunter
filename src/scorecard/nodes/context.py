@@ -55,7 +55,9 @@ def node_context(
             {
                 "messages": formatted_messages,
                 "existing": {
-                    "ScorecardWithContextValidation": state.scorecard.model_dump()
+                    "ScorecardWithContextValidation": state.scorecard.model_dump(
+                        mode="json"
+                    )
                 },
             }
         )["responses"][0],

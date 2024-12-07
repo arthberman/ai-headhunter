@@ -6,7 +6,7 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 from matcher.configuration import Configuration
 from matcher.models.synthesis import IntentSynthesis
 from matcher.state import MainGraphState
-from utils import format_data, get_prompt, init_model
+from utils import get_prompt, init_model
 
 
 async def node_synthetize_intent(
@@ -40,9 +40,13 @@ async def node_synthetize_intent(
         IntentSynthesis,
         await chain.ainvoke(
             {
-                "profile": format_data(state.profile),
-                "synthesis_hierarchy": format_data(state.synthesis_hierarchy),
-                "synthesis_open_to_work": format_data(state.synthesis_open_to_work),
+                "profile": state.profile.model_dump(mode="json"),
+                "synthesis_hierarchy": state.synthesis_hierarchy.model_dump(
+                    mode="json"
+                ),
+                "synthesis_open_to_work": state.synthesis_open_to_work.model_dump(
+                    mode="json"
+                ),
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
                 "output_language": configuration.output_language,
                 "score": heuristic_score,

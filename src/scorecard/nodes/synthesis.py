@@ -28,7 +28,9 @@ def node_synthesis(
                 "context_enriched": state.context_enriched,
                 "context_additional": (state.context_additional or [])
                 + (state.human_feedback or []),
-                "generated_questions": state.generated_questions,
+                "generated_questions": state.generated_questions.model_dump(
+                    mode="json"
+                ),
             }
         ),
     )

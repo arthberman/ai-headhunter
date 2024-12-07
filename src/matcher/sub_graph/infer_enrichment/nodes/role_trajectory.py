@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from matcher.configuration import Configuration
 from matcher.sub_graph.infer_enrichment.state import MainInferEnrichmentState
-from utils import format_data, get_prompt, init_model
+from utils import get_prompt, init_model
 from utils.few_shot import FewShotConfig, get_few_shot_messages
 
 
@@ -55,7 +55,7 @@ async def node_infer_role_trajectory(
         RoleTrajectory,
         await chain.ainvoke(
             {
-                "profile": format_data(state.profile),
+                "profile": state.profile.model_dump(mode="json"),
                 "examples": few_shot_messages,
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }

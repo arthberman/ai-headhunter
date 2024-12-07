@@ -8,7 +8,6 @@ from matcher.models.synthesis import SynthesisOverall
 from matcher.state import MainGraphState
 from utils import (
     compute_must_score,
-    format_data,
     format_scored_criteria,
     get_extended_scored_criterion,
     get_prompt,
@@ -85,22 +84,22 @@ async def node_conclude(
         SynthesisOverall,
         await chain.ainvoke(
             {
-                "extended_scored_criterion": format_data(
-                    format_scored_criteria(
-                        extended_scored_criterion,
-                        state.scored_criterion,
-                        state.scorecard,
-                    )
+                "extended_scored_criterion": format_scored_criteria(
+                    extended_scored_criterion,
+                    state.scored_criterion,
+                    state.scorecard,
+                ).model_dump(mode="json"),
+                "evaluation_guidelines": get_evaluation_guidelines(
+                    False if must_score.score.value == "FAIL" else True
                 ),
-                "evaluation_guidelines": format_data(
-                    get_evaluation_guidelines(
-                        False if must_score.score.value == "FAIL" else True
-                    )
+                "job_synthesis": state.job_synthesis,
+                "synthesis_hierarchy": state.synthesis_hierarchy.model_dump(
+                    mode="json"
                 ),
-                "job_synthesis": format_data(state.job_synthesis),
-                "synthesis_hierarchy": format_data(state.synthesis_hierarchy),
-                "synthesis_open_to_work": format_data(state.synthesis_open_to_work),
-                "inferred_role_trajectory": format_data(state.inferred_role_trajectory),
+                "synthesis_open_to_work": state.synthesis_open_to_work.model_dump(
+                    mode="json"
+                ),
+                "inferred_role_trajectory": state.inferred_role_trajectory,
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }

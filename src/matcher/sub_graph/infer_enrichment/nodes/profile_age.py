@@ -6,7 +6,7 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from matcher.configuration import Configuration
 from matcher.models.profile import ProfileAge
 from matcher.sub_graph.infer_enrichment.state import MainInferEnrichmentState
-from utils import format_data, get_prompt, init_model
+from utils import get_prompt, init_model
 
 
 async def node_infer_age(
@@ -38,7 +38,7 @@ async def node_infer_age(
         ProfileAge,
         await chain.ainvoke(
             {
-                "profile": format_data(state.profile),
+                "profile": state.profile.model_dump(mode="json"),
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }

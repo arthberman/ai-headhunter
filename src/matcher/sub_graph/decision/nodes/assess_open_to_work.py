@@ -41,10 +41,7 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
         input_keys=["profile_details"],
         output_keys=["score", "explanation"],
         input_template="Profile details: {profile_details}",
-        output_template="""
-                Score: {score}
-                Explanation: {explanation}
-                """,
+        output_template="""Score: {score}\nExplanation: {explanation}""",
     )
 
     few_shot_messages = await get_few_shot_messages(few_shot_config)
@@ -62,7 +59,7 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
             {
                 "candidate_timeline": get_candidate_timeline(
                     state.profile, with_detail=True
-                ),
+                ).model_dump(mode="json"),
                 "examples": few_shot_messages,
                 "target_role": state.job_synthesis,
                 "output_language": configuration.output_language,
