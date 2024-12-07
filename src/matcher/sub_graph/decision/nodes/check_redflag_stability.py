@@ -5,6 +5,7 @@ from langchain_core.runnables import Runnable, RunnableConfig
 
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
+from matcher.sub_graph.decision.models import RedflagStability
 from utils import (
     FewShotConfig,
     get_candidate_timeline,
@@ -37,14 +38,14 @@ async def node_check_redflag_stability(state: MainGraphState, config: RunnableCo
     few_shot_messages = await get_few_shot_messages(few_shot_config)
 
     # Bind the model to the structured output
-    model = raw_model.with_structured_output(OpenToWorkSynthesis)
+    model = raw_model.with_structured_output(RedflagStability)
 
     # Create the chain
     chain = cast(Runnable, prompt | model)
 
     # Invoke the chain
     res = cast(
-        OpenToWorkSynthesis,
+        RedflagStability,
         await chain.ainvoke(
             {
                 "candidate_timeline": get_candidate_timeline(

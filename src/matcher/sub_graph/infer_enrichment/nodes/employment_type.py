@@ -8,7 +8,6 @@ from matcher.configuration import Configuration
 from matcher.sub_graph.infer_enrichment.state import MainInferEnrichmentState
 from utils import (
     FewShotConfig,
-    format_data,
     get_few_shot_messages,
     get_prompt,
     init_model,
@@ -89,9 +88,9 @@ async def node_infer_employment_type(
     if not experiences_without_employment_type:
         return {"profile": state.profile}
 
-    # Format experiences with their IDs for the LLM (format_data is sync)
+    # Format experiences with their IDs for the LLM
     formatted_experiences = [
-        {"id": idx, "experience": format_data(exp)}
+        {"id": idx, "experience": exp.model_dump(mode="json")}
         for idx, exp in experiences_without_employment_type
     ]
 
@@ -99,7 +98,7 @@ async def node_infer_employment_type(
         ListEmploymentType,
         await chain.ainvoke(
             {
-                "experiences": format_data(formatted_experiences),
+                "experiences": formatted_experiences,
                 "candidate_timeline": get_candidate_timeline(state.profile).model_dump(
                     mode="json"
                 ),

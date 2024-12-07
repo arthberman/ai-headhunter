@@ -33,7 +33,9 @@ def node_judge_scorecard_structure(
         extractor.invoke(
             {
                 "messages": formatted_messages,
-                "existing": {"LimitedScorecard": limited_scorecard.model_dump()},
+                "existing": {
+                    "LimitedScorecard": limited_scorecard.model_dump(mode="json")
+                },
             }
         )["responses"][0],
     )

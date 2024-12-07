@@ -3,7 +3,7 @@ from enum import Enum
 from pydantic import BaseModel, Field
 
 
-class SynthesisScore(Enum):
+class Score(Enum):
     """Score of the synthesis."""
 
     PASS = "pass"
@@ -11,10 +11,10 @@ class SynthesisScore(Enum):
     DOUBT = "doubt"
 
 
-class RedflagStabilitySynthesis(BaseModel):
-    """Synthesis of the candidate's redflag stability."""
+class RedflagStability(BaseModel):
+    """Candidate's redflag stability assessment."""
 
-    score: SynthesisScore = Field(..., description="Score of the synthesis")
+    score: Score = Field(..., description="Score of the assessment")
     explanation: str = Field(
-        ..., description="Explanation of the synthesis (max 600 characters)"
+        ..., description="Explanation of the assessment (max 600 characters)"
     )

@@ -12,7 +12,7 @@ from matcher.models.synthesis import (
 from matcher.state import MainGraphState
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
 from scorecard.models.scorecard import Category, Priority
-from utils import format_data, get_prompt, init_model
+from utils import get_prompt, init_model
 from utils.candidate_timeline import get_candidate_timeline
 from utils.few_shot import FewShotConfig, get_few_shot_messages
 

@@ -7,7 +7,7 @@ from langsmith.schemas import Example, Run
 
 from matcher.models.language import LanguageProficiency
 from matcher.nodes.enrichment.language import StructuredOutput
-from utils import format_data, get_prompt
+from utils import get_prompt
 from utils.init_model import init_model
 
 load_dotenv(dotenv_path=".env.studio")
@@ -32,7 +32,7 @@ def predict_language_enrichment(example: dict):
     # Invoke the chain
     res = cast(
         StructuredOutput,
-        chain.invoke({"profile": format_data(example), "knowledge_points": ""}),
+        chain.invoke({"profile": example, "knowledge_points": ""}),
     )
 
     return {"language_proficiency": res.language_proficiency}

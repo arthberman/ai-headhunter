@@ -55,7 +55,9 @@ def node_scoring_distribution(
             {
                 "messages": formatted_messages,
                 "existing": {
-                    "ScorecardWithScoringDistributionValidation": state.scorecard.model_dump()
+                    "ScorecardWithScoringDistributionValidation": state.scorecard.model_dump(
+                        mode="json"
+                    )
                 },
             }
         )["responses"][0],

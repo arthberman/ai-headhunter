@@ -9,7 +9,7 @@ from matcher.sub_graph.infer_enrichment.state import (
     MainInferEnrichmentState,
     OutputInferEnrichmentState,
 )
-from utils import format_data, get_prompt, init_model
+from utils import get_prompt, init_model
 
 
 class IndustrySectorSynthesis(BaseModel):
@@ -47,7 +47,7 @@ async def node_infer_industry_sector(
         IndustrySectorSynthesis,
         await chain.ainvoke(
             {
-                "candidate": format_data(state.profile),
+                "candidate": state.profile.model_dump(mode="json"),
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }
