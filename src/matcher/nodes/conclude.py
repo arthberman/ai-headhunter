@@ -102,7 +102,7 @@ async def node_conclude(
                 "synthesis_open_to_work": format_data(state.synthesis_open_to_work),
                 "inferred_role_trajectory": format_data(state.inferred_role_trajectory),
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
+                "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }
         ),
     )

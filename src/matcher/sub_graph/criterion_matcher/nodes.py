@@ -49,7 +49,7 @@ async def init_agent(
                     "description": state.criterion.description,
                     "priority": state.criterion.priority.value,
                     "context": state.criterion.context,
-                    "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
+                    "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
                     "output_language": configuration.output_language,
                 }
             ),
@@ -72,7 +72,7 @@ async def init_agent(
         context=state.criterion.context,
         evaluation_steps=evaluation_steps,
         output_language=configuration.output_language,
-        system_time=datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
+        system_time=datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
     )
 
     return {

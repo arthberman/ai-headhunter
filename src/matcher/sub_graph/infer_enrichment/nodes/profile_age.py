@@ -40,7 +40,7 @@ async def node_infer_age(
             {
                 "profile": format_data(state.profile),
                 "output_language": configuration.output_language,
-                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
+                "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }
         ),
     )

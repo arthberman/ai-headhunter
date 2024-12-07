@@ -57,7 +57,7 @@ async def node_infer_role_trajectory(
             {
                 "profile": format_data(state.profile),
                 "examples": few_shot_messages,
-                "system_time": datetime.now().strftime("%d %B %Y (%d-%m-%Y)"),
+                "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }
         ),
     )
