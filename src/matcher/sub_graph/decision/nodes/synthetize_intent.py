@@ -4,14 +4,12 @@ from typing import cast
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from matcher.configuration import Configuration
-from matcher.models.synthesis import IntentSynthesis
 from matcher.state import MainGraphState
+from matcher.sub_graph.decision.models import IntentToMove
 from utils import get_prompt, init_model
 
 
-async def node_synthetize_intent(
-    state: MainGraphState, config: RunnableConfig
-) -> MainGraphState:
+async def node_synthetize_intent(state: MainGraphState, config: RunnableConfig):
     """Synthesize the intent of the profile."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
@@ -21,15 +19,15 @@ async def node_synthetize_intent(
 
     # Initialize the model
     raw_model = init_model(configuration.synthesis_model)
-    model = raw_model.with_structured_output(IntentSynthesis)
+    model = raw_model.with_structured_output(IntentToMove)
 
     # Create the chain
     chain = cast(RunnableLambda, prompt | model)
 
     # Compute score based on hierarchy and open_to_work synthesis results
     scores = [
-        state.synthesis_hierarchy.score.value,
-        state.synthesis_open_to_work.score.value,
+        state.hierarchy_move.score.value,
+        state.openess_to_work.score.value,
     ]
     heuristic_score = (
         "FAIL" if "FAIL" in scores else "DOUBT" if "DOUBT" in scores else "SUCCESS"
@@ -37,16 +35,12 @@ async def node_synthetize_intent(
 
     # Invoke the chain
     res = cast(
-        IntentSynthesis,
+        IntentToMove,
         await chain.ainvoke(
             {
                 "profile": state.profile.model_dump(mode="json"),
-                "synthesis_hierarchy": state.synthesis_hierarchy.model_dump(
-                    mode="json"
-                ),
-                "synthesis_open_to_work": state.synthesis_open_to_work.model_dump(
-                    mode="json"
-                ),
+                "synthesis_hierarchy": state.hierarchy_move.model_dump(mode="json"),
+                "synthesis_open_to_work": state.openess_to_work.model_dump(mode="json"),
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
                 "output_language": configuration.output_language,
                 "score": heuristic_score,
@@ -54,4 +48,4 @@ async def node_synthetize_intent(
         ),
     )
 
-    return {"synthesis_intent": res}
+    return {"intent_to_move": res}

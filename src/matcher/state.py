@@ -9,13 +9,16 @@ from matcher.memory.models.school import SchoolInfo
 from matcher.models.language import LanguageProficiency
 from matcher.models.profile import Profile
 from matcher.models.synthesis import (
-    HierarchySynthesis,
-    IntentSynthesis,
     LocationSynthesis,
-    OpenToWorkSynthesis,
-    SynthesisOverall,
 )
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
+from matcher.sub_graph.decision.models import (
+    ConclusionOverall,
+    HierarchyMove,
+    IntentToMove,
+    OpenessToWork,
+    RedflagStability,
+)
 from scorecard.models.scorecard import Scorecard
 from utils import reducer_list
 
@@ -44,7 +47,9 @@ class MainGraphState(InputGraphState):
     scored_criterion: Annotated[List[ScoredCriterion], operator.add]
 
     synthesis_location: Optional[LocationSynthesis] = Field(default=None)
-    synthesis_hierarchy: Optional[HierarchySynthesis] = Field(default=None)
-    synthesis_open_to_work: Optional[OpenToWorkSynthesis] = Field(default=None)
-    synthesis_intent: Optional[IntentSynthesis] = Field(default=None)
-    synthesis_overall: Optional[SynthesisOverall] = Field(default=None)
+
+    conclusion_overall: Optional[ConclusionOverall] = Field(default=None)
+    hierarchy_move: Optional[HierarchyMove] = Field(default=None)
+    openess_to_work: Optional[OpenessToWork] = Field(default=None)
+    intent_to_move: Optional[IntentToMove] = Field(default=None)
+    redflag_stability: Optional[RedflagStability] = Field(default=None)

@@ -12,9 +12,6 @@ from matcher.sub_graph.infer_enrichment.nodes.language import node_infer_languag
 from matcher.sub_graph.infer_enrichment.nodes.profile_age import (
     node_infer_age,
 )
-from matcher.sub_graph.infer_enrichment.nodes.role_trajectory import (
-    node_infer_role_trajectory,
-)
 from matcher.sub_graph.infer_enrichment.state import (
     MainInferEnrichmentState,
     OutputInferEnrichmentState,
@@ -43,9 +40,6 @@ def get_infer_enrichment_subgraph():
         node_infer_employment_type,
         retry=get_retry_policy(),
     )
-    workflow.add_node(
-        "infer_role_trajectory", node_infer_role_trajectory, retry=get_retry_policy()
-    )
     workflow.add_node("infer_age", node_infer_age, retry=get_retry_policy())
 
     workflow.add_edge(START, "infer_employment_type")
@@ -53,8 +47,6 @@ def get_infer_enrichment_subgraph():
     workflow.add_edge("infer_age", "infer_languages")
     workflow.add_edge("infer_age", "infer_industry_sector")
     workflow.add_edge("infer_age", "infer_culture")
-    workflow.add_edge("infer_age", "infer_role_trajectory")
-    workflow.add_edge("infer_role_trajectory", END)
     workflow.add_edge("infer_languages", END)
     workflow.add_edge("infer_industry_sector", END)
     workflow.add_edge("infer_culture", END)

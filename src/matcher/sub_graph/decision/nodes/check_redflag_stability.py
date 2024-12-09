@@ -58,4 +58,4 @@ async def node_check_redflag_stability(state: MainGraphState, config: RunnableCo
         ),
     )
 
-    return {"synthesis_open_to_work": res}
+    return {"redflag_stability": res}
