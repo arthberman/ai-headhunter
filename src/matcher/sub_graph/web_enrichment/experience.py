@@ -70,9 +70,9 @@ async def node_experience_enrichment(
     if not experience.linkedin_id:
         return {"experience_enrichment": []}
 
-    # Access store
-    namespace = ("company", "enrichment")
-    key = experience.linkedin_id.lower().strip()
+    # Access store - Updated namespace structure
+    key = "enrichment"
+    namespace = ("company", experience.linkedin_id.lower().strip())
     company = await store.aget(namespace, key)
 
     if company:
