@@ -6,7 +6,6 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 from matcher.configuration import Configuration
 from matcher.models.synthesis import (
     LocationSynthesis,
-    SynthesisOverall,
     SynthesisScore,
 )
 from matcher.state import MainGraphState
@@ -92,7 +91,7 @@ async def node_check_location(
     }
 
     # Only update synthesis_overall if location check fails
-    if res.score == SynthesisScore.FAIL:
+    """ if res.score == SynthesisScore.FAIL:
         state_update["synthesis_overall"] = SynthesisOverall(
             score=SynthesisScore.FAIL,
             explanation=f"Required location criteria not met: {res.explanation}",
@@ -100,6 +99,6 @@ async def node_check_location(
                 "🚫 Location requirements not satisfied",
                 "📍 Candidate location incompatible with job requirements",
             ],
-        )
+        ) """
 
     return state_update

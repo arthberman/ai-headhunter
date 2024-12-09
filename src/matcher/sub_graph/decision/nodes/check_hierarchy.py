@@ -4,8 +4,8 @@ from typing import cast
 from langchain_core.runnables import Runnable, RunnableConfig
 
 from matcher.configuration import Configuration
-from matcher.models.synthesis import HierarchySynthesis
 from matcher.state import MainGraphState
+from matcher.sub_graph.decision.models import HierarchyMove
 from utils import get_candidate_timeline, get_prompt, init_model
 
 
@@ -21,14 +21,14 @@ async def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):
     prompt = get_prompt("candidate-analysis-hierarchy")
 
     # Bind the model to the structured output
-    model = raw_model.with_structured_output(HierarchySynthesis)
+    model = raw_model.with_structured_output(HierarchyMove)
 
     # Create the chain
     chain = cast(Runnable, prompt | model)
 
     # Invoke the chain
     res = cast(
-        HierarchySynthesis,
+        HierarchyMove,
         await chain.ainvoke(
             {
                 "candidate_timeline": get_candidate_timeline(
@@ -41,4 +41,4 @@ async def node_check_hierarchy(state: MainGraphState, config: RunnableConfig):
         ),
     )
 
-    return {"synthesis_hierarchy": res}
+    return {"hierarchy_move": res}

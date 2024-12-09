@@ -4,8 +4,8 @@ from typing import cast
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from matcher.configuration import Configuration
-from matcher.models.synthesis import SynthesisOverall
 from matcher.state import MainGraphState
+from matcher.sub_graph.decision.models import ConclusionOverall
 from utils import (
     compute_must_score,
     format_scored_criteria,
@@ -66,7 +66,7 @@ async def node_conclude(
 
     # Initialize the model
     raw_model = init_model(configuration.synthesis_model)
-    model = raw_model.with_structured_output(SynthesisOverall)
+    model = raw_model.with_structured_output(ConclusionOverall)
 
     # Create the chain
     chain = cast(RunnableLambda, prompt | model)
@@ -81,7 +81,7 @@ async def node_conclude(
 
     # Invoke the chain
     res = cast(
-        SynthesisOverall,
+        ConclusionOverall,
         await chain.ainvoke(
             {
                 "extended_scored_criterion": format_scored_criteria(
@@ -93,12 +93,8 @@ async def node_conclude(
                     False if must_score.score.value == "FAIL" else True
                 ),
                 "job_synthesis": state.job_synthesis,
-                "synthesis_hierarchy": state.synthesis_hierarchy.model_dump(
-                    mode="json"
-                ),
-                "synthesis_open_to_work": state.synthesis_open_to_work.model_dump(
-                    mode="json"
-                ),
+                "synthesis_hierarchy": state.hierarchy_move.model_dump(mode="json"),
+                "synthesis_open_to_work": state.openess_to_work.model_dump(mode="json"),
                 "inferred_role_trajectory": state.inferred_role_trajectory,
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
@@ -106,4 +102,4 @@ async def node_conclude(
         ),
     )
 
-    return {"synthesis_overall": res}
+    return {"conclusion_overall": res}

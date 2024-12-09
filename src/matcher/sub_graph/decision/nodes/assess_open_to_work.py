@@ -4,8 +4,8 @@ from typing import cast
 from langchain_core.runnables import Runnable, RunnableConfig
 
 from matcher.configuration import Configuration
-from matcher.models.synthesis import OpenToWorkSynthesis, SynthesisScore
 from matcher.state import MainGraphState
+from matcher.sub_graph.decision.models import OpenessToWork, Score
 from utils import (
     FewShotConfig,
     get_candidate_timeline,
@@ -23,8 +23,8 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
     # Already open to work on his profile
     if state.profile.is_open_to_work:
         return {
-            "synthesis_open_to_work": OpenToWorkSynthesis(
-                score=SynthesisScore.PASS,
+            "synthesis_open_to_work": OpenessToWork(
+                score=Score.PASS,
                 explanation="This candidate is declared as Open To Work on his profile.",
             )
         }
@@ -47,14 +47,14 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
     few_shot_messages = await get_few_shot_messages(few_shot_config)
 
     # Bind the model to the structured output
-    model = raw_model.with_structured_output(OpenToWorkSynthesis)
+    model = raw_model.with_structured_output(OpenessToWork)
 
     # Create the chain
     chain = cast(Runnable, prompt | model)
 
     # Invoke the chain
     res = cast(
-        OpenToWorkSynthesis,
+        OpenessToWork,
         await chain.ainvoke(
             {
                 "candidate_timeline": get_candidate_timeline(
@@ -68,4 +68,4 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
         ),
     )
 
-    return {"synthesis_open_to_work": res}
+    return {"openess_to_work": res}

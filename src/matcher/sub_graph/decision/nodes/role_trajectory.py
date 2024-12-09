@@ -5,7 +5,7 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
 from matcher.configuration import Configuration
-from matcher.sub_graph.infer_enrichment.state import MainInferEnrichmentState
+from matcher.state import MainGraphState
 from utils import get_prompt, init_model
 from utils.few_shot import FewShotConfig, get_few_shot_messages
 
@@ -20,10 +20,10 @@ class RoleTrajectory(BaseModel):
 
 
 async def node_infer_role_trajectory(
-    state: MainInferEnrichmentState,
+    state: MainGraphState,
     *,
     config: RunnableConfig,
-) -> MainInferEnrichmentState:
+):
     """Estimate the role trajectory of the profile."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)

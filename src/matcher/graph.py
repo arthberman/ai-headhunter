@@ -6,14 +6,11 @@ from langgraph.types import Send
 
 from matcher.configuration import Configuration
 from matcher.models.synthesis import SynthesisScore
-from matcher.nodes.assess_open_to_work import node_assess_open_to_work
-from matcher.nodes.check_hierarchy import node_check_hierarchy
 from matcher.nodes.check_location import node_check_location
-from matcher.nodes.conclude import node_conclude
-from matcher.nodes.synthetize_intent import node_synthetize_intent
 from matcher.nodes.write_memory import node_write_memory
 from matcher.state import InputGraphState, MainGraphState
 from matcher.sub_graph.criterion_matcher.graph import get_criterion_matcher_subgraph
+from matcher.sub_graph.decision.graph import get_decision_subgraph
 from matcher.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgraph
 from matcher.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
 from scorecard.models.scorecard import Category, Priority
@@ -114,12 +111,12 @@ def continue_to_matcher(state: MainGraphState):
         compute_must_score(state.scored_criterion, state.scorecard).score
         == SynthesisScore.FAIL
     ):
-        return ["synthetize_scored_criteria"]
+        return "decision"
 
     if sends_preferred:
         return sends_preferred
 
-    return ["synthetize_scored_criteria"]
+    return "decision"
 
 
 def continue_to_enrichment(state: MainGraphState):
@@ -162,20 +159,10 @@ def compile_matcher_graph() -> CompiledGraph:
         get_infer_enrichment_subgraph(),
     )
 
-    workflow.add_node(
-        "synthetize_intent", node_synthetize_intent, retry=get_retry_policy()
-    )
-
-    workflow.add_node("synthetize_scored_criteria", pass_through_node)
+    workflow.add_node("decision", get_decision_subgraph())
 
     workflow.add_node("supervisor", pass_through_node)
     workflow.add_node("write_memory", node_write_memory, retry=get_retry_policy())
-    workflow.add_node("conclude", node_conclude, retry=get_retry_policy())
-
-    workflow.add_node(
-        "assess_open_to_work", node_assess_open_to_work, retry=get_retry_policy()
-    )
-    workflow.add_node("check_hierarchy", node_check_hierarchy, retry=get_retry_policy())
 
     workflow.add_edge(START, "compute_profile_metadata")
     workflow.add_edge("compute_profile_metadata", "check_location")
@@ -198,7 +185,7 @@ def compile_matcher_graph() -> CompiledGraph:
         [
             "score_required_criteria",
             "score_preferred_criteria",
-            "synthetize_scored_criteria",
+            "decision",
             "write_memory",
         ],
     )
@@ -207,14 +194,7 @@ def compile_matcher_graph() -> CompiledGraph:
     workflow.add_edge("score_preferred_criteria", "supervisor")
     workflow.add_edge("write_memory", "supervisor")
 
-    workflow.add_edge("synthetize_scored_criteria", "assess_open_to_work")
-    workflow.add_edge("synthetize_scored_criteria", "check_hierarchy")
-
-    workflow.add_edge("check_hierarchy", "synthetize_intent")
-    workflow.add_edge("assess_open_to_work", "synthetize_intent")
-
-    workflow.add_edge("synthetize_intent", "conclude")
-    workflow.add_edge("conclude", END)
+    workflow.add_edge("decision", END)
 
     graph = workflow.compile()
     graph.name = "AnalysisFullGraph"
