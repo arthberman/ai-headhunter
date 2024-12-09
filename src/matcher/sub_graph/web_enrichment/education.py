@@ -64,9 +64,9 @@ async def node_education_enrichment(
     if not education.linkedin_id:
         return {"education_enrichment": []}
 
-    # Access store
-    namespace = ("school", "enrichment")
-    key = education.linkedin_id.lower().strip()
+    # Access store - Updated namespace structure
+    key = "enrichment"
+    namespace = ("school", education.linkedin_id.lower().strip())
     school = await store.aget(namespace, key)
 
     if school:
