@@ -10,6 +10,7 @@ from matcher.models.synthesis import (
 )
 from matcher.state import MainGraphState
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
+from matcher.sub_graph.decision.models import ConclusionOverall
 from scorecard.models.scorecard import Category, Priority
 from utils import get_prompt, init_model
 from utils.candidate_timeline import get_candidate_timeline
@@ -91,14 +92,14 @@ async def node_check_location(
     }
 
     # Only update synthesis_overall if location check fails
-    """ if res.score == SynthesisScore.FAIL:
-        state_update["synthesis_overall"] = SynthesisOverall(
+    if res.score == SynthesisScore.FAIL:
+        state_update["conclusion_overall"] = ConclusionOverall(
             score=SynthesisScore.FAIL,
             explanation=f"Required location criteria not met: {res.explanation}",
             summary=[
                 "🚫 Location requirements not satisfied",
                 "📍 Candidate location incompatible with job requirements",
             ],
-        ) """
+        )
 
     return state_update
