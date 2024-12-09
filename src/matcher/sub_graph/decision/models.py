@@ -63,6 +63,6 @@ class ConclusionOverall(BaseModel):
     summary: List[str] = Field(
         ...,
         description="""Summary of the conclusion as a list of bullet points.
-        Focus on the elements
+        Use an emoji at the beginning of each element. Focus on the elements
         that were structural in your decisions. Max 70 characters per item""",
     )
