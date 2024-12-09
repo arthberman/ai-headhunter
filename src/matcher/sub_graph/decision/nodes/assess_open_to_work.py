@@ -31,7 +31,6 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
 
     # Initialize the raw model with the provided configuration
     raw_model = init_model(configuration.matcher_model)
-
     # Initialize the prompt
     prompt = get_prompt("candidate-analysis-open-to-work")
 
