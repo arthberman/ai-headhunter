@@ -4,14 +4,14 @@ version = "0.0.1"
 description = "AI Agents for repio.co"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["langchain>=0.3.11",
-  "langchain-community>=0.3.11",
-  "langchain-anthropic>=0.3.0",
-  "langchain-core>=0.3.25",
-  "langgraph>=0.2.59",
-  "langchain-openai>=0.2.12",
-  "pydantic>=2.10.3",
-  "langchain-aws>=0.2.9",
+dependencies = ["langchain>=0.3.13",
+  "langchain-community>=0.3.13",
+  "langchain-anthropic>=0.3.1",
+  "langchain-core>=0.3.28",
+  "langgraph>=0.2.60",
+  "langchain-openai>=0.2.14",
+  "pydantic>=2.10.4",
+  "langchain-aws>=0.2.10",
   "trustcall>=0.0.26",
   "python-dotenv>=1.0.1"]
 
