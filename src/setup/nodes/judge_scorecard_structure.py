@@ -4,10 +4,10 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from trustcall import create_extractor
 
-from scorecard.configuration import Configuration
-from scorecard.models.scorecard import BaseCriterion, Scorecard
-from scorecard.nodes.scorecard_structure import LimitedScorecard
-from scorecard.state import ScorecardGraphState
+from setup.configuration import Configuration
+from setup.models.scorecard import BaseCriterion, Scorecard
+from setup.nodes.scorecard_structure import LimitedScorecard
+from setup.state import ScorecardGraphState
 from utils import get_prompt, init_model
 
 

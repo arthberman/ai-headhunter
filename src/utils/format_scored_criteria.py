@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 from matcher.models.synthesis import MustSynthesis
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
-from scorecard.models.scorecard import Scorecard
+from setup.models.scorecard import Scorecard
 from utils.compute_must_score import compute_must_score
 from utils.get_extended_scored_criterion import ExtendedScoredCriterion
 

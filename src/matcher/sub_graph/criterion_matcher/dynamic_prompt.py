@@ -1,5 +1,5 @@
 from matcher.sub_graph.criterion_matcher.models import CotQuestions
-from scorecard.models.scorecard import (
+from setup.models.scorecard import (
     BaseCriterion,
     Priority,
     ScoringDistribution,

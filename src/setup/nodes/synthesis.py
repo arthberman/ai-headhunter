@@ -2,9 +2,9 @@ from typing import cast
 
 from langchain_core.runnables import Runnable, RunnableConfig
 
-from scorecard.configuration import Configuration
-from scorecard.models.synthesis import Synthesis
-from scorecard.state import ScorecardGraphState
+from setup.configuration import Configuration
+from setup.models.synthesis import Synthesis
+from setup.state import ScorecardGraphState
 from utils import get_prompt, init_model
 
 
@@ -24,10 +24,7 @@ def node_synthesis(
         Synthesis,
         chain.invoke(
             {
-                "context_initial": state.context_initial,
-                "context_enriched": state.context_enriched,
-                "context_additional": (state.context_additional or [])
-                + (state.human_feedback or []),
+                "contexts": state.contexts,
                 "generated_questions": state.generated_questions.model_dump(
                     mode="json"
                 ),

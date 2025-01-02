@@ -8,6 +8,7 @@ from .questions import node_questions
 from .scorecard_structure import node_scorecard_structure
 from .scoring_distribution import node_scoring_distribution
 from .synthesis import node_synthesis
+from .human_answer_questions import node_human_answer_questions
 
 __all__ = [
     "node_context",
@@ -18,4 +19,5 @@ __all__ = [
     "node_synthesis",
     "node_scorecard_structure",
     "node_judge_scorecard_structure",
+    "node_human_answer_questions",
 ]

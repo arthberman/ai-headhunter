@@ -1,7 +1,7 @@
 {
   "graphs": {
     "match": "./src/matcher/graph.py:compile_matcher_graph",
-    "scorecard": "./src/scorecard/graph.py:compile_scorecard_graph"
+    "setup": "./src/setup/graph.py:compile_setup_graph"
   },
   "env": ".env.studio",
   "python_version": "3.12",

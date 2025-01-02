@@ -6,7 +6,7 @@ from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 
-from scorecard.configuration import Configuration
+from setup.configuration import Configuration
 
 
 class WebContext(BaseModel):

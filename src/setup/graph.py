@@ -1,9 +1,10 @@
 from langgraph.graph import END, START, StateGraph
 
-from scorecard.configuration import Configuration
-from scorecard.nodes import (
+from setup.configuration import Configuration
+from setup.nodes import (
     get_enrichment_graph,
     node_context,
+    node_human_answer_questions,
     node_job_posting,
     #    node_judge_scorecard_structure,
     node_questions,
@@ -11,12 +12,18 @@ from scorecard.nodes import (
     node_scoring_distribution,
     node_synthesis,
 )
-from scorecard.state import ScorecardGraphState, ScorecardInputGraphState
+from setup.nodes.enrichment_subgraph.state import OutputGraphState
+from setup.state import ScorecardGraphState, ScorecardInputGraphState
 from utils import get_retry_policy
 
 
-def compile_scorecard_graph() -> StateGraph:
-    """Compile the scorecard full graph."""
+def update_state(state: OutputGraphState) -> ScorecardGraphState:
+    """Update the state."""
+    return {"contexts": state.contexts}
+
+
+def compile_setup_graph() -> StateGraph:
+    """Compile the setup full graph."""
     workflow = StateGraph(
         ScorecardGraphState,
         input=ScorecardInputGraphState,
@@ -25,6 +32,7 @@ def compile_scorecard_graph() -> StateGraph:
 
     # Add nodes to the graph
     workflow.add_node("enrichment", get_enrichment_graph())
+    workflow.add_node("update_state", update_state)
     workflow.add_node(
         "generate_job_posting", node_job_posting, retry=get_retry_policy()
     )
@@ -37,12 +45,15 @@ def compile_scorecard_graph() -> StateGraph:
     )
     workflow.add_node("generate_synthesis", node_synthesis, retry=get_retry_policy())
     workflow.add_node("generate_structure", node_scorecard_structure)
+    workflow.add_node("human_answer_questions", node_human_answer_questions)
     # workflow.add_node("judge_structure", node_judge_scorecard_structure)
     # Define the edges
     workflow.add_edge(START, "enrichment")
-    workflow.add_edge("enrichment", "generate_job_posting")
+    workflow.add_edge("enrichment", "update_state")
+    workflow.add_edge("update_state", "generate_job_posting")
     workflow.add_edge("generate_job_posting", "generate_questions")
-    workflow.add_edge("generate_questions", "generate_synthesis")
+    workflow.add_edge("generate_questions", "human_answer_questions")
+    workflow.add_edge("human_answer_questions", "generate_synthesis")
     workflow.add_edge("generate_synthesis", "generate_structure")
     # workflow.add_edge("generate_structure", "judge_structure")
     workflow.add_edge("generate_structure", "generate_context")
@@ -50,5 +61,5 @@ def compile_scorecard_graph() -> StateGraph:
     workflow.add_edge("generate_scoring_distribution", END)
 
     graph = workflow.compile()
-    graph.name = "ScorecardGraph"
+    graph.name = "SetupGraph"
     return graph

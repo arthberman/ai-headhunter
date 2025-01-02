@@ -6,7 +6,7 @@ from langgraph.store.base import Op
 from pydantic import BaseModel, Field
 
 from matcher.state import MainGraphState
-from scorecard.models.scorecard import BaseCriterion
+from setup.models.scorecard import BaseCriterion
 from utils import reducer_list
 
 

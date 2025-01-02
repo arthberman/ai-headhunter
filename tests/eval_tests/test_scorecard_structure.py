@@ -6,8 +6,8 @@ from langsmith.evaluation import evaluate
 from langsmith.schemas import Example, Run
 from pydantic import BaseModel, Field
 
-from scorecard.nodes.scorecard_structure import node_scorecard_structure
-from scorecard.state import ScorecardGraphState
+from setup.nodes.scorecard_structure import node_scorecard_structure
+from setup.state import ScorecardGraphState
 from utils import get_prompt
 from utils.init_model import init_model
 

@@ -1,3 +1,4 @@
+import uuid
 from enum import Enum
 from typing import List
 
@@ -25,6 +26,9 @@ class ExtendedCriterionType(str, Enum):
 class Question(BaseModel):
     """Question about uncertainty in the job posting."""
 
+    id: uuid.UUID = Field(
+        default_factory=uuid.uuid4, description="The ID of the question"
+    )
     question: str = Field(
         ...,
         description="Question about uncertainty in the job posting, max 130 characters",
