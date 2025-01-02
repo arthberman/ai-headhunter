@@ -1,28 +1,13 @@
-import operator
-from typing import Annotated, Optional, Sequence
-
-from langchain_core.messages import AIMessage, BaseMessage
+from langchain_core.messages import AIMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from langgraph.errors import NodeInterrupt
-from pydantic import BaseModel, Field
 
-from scorecard.configuration import Configuration
-from scorecard.nodes.enrichment_subgraph.tools import WebContext, get_tools
+from setup.configuration import Configuration
+from setup.nodes.enrichment_subgraph.state import AgentState
+from setup.nodes.enrichment_subgraph.tools import WebContext, get_tools
+from setup.state import BaseContext, ContextSource, ContextType
 from utils import get_prompt, init_model
-
-
-class AgentState(BaseModel):
-    """State of the agent."""
-
-    messages: Annotated[Sequence[BaseMessage], operator.add]
-    context_initial: str = Field(
-        ..., description="Raw job posting with all the context provided by the user"
-    )
-    context_enriched: Optional[WebContext] = Field(
-        None, description="Web context for the job posting"
-    )
-    loop_step: Annotated[int, operator.add] = Field(default=0)
 
 
 def init_agent(state: AgentState):
@@ -31,9 +16,7 @@ def init_agent(state: AgentState):
 
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
-    formatted_messages = chat_prompt.format_messages(
-        context_initial=state.context_initial
-    )
+    formatted_messages = chat_prompt.format_messages(contexts=state.contexts)
 
     return {"messages": formatted_messages}
 
@@ -66,8 +49,20 @@ def call_model(state: AgentState, *, config: RunnableConfig):
 def respond(state: AgentState):
     """Respond to the user."""
     response = WebContext(**state.messages[-1].tool_calls[0]["args"])
-    # We return the final answer
-    return {"context_enriched": response.context_enriched}
+
+    # Create a list of BaseContext objects from the enriched contexts
+    enriched_contexts = [
+        BaseContext(
+            source=ContextSource.AGENT,
+            content_type=ContextType.TEXT,
+            content=context,
+        )
+        for context in response.context_enriched
+    ]
+
+    state.contexts.extend(enriched_contexts)
+
+    return {"contexts": state.contexts}
 
 
 def should_continue(state: AgentState, *, config: RunnableConfig):

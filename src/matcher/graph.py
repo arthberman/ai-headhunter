@@ -13,7 +13,7 @@ from matcher.sub_graph.criterion_matcher.graph import get_criterion_matcher_subg
 from matcher.sub_graph.decision.graph import get_decision_subgraph
 from matcher.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgraph
 from matcher.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
-from scorecard.models.scorecard import Category, Priority
+from setup.models.scorecard import Category, Priority
 from utils import compute_must_score, get_retry_policy
 from utils.get_profile_metadata import get_profile_metadata
 

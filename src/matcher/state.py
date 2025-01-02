@@ -19,7 +19,7 @@ from matcher.sub_graph.decision.models import (
     OpenessToWork,
     RedflagStability,
 )
-from scorecard.models.scorecard import Scorecard
+from setup.models.scorecard import Scorecard
 from utils import reducer_list
 
 

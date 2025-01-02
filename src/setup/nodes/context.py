@@ -5,9 +5,9 @@ from langchain_core.runnables import RunnableConfig
 from pydantic import model_validator
 from trustcall import create_extractor
 
-from scorecard.configuration import Configuration
-from scorecard.models.scorecard import Scorecard
-from scorecard.state import ScorecardGraphState
+from setup.configuration import Configuration
+from setup.models.scorecard import Scorecard
+from setup.state import ScorecardGraphState
 from utils import get_prompt, init_model
 
 
@@ -36,9 +36,7 @@ def node_context(
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
-        context_initial=state.context_initial,
-        context_enriched=state.context_enriched,
-        context_additional=state.context_additional,
+        contexts=state.get_all_contexts_without_feedback(as_dict=True),
     )
 
     raw_model = init_model(configuration.structure_model)

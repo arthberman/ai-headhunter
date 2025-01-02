@@ -3,7 +3,7 @@ from typing import List
 
 from matcher.models.synthesis import MustSynthesis, SynthesisScore
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
-from scorecard.models.scorecard import Priority, Scorecard
+from setup.models.scorecard import Priority, Scorecard
 from utils.get_extended_scored_criterion import get_extended_scored_criterion
 
 

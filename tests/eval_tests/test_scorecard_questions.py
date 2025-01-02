@@ -8,7 +8,7 @@ from langsmith.schemas import Example, Run
 from pydantic import BaseModel, Field
 from trustcall import create_extractor
 
-from scorecard.models.question import ListQuestions
+from setup.models.question import ListQuestions
 from utils import get_prompt
 from utils.init_model import init_model
 

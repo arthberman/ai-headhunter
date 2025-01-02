@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 from pydantic import Field
 
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
-from scorecard.models.scorecard import Category, Priority, Scorecard
+from setup.models.scorecard import Category, Priority, Scorecard
 
 
 class ExtendedScoredCriterion(ScoredCriterion):

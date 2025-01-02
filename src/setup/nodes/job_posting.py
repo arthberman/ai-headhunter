@@ -4,9 +4,9 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
 from trustcall import create_extractor
 
-from scorecard.configuration import Configuration
-from scorecard.models.job_posting import JobPosting
-from scorecard.state import ScorecardGraphState
+from setup.configuration import Configuration
+from setup.models.job_posting import JobPosting
+from setup.state import ScorecardGraphState
 from utils import get_prompt, init_model
 
 
@@ -26,8 +26,7 @@ def node_job_posting(
     prompt = get_prompt("generate-scorecard-job-posting")
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
     formatted_messages = chat_prompt.format_messages(
-        context_initial=state.context_initial,
-        context_enriched=state.context_enriched,
+        contexts=state.get_all_contexts_without_feedback(as_dict=True),
     )
     # Invoke the extractor with the formatted messages
     res = cast(
