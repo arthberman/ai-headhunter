@@ -59,7 +59,7 @@ def node_scorecard_structure(
 
     # Get unprocessed feedback
     unprocessed_feedback = state.get_feedback_contexts_unprocessed()
-    feedback_content = "\n".join(ctx.content for ctx in unprocessed_feedback)
+    feedback_content = "\n".join(resource.content for resource in unprocessed_feedback)
 
     if state.scorecard:
         limited_scorecard = LimitedScorecard(**state.scorecard.model_dump())
@@ -72,7 +72,7 @@ def node_scorecard_structure(
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
-        contexts=state.get_all_contexts_without_feedback(as_dict=True),
+        resources=state.get_all_resources_without_feedback(as_dict=True),
         iterative_instruction=(
             prompt_iterative_instruction.format(human_feedback=feedback_content)
             if state.scorecard and feedback_content
@@ -126,5 +126,5 @@ def node_scorecard_structure(
 
     return {
         "scorecard": scorecard_new,
-        "contexts": state.contexts,  # Return updated contexts with processed feedback
+        "resources": state.resources,  # Return updated resources with processed feedback
     }

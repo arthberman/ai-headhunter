@@ -9,11 +9,11 @@ from pydantic import BaseModel, Field
 from setup.configuration import Configuration
 
 
-class WebContext(BaseModel):
+class WebResource(BaseModel):
     """Respond to the user with this tool."""
 
-    context_enriched: List[str] = Field(
-        description="List of context elements (results from the web search)"
+    resources_enriched: List[str] = Field(
+        description="List of text summaries related to web search results"
     )
 
 
@@ -33,5 +33,5 @@ async def search_web(
 
 def get_tools() -> List[BaseTool]:
     """Get the tools for the enrichment subgraph."""
-    tools = [search_web, WebContext]
+    tools = [search_web, WebResource]
     return tools

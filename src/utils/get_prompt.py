@@ -15,7 +15,8 @@ def get_prompt(prompt_name: str) -> ChatPromptTemplate:
         prompt_name = f"{prompt_name}:production"
 
     # Check if prompt is already in cache
-    if prompt_name in _prompt_cache:
+    # Cache only in production
+    if os.getenv("ENV") == "production" and prompt_name in _prompt_cache:
         return _prompt_cache[prompt_name]
 
     # If not in cache, pull from hub and store in cache

@@ -44,7 +44,7 @@ class CompanyInfo(BaseModel):
     )
 
     roles: List[Role] = Field(
-        description="Roles and their real-world contexts, extracted from profile descriptions. "
+        description="Roles and their real-world resources, extracted from profile descriptions. "
         "This helps understand what people actually do in different positions. "
         "Each role description should reflect actual work, tools used, and scope of responsibility. "
         "Example: A Marketing Manager might use HubSpot and manage international campaigns, "
