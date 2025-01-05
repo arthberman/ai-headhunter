@@ -5,8 +5,8 @@ from langgraph.errors import NodeInterrupt
 
 from setup.configuration import Configuration
 from setup.nodes.enrichment_subgraph.state import AgentState
-from setup.nodes.enrichment_subgraph.tools import WebContext, get_tools
-from setup.state import BaseContext, ContextSource, ContextType
+from setup.nodes.enrichment_subgraph.tools import WebResource, get_tools
+from setup.state import BaseResource, ResourceOrigin, ResourceType
 from utils import get_prompt, init_model
 
 
@@ -16,7 +16,7 @@ def init_agent(state: AgentState):
 
     chat_prompt = ChatPromptTemplate.from_messages(hub_prompt.messages)
 
-    formatted_messages = chat_prompt.format_messages(contexts=state.contexts)
+    formatted_messages = chat_prompt.format_messages(resources=state.resources)
 
     return {"messages": formatted_messages}
 
@@ -31,7 +31,7 @@ def call_model(state: AgentState, *, config: RunnableConfig):
         return {
             "messages": [
                 AIMessage(
-                    content="You exceeded the maximum number of loops. You must respond to the user by calling the WebContext tool now.",
+                    content="You exceeded the maximum number of loops. You must respond to the user by calling the WebResource tool now.",
                 )
             ],
             "loop_step": 1,
@@ -48,21 +48,21 @@ def call_model(state: AgentState, *, config: RunnableConfig):
 
 def respond(state: AgentState):
     """Respond to the user."""
-    response = WebContext(**state.messages[-1].tool_calls[0]["args"])
+    response = WebResource(**state.messages[-1].tool_calls[0]["args"])
 
-    # Create a list of BaseContext objects from the enriched contexts
-    enriched_contexts = [
-        BaseContext(
-            source=ContextSource.AGENT,
-            content_type=ContextType.TEXT,
-            content=context,
+    # Create a list of BaseResource objects from the enriched resources
+    enriched_resources = [
+        BaseResource(
+            source=ResourceOrigin.AGENT,
+            content_type=ResourceType.TEXT,
+            content=resource,
         )
-        for context in response.context_enriched
+        for resource in response.resources_enriched
     ]
 
-    state.contexts.extend(enriched_contexts)
+    state.resources.extend(enriched_resources)
 
-    return {"contexts": state.contexts}
+    return {"resources": state.resources}
 
 
 def should_continue(state: AgentState, *, config: RunnableConfig):
@@ -79,7 +79,7 @@ def should_continue(state: AgentState, *, config: RunnableConfig):
     # If there is only one tool call and it is the response tool call we respond to the user
     if (
         len(last_message.tool_calls) == 1
-        and last_message.tool_calls[0]["name"] == "WebContext"
+        and last_message.tool_calls[0]["name"] == "WebResource"
     ):
         return "respond"
     # Otherwise we will use the tool node again

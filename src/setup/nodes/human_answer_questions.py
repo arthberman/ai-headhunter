@@ -5,10 +5,10 @@ from langgraph.types import interrupt
 from pydantic import BaseModel, Field
 
 from setup.state import (
-    BaseContext,
-    ContextSource,
-    ContextType,
-    QuestionContext,
+    BaseResource,
+    QuestionResource,
+    ResourceOrigin,
+    ResourceType,
     ScorecardGraphState,
 )
 
@@ -28,7 +28,9 @@ class Response(BaseModel):
     )
 
 
-def node_human_answer_questions(state: ScorecardGraphState) -> ScorecardGraphState:
+async def node_human_answer_questions(
+    state: ScorecardGraphState,
+) -> ScorecardGraphState:
     """Human answer questions."""
     # Store the questions first to maintain stable references
     questions = state.generated_questions.questions
@@ -50,18 +52,18 @@ def node_human_answer_questions(state: ScorecardGraphState) -> ScorecardGraphSta
         if answer.id not in question_ids:
             raise ValueError(f"Question ID {answer.id} not found in state")
 
-    # BaseContext for each answer with QuestionContext type-specific fields
+    # BaseResource for each answer with QuestionContext type-specific fields
     for answer in result.final_answers:
         if not answer.final_answer:
             continue
 
-        state.contexts.append(
-            BaseContext(
-                source=ContextSource.HUMAN,
-                content_type=ContextType.QUESTION,
+        state.resources.append(
+            BaseResource(
+                source=ResourceOrigin.HUMAN,
+                content_type=ResourceType.QUESTION,
                 content=answer.final_answer,
-                type_specific=QuestionContext(question_id=answer.id),
+                type_specific=QuestionResource(question_id=answer.id),
             )
         )
 
-    return {"contexts": state.contexts}
+    return {"resources": state.resources}

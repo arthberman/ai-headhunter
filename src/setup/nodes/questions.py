@@ -21,7 +21,7 @@ def node_questions(
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
-        contexts=state.get_all_contexts_without_feedback(as_dict=True),
+        resources=state.get_all_resources_without_feedback(as_dict=True),
     )
 
     raw_model = init_model(configuration.structure_model)
