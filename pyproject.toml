@@ -5,16 +5,18 @@ description = "AI Agents for repio.co"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-  "langchain>=0.3.13",
-  "langchain-community>=0.3.13",
+  "langchain>=0.3.14",
+  "langchain-community>=0.3.14",
   "langchain-anthropic>=0.3.1",
-  "langchain-core>=0.3.28",
-  "langgraph>=0.2.60",
+  "langchain-core>=0.3.29",
+  "langgraph>=0.2.61",
   "langchain-openai>=0.2.14",
   "pydantic>=2.10.4",
   "langchain-aws>=0.2.10",
   "trustcall>=0.0.26",
   "python-dotenv>=1.0.1",
+  "langgraph-sdk>=0.1.48",
+  "asyncpg>=0.30.0",
 ]
 
 [build-system]
@@ -24,15 +26,14 @@ build-backend = "setuptools.build_meta"
 [tool.uv]
 dev-dependencies = [
   "ipykernel>=6.29.5",
-  "langgraph-cli[inmem]>=0.1.56",
-  "langgraph-sdk>=0.1.33",
-  "mypy>=1.13.0",
-  "ruff>=0.6.6",
+  "langgraph-cli[inmem]>=0.1.65",
+  "mypy>=1.14.1",
+  "ruff>=0.8.6",
   "toml>=0.10.2",
 ]
 
 [tool.setuptools]
-packages = ["matcher", "setup", "utils"]
+packages = ["matcher", "setup", "utils", "security"]
 
 [tool.ruff]
 include = ["*.py", "*.pyi", "*.ipynb"]
@@ -41,7 +42,7 @@ include = ["*.py", "*.pyi", "*.ipynb"]
 matcher = "src/matcher"
 setup = "src/setup"
 utils = "src/utils"
-
+security = "src/security"
 [tool.setuptools.package-data]
 "*" = ["py.typed"]
 
