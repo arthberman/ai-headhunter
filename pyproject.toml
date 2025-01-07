@@ -15,8 +15,8 @@ dependencies = [
   "langchain-aws>=0.2.10",
   "trustcall>=0.0.26",
   "python-dotenv>=1.0.1",
-  "langgraph-sdk>=0.1.48",
   "asyncpg>=0.30.0",
+  "langgraph-sdk>=0.1.48",
 ]
 
 [build-system]

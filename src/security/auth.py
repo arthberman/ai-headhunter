@@ -1,7 +1,7 @@
-from typing import Literal, Protocol
+from typing import Protocol, Sequence
 
 from langgraph_sdk import Auth
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.security.db import get_session_from_token, validate_api_key
 
@@ -11,12 +11,11 @@ auth = Auth()
 class UserContext(BaseModel):
     """User context for authentication."""
 
-    identity: str
-    is_authenticated: bool = True
-    organization_id: str | None = None  # Optional for admin
-    email: str
-    name: str
-    auth_type: Literal["session", "admin"]
+    identity: str = Field(...)
+    is_authenticated: bool = Field(True)
+    permissions: Sequence[str] | None = Field(None)
+    organization_id: str | None = Field(None)
+    email: str | None = Field(None)
 
 
 class AuthContext(Protocol):
@@ -37,13 +36,11 @@ async def authenticate_session(token: str) -> UserContext:
         identity=str(session["user_id"]),
         organization_id=str(session["active_organization_id"]),
         email=session["email"],
-        name=session["name"],
-        auth_type="session",
     )
 
 
 @auth.authenticate
-async def authenticate(headers: dict) -> UserContext:
+async def authenticate(headers: dict[str, bytes]) -> UserContext:
     """Authenticate requests using LangSmith API key or session token."""
     # First check for LangSmith API key - try both string and bytes keys
     api_key = headers.get("x-api-key") or headers.get(b"x-api-key")
@@ -54,10 +51,7 @@ async def authenticate(headers: dict) -> UserContext:
 
     if api_key and validate_api_key(api_key):
         return UserContext(
-            identity="admin",
-            email="arthur@repio.co",
-            name="Arthur",
-            auth_type="admin",
+            identity="backend",
         )
 
     # If no valid API key, try session auth - handle both string and bytes
@@ -80,11 +74,7 @@ async def scope_to_organization(
 ) -> dict:
     """Scope resources to organization for non-admin users."""
     # Check if it's a LangGraph studio user (admin)
-    if ctx.user.identity == "langgraph-studio-user":
-        return {}
-
-    if ctx.user.auth_type == "admin":
-        # Our admin users have full access
+    if ctx.user.identity == "langgraph-studio-user" or ctx.user.identity == "backend":
         return {}
 
     # Regular users are scoped to their organization
@@ -101,47 +91,210 @@ async def scope_to_organization(
 
 
 # Resource-specific handlers
-""" @auth.on.threads.create """
 
 
+# Thread handlers
+@auth.on.threads.create
 async def on_thread_create(
     ctx: AuthContext,
-    value: Auth.types.on.threads.create.value,
+    value: Auth.types.ThreadsCreate.values,
 ):
-    """Add organization and owner metadata when creating threads."""
-    metadata = value.setdefault("metadata", {})
-    metadata.update({"organization_id": ctx.user.organization_id})
-    return {"organization_id": ctx.user.organization_id}
+    """Block thread creation for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to create threads"
+        )
+    return {}
 
 
-""" @auth.on.threads.read """
-
-
+@auth.on.threads.read
 async def on_thread_read(
     ctx: AuthContext,
-    value: Auth.types.on.threads.read.value,
+    value: Auth.types.ThreadsRead.values,
 ):
-    """Only allow access to threads in user's organization."""
+    """Allow thread reading for all authenticated users, scoped to organization."""
+    if ctx.user.identity in ["langgraph-studio-user", "backend"]:
+        return {}
     return {"organization_id": ctx.user.organization_id}
 
 
-""" @auth.on.assistants """
-
-
-async def on_assistants(
+@auth.on.threads.update
+async def on_thread_update(
     ctx: AuthContext,
-    value: Auth.types.on.assistants.value,
+    value: Auth.types.ThreadsUpdate.values,
 ):
-    """Scope assistants to organization."""
-    return {"organization_id": ctx.user.organization_id}
+    """Block thread updates for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to update threads"
+        )
+    return {}
 
 
-""" @auth.on.crons """
-
-
-async def on_crons(
+@auth.on.threads.delete
+async def on_thread_delete(
     ctx: AuthContext,
-    value: Auth.types.on.crons.value,
+    value: Auth.types.ThreadsDelete.values,
 ):
-    """Scope cron jobs to organization."""
+    """Block thread deletion for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to delete threads"
+        )
+    return {}
+
+
+@auth.on.threads.search
+async def on_thread_search(
+    ctx: AuthContext,
+    value: Auth.types.ThreadsSearch.values,
+):
+    """Block thread search for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to search threads"
+        )
+    return {}
+
+
+@auth.on.threads.create_run
+async def on_thread_create_run(
+    ctx: AuthContext,
+    value: Auth.types.RunsCreate.values,
+):
+    """Allow run creation for all authenticated users, scoped to organization."""
+    if ctx.user.identity in ["langgraph-studio-user", "backend"]:
+        return {}
     return {"organization_id": ctx.user.organization_id}
+
+
+# Assistant handlers
+@auth.on.assistants.create
+async def on_assistants_create(
+    ctx: AuthContext,
+    value: Auth.types.AssistantsCreate.values,
+):
+    """Block assistant creation for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to create assistants"
+        )
+    return {}
+
+
+@auth.on.assistants.read
+async def on_assistants_read(
+    ctx: AuthContext,
+    value: Auth.types.AssistantsRead.values,
+):
+    """Block assistant reading for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to read assistants"
+        )
+    return {}
+
+
+@auth.on.assistants.update
+async def on_assistants_update(
+    ctx: AuthContext,
+    value: Auth.types.AssistantsUpdate.values,
+):
+    """Block assistant updates for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to update assistants"
+        )
+    return {}
+
+
+@auth.on.assistants.delete
+async def on_assistants_delete(
+    ctx: AuthContext,
+    value: Auth.types.AssistantsDelete.values,
+):
+    """Block assistant deletion for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to delete assistants"
+        )
+    return {}
+
+
+@auth.on.assistants.search
+async def on_assistants_search(
+    ctx: AuthContext,
+    value: Auth.types.AssistantsSearch.values,
+):
+    """Block assistant search for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to search assistants"
+        )
+    return {}
+
+
+# Cron handlers
+@auth.on.crons.create
+async def on_crons_create(
+    ctx: AuthContext,
+    value: Auth.types.CronsCreate.values,
+):
+    """Block cron creation for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to create crons"
+        )
+    return {}
+
+
+@auth.on.crons.read
+async def on_crons_read(
+    ctx: AuthContext,
+    value: Auth.types.CronsRead.values,
+):
+    """Block cron reading for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to read crons"
+        )
+    return {}
+
+
+@auth.on.crons.update
+async def on_crons_update(
+    ctx: AuthContext,
+    value: Auth.types.CronsUpdate.values,
+):
+    """Block cron updates for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to update crons"
+        )
+    return {}
+
+
+@auth.on.crons.delete
+async def on_crons_delete(
+    ctx: AuthContext,
+    value: Auth.types.CronsDelete.values,
+):
+    """Block cron deletion for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to delete crons"
+        )
+    return {}
+
+
+@auth.on.crons.search
+async def on_crons_search(
+    ctx: AuthContext,
+    value: Auth.types.CronsSearch.values,
+):
+    """Block cron search for non-admin users."""
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+        raise Auth.exceptions.HTTPException(
+            status_code=403, detail="Insufficient permissions to search crons"
+        )
+    return {}
