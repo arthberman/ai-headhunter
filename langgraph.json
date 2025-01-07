@@ -10,6 +10,6 @@
   ],
   "auth": {
     "path": "./src/security/auth.py:auth",
-    "disable_studio_auth": "true"
+    "disable_studio_auth": "false"
   }
 }
