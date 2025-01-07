@@ -33,11 +33,9 @@ async def get_session_from_token(token: str) -> Optional[dict]:
                     s.id as session_id,
                     s.expires_at,
                     s.active_organization_id,
-                    u.id as user_id,
-                    u.email,
-                    u.name
+                    u.id as user_id
                 FROM session s
-                JOIN "user" u ON s.user_id = u.id 
+                JOIN "user" u ON s.user_id = u.id
                 WHERE s.token = $1 
                 AND s.expires_at > $2::timestamptz
                 """,
