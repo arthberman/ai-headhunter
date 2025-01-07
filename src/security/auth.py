@@ -32,39 +32,47 @@ async def authenticate_session(token: str) -> UserContext:
             status_code=401, detail="Invalid or expired session"
         )
 
-    return UserContext(
+    user = UserContext(
         identity=str(session["user_id"]),
+        is_authenticated=True,
         organization_id=str(session["active_organization_id"]),
-        email=session["email"],
     )
+    return user
 
 
 @auth.authenticate
 async def authenticate(headers: dict[str, bytes]) -> UserContext:
     """Authenticate requests using LangSmith API key or session token."""
-    # First check for LangSmith API key - try both string and bytes keys
-    api_key = headers.get("x-api-key") or headers.get(b"x-api-key")
+    try:
+        # First check for LangSmith API key - try both string and bytes keys
+        api_key = headers.get("x-api-key") or headers.get(b"x-api-key")
 
-    # Convert bytes to string if needed
-    if isinstance(api_key, bytes):
-        api_key = api_key.decode()
+        # Convert bytes to string if needed
+        if isinstance(api_key, bytes):
+            api_key = api_key.decode()
 
-    if api_key and validate_api_key(api_key):
-        return UserContext(
-            identity="backend",
-        )
+        if api_key and validate_api_key(api_key):
+            return UserContext(
+                identity="backend",
+                is_authenticated=True,
+            )
 
-    # If no valid API key, try session auth - handle both string and bytes
-    session_token = headers.get("session") or headers.get(b"session")
-    if session_token:
-        if isinstance(session_token, bytes):
-            session_token = session_token.decode()
-        return await authenticate_session(session_token)
+        # If no valid API key, try session auth - handle both string and bytes
+        authorization = headers.get("authorization") or headers.get(b"authorization")
 
-    raise Auth.exceptions.HTTPException(
-        status_code=401,
-        detail="Invalid authentication. Use either LangSmith API key or session token",
-    )
+        # Convert bytes to string if needed
+        if isinstance(authorization, bytes):
+            authorization = authorization.decode()
+
+        token = authorization.split(" ")[1]
+
+        return await authenticate_session(token)
+    except Exception as e:
+        raise Auth.exceptions.HTTPException(
+            status_code=401,
+            detail=f"Could not validate credentials: {str(e)}",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from e
 
 
 @auth.on
@@ -150,10 +158,10 @@ async def on_thread_search(
     value: Auth.types.ThreadsSearch.values,
 ):
     """Block thread search for non-admin users."""
-    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+    """ if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
         raise Auth.exceptions.HTTPException(
             status_code=403, detail="Insufficient permissions to search threads"
-        )
+        ) """
     return {}
 
 
