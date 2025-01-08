@@ -4,13 +4,7 @@ from typing import List
 from langgraph.types import interrupt
 from pydantic import BaseModel, Field
 
-from setup.state import (
-    BaseResource,
-    QuestionResource,
-    ResourceOrigin,
-    ResourceType,
-    ScorecardGraphState,
-)
+from setup.state import BaseResource, ResourceOrigin, ResourceType, ScorecardGraphState
 
 
 class Answer(BaseModel):
@@ -60,9 +54,8 @@ async def node_human_answer_questions(
         state.resources.append(
             BaseResource(
                 source=ResourceOrigin.HUMAN,
-                content_type=ResourceType.QUESTION,
+                content_type=ResourceType.TEXT,
                 content=answer.final_answer,
-                type_specific=QuestionResource(question_id=answer.id),
             )
         )
 

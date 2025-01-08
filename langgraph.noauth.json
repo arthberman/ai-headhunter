@@ -7,9 +7,5 @@
   "python_version": "3.12",
   "dependencies": [
     "."
-  ],
-  "auth": {
-    "path": "./src/security/auth.py:auth",
-    "disable_studio_auth": "true"
-  }
+  ]
 }

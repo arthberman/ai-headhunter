@@ -53,4 +53,4 @@ async def node_clean_resource(
     cleaned_resources = await asyncio.gather(*tasks)
 
     # Return updated state with cleaned resources
-    return {"resources": cleaned_resources}
+    return {"cleaned_resources": cleaned_resources}
