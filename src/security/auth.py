@@ -3,7 +3,7 @@ from typing import Protocol, Sequence
 from langgraph_sdk import Auth
 from pydantic import BaseModel, Field
 
-from src.security.db import get_session_from_token, validate_api_key
+from security.db import get_session_from_token, validate_api_key
 
 auth = Auth()
 
@@ -50,7 +50,6 @@ async def authenticate(headers: dict[str, bytes]) -> UserContext:
         # Convert bytes to string if needed
         if isinstance(api_key, bytes):
             api_key = api_key.decode()
-
         if api_key and validate_api_key(api_key):
             return UserContext(
                 identity="backend",
@@ -158,10 +157,10 @@ async def on_thread_search(
     value: Auth.types.ThreadsSearch.values,
 ):
     """Block thread search for non-admin users."""
-    """ if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
+    if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
         raise Auth.exceptions.HTTPException(
             status_code=403, detail="Insufficient permissions to search threads"
-        ) """
+        )
     return {}
 
 

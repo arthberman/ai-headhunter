@@ -1,4 +1,3 @@
-import uuid
 from enum import Enum
 from typing import List, Optional, Union
 
@@ -23,7 +22,6 @@ class ResourceType(str, Enum):
     TEXT = "text"
     URL = "url"
     PDF = "pdf"
-    QUESTION = "question"
     FEEDBACK = "feedback"
 
 
@@ -31,12 +29,6 @@ class FeedbackResource(BaseModel):
     """Model for feedback-specific fields."""
 
     feedback_processed: bool = Field(default=False)
-
-
-class QuestionResource(BaseModel):
-    """Model for question-specific fields."""
-
-    question_id: uuid.UUID = Field(...)
 
 
 class TextResource(BaseModel):
@@ -68,9 +60,7 @@ class BaseResource(BaseModel):
 
     # Use discriminated union for type-specific fields
     type_specific: Optional[
-        Union[
-            FeedbackResource, QuestionResource, TextResource, URLResource, PDFResource
-        ]
+        Union[FeedbackResource, TextResource, URLResource, PDFResource]
     ] = None
 
 
@@ -78,107 +68,18 @@ class ScorecardInputGraphState(BaseModel):
     """State of the scorecard input graph."""
 
     resources: List[BaseResource] = Field(
-        default_factory=list,
+        ...,
         description="List of all resources related to the job posting",
     )
-
-    def get_resources_from_human(self, as_dict: bool = False) -> List[BaseResource]:
-        """Get all resources provided by a human."""
-        resources = [
-            resource
-            for resource in self.resources
-            if resource.source == ResourceOrigin.HUMAN
-        ]
-        return [
-            resource.model_dump() if as_dict else resource for resource in resources
-        ]
-
-    def get_resources_from_agent(self, as_dict: bool = False) -> List[BaseResource]:
-        """Get all resources scraped by agents."""
-        resources = [
-            resource
-            for resource in self.resources
-            if resource.source == ResourceOrigin.AGENT
-        ]
-        return [
-            resource.model_dump() if as_dict else resource for resource in resources
-        ]
-
-    def get_all_resources_without_feedback(
-        self, as_dict: bool = False
-    ) -> List[BaseResource]:
-        """Get all resources without feedback."""
-        resources = [
-            resource
-            for resource in self.resources
-            if resource.content_type != ResourceType.FEEDBACK
-        ]
-        return [
-            resource.model_dump() if as_dict else resource for resource in resources
-        ]
-
-    def get_text_resources(self, as_dict: bool = False) -> List[BaseResource]:
-        """Get all text resources."""
-        resources = [
-            resource
-            for resource in self.resources
-            if resource.content_type == ResourceType.TEXT
-        ]
-        return [
-            resource.model_dump() if as_dict else resource for resource in resources
-        ]
-
-    def get_url_resources(self, as_dict: bool = False) -> List[BaseResource]:
-        """Get all URL resources."""
-        resources = [
-            resource
-            for resource in self.resources
-            if resource.content_type == ResourceType.URL
-        ]
-        return [
-            resource.model_dump() if as_dict else resource for resource in resources
-        ]
-
-    def get_pdf_resources(self, as_dict: bool = False) -> List[BaseResource]:
-        """Get all PDF resources."""
-        resources = [
-            resource
-            for resource in self.resources
-            if resource.content_type == ResourceType.PDF
-        ]
-        return [
-            resource.model_dump() if as_dict else resource for resource in resources
-        ]
-
-    def get_feedback_resources(self, as_dict: bool = False) -> List[BaseResource]:
-        """Get all feedback resources."""
-        resources = [
-            resource
-            for resource in self.resources
-            if resource.content_type == ResourceType.FEEDBACK
-        ]
-        return [
-            resource.model_dump() if as_dict else resource for resource in resources
-        ]
-
-    def get_feedback_resources_unprocessed(
-        self, as_dict: bool = False
-    ) -> List[BaseResource]:
-        """Get all feedback resources that have not been processed."""
-        resources = [
-            resource
-            for resource in self.resources
-            if resource.content_type == ResourceType.FEEDBACK
-            and not resource.feedback_processed
-        ]
-        return [
-            resource.model_dump() if as_dict else resource for resource in resources
-        ]
 
 
 class ScorecardGraphState(ScorecardInputGraphState):
     """State of the scorecard graph."""
 
+    cleaned_resources: Optional[List[BaseResource]] = Field(
+        None,
+        description="List of all resources related to the job posting after cleaning",
+    )
     job_posting: Optional[JobPosting] = Field(
         None, description="Job posting with all the context provided by the user"
     )
@@ -192,3 +93,112 @@ class ScorecardGraphState(ScorecardInputGraphState):
     synthesis: Optional[Synthesis] = Field(
         None, description="Synthesis of the scorecard"
     )
+
+    def get_resources_from_human(self, as_dict: bool = False) -> List[BaseResource]:
+        """Get all resources provided by a human."""
+        if not self.cleaned_resources:
+            return []
+        resources = [
+            resource
+            for resource in self.cleaned_resources
+            if resource.source == ResourceOrigin.HUMAN
+        ]
+        return [
+            resource.model_dump() if as_dict else resource for resource in resources
+        ]
+
+    def get_resources_from_agent(self, as_dict: bool = False) -> List[BaseResource]:
+        """Get all resources scraped by agents."""
+        if not self.cleaned_resources:
+            return []
+        resources = [
+            resource
+            for resource in self.cleaned_resources
+            if resource.source == ResourceOrigin.AGENT
+        ]
+        return [
+            resource.model_dump() if as_dict else resource for resource in resources
+        ]
+
+    def get_all_resources_without_feedback(
+        self, as_dict: bool = False
+    ) -> List[BaseResource]:
+        """Get all resources without feedback."""
+        if not self.cleaned_resources:
+            return []
+        resources = [
+            resource
+            for resource in self.cleaned_resources
+            if resource.content_type != ResourceType.FEEDBACK
+        ]
+        return [
+            resource.model_dump() if as_dict else resource for resource in resources
+        ]
+
+    def get_text_resources(self, as_dict: bool = False) -> List[BaseResource]:
+        """Get all text resources."""
+        if not self.cleaned_resources:
+            return []
+        resources = [
+            resource
+            for resource in self.cleaned_resources
+            if resource.content_type == ResourceType.TEXT
+        ]
+        return [
+            resource.model_dump() if as_dict else resource for resource in resources
+        ]
+
+    def get_url_resources(self, as_dict: bool = False) -> List[BaseResource]:
+        """Get all URL resources."""
+        if not self.cleaned_resources:
+            return []
+        resources = [
+            resource
+            for resource in self.cleaned_resources
+            if resource.content_type == ResourceType.URL
+        ]
+        return [
+            resource.model_dump() if as_dict else resource for resource in resources
+        ]
+
+    def get_pdf_resources(self, as_dict: bool = False) -> List[BaseResource]:
+        """Get all PDF resources."""
+        if not self.cleaned_resources:
+            return []
+        resources = [
+            resource
+            for resource in self.cleaned_resources
+            if resource.content_type == ResourceType.PDF
+        ]
+        return [
+            resource.model_dump() if as_dict else resource for resource in resources
+        ]
+
+    def get_feedback_resources(self, as_dict: bool = False) -> List[BaseResource]:
+        """Get all feedback resources."""
+        if not self.cleaned_resources:
+            return []
+        resources = [
+            resource
+            for resource in self.cleaned_resources
+            if resource.content_type == ResourceType.FEEDBACK
+        ]
+        return [
+            resource.model_dump() if as_dict else resource for resource in resources
+        ]
+
+    def get_feedback_resources_unprocessed(
+        self, as_dict: bool = False
+    ) -> List[BaseResource]:
+        """Get all feedback resources that have not been processed."""
+        if not self.cleaned_resources:
+            return []
+        resources = [
+            resource
+            for resource in self.cleaned_resources
+            if resource.content_type == ResourceType.FEEDBACK
+            and not resource.feedback_processed
+        ]
+        return [
+            resource.model_dump() if as_dict else resource for resource in resources
+        ]

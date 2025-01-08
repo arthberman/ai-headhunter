@@ -16,6 +16,7 @@ def validate_api_key(api_key: str) -> bool:
         os.getenv("LANGCHAIN_API_KEY"),
         os.getenv("LANGGRAPH_API_KEY"),
     ]
+
     return api_key in [key for key in valid_keys if key]  # Filter out None values
 
 
