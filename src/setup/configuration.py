@@ -25,6 +25,12 @@ class Configuration(BaseModel):
         "Should be in the form: provider/model-name.",
     )
 
+    cleaning_model: str = Field(
+        default="openai/gpt-4o-mini",
+        description="The name of the language model to use for cleaning. "
+        "Should be in the form: provider/model-name.",
+    )
+
     max_search_results: int = Field(
         default=5,
         description="The maximum number of search results to return for each search query.",

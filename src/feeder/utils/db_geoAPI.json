@@ -1,0 +1,93 @@
+{
+    "Paris": {
+        "success": true,
+        "message": "",
+        "data": {
+            "items": [
+                {
+                    "id": "urn:li:geo:106383538",
+                    "name": "Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:90009659",
+                    "name": "Greater Paris Metropolitan Region"
+                },
+                {
+                    "id": "urn:li:geo:104883172",
+                    "name": "75001, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:106288977",
+                    "name": "Paris, Texas, United States"
+                },
+                {
+                    "id": "urn:li:geo:116971850",
+                    "name": "75000, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:106187987",
+                    "name": "75015, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:104645172",
+                    "name": "Paris, Tennessee, United States"
+                },
+                {
+                    "id": "urn:li:geo:105880644",
+                    "name": "75008, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:104533326",
+                    "name": "Orleans Parish County, Louisiana, United States"
+                },
+                {
+                    "id": "urn:li:geo:104380555",
+                    "name": "75017, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:105646901",
+                    "name": "Paris, Ontario, Canada"
+                },
+                {
+                    "id": "urn:li:geo:101167991",
+                    "name": "Paris, Kentucky, United States"
+                },
+                {
+                    "id": "urn:li:geo:105874615",
+                    "name": "75013, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:100313047",
+                    "name": "75018, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:103228409",
+                    "name": "75016, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:106836922",
+                    "name": "75019, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:104114123",
+                    "name": "75011, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:101722768",
+                    "name": "75020, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:103644156",
+                    "name": "75012, Paris, \u00cele-de-France, France"
+                },
+                {
+                    "id": "urn:li:geo:100759173",
+                    "name": "75014, Paris, \u00cele-de-France, France"
+                }
+            ]
+        }
+    },
+    "Paris, France": {
+        "message": "You have exceeded the MONTHLY quota for Requests on your current plan, PRO. Upgrade your plan at https://rapidapi.com/rockapis-rockapis-default/api/linkedin-api8"
+    }
+}

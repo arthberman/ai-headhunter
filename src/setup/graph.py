@@ -31,9 +31,6 @@ def compile_setup_graph() -> StateGraph:
         config_schema=Configuration,
     )
 
-    # Add nodes to the graph
-    # workflow.add_node("enrichment", get_enrichment_graph())
-    # workflow.add_node("update_state", update_state)
     workflow.add_node("clean_resource", node_clean_resource, retry=get_retry_policy())
     workflow.add_node(
         "generate_job_posting", node_job_posting, retry=get_retry_policy()
@@ -48,18 +45,13 @@ def compile_setup_graph() -> StateGraph:
     workflow.add_node("generate_synthesis", node_synthesis, retry=get_retry_policy())
     workflow.add_node("generate_structure", node_scorecard_structure)
     workflow.add_node("human_answer_questions", node_human_answer_questions)
-    # workflow.add_node("judge_structure", node_judge_scorecard_structure)
-    # Define the edges
-    # workflow.add_edge(START, "enrichment")
-    # workflow.add_edge("enrichment", "update_state")
-    # workflow.add_edge("update_state", "generate_job_posting")
+
     workflow.add_edge(START, "clean_resource")
     workflow.add_edge("clean_resource", "generate_job_posting")
     workflow.add_edge("generate_job_posting", "generate_questions")
     workflow.add_edge("generate_questions", "human_answer_questions")
     workflow.add_edge("human_answer_questions", "generate_synthesis")
     workflow.add_edge("generate_synthesis", "generate_structure")
-    # workflow.add_edge("generate_structure", "judge_structure")
     workflow.add_edge("generate_structure", "generate_context")
     workflow.add_edge("generate_context", "generate_scoring_distribution")
     workflow.add_edge("generate_scoring_distribution", END)
