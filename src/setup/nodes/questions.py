@@ -2,18 +2,30 @@ from typing import cast
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
+from langgraph.types import StreamWriter
 from trustcall import create_extractor
 
 from setup.configuration import Configuration
 from setup.models.question import ListQuestions
-from setup.state import ScorecardGraphState
+from setup.state import (
+    ScorecardGraphState,
+    StreamCustomEvents,
+    StreamCustomEventsStatus,
+)
 from utils import get_prompt, init_model
 
 
 def node_questions(
-    state: ScorecardGraphState, *, config: RunnableConfig
+    state: ScorecardGraphState, writer: StreamWriter, *, config: RunnableConfig
 ) -> ScorecardGraphState:
     """Generate questions for the scorecard criteria."""
+    # Send stream event
+    writer(
+        {
+            "event_name": StreamCustomEvents.GENERATE_QUESTIONS,
+            "status": StreamCustomEventsStatus.STARTED,
+        }
+    )
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
@@ -21,7 +33,7 @@ def node_questions(
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
-        resources=state.get_all_resources_without_feedback(as_dict=True),
+        resources=state.resources,
     )
 
     raw_model = init_model(configuration.structure_model)
@@ -39,4 +51,16 @@ def node_questions(
         )["responses"][0],
     )
 
-    return {"generated_questions": res}
+    # Put all final answers to None
+    for question in res.questions:
+        question.final_answer = None
+
+    # Send stream event
+    writer(
+        {
+            "event_name": StreamCustomEvents.GENERATE_QUESTIONS,
+            "status": StreamCustomEventsStatus.COMPLETED,
+        }
+    )
+
+    return {"questions": res}

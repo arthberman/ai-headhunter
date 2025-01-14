@@ -9,14 +9,14 @@ dependencies = [
   "langchain-community>=0.3.14",
   "langchain-anthropic>=0.3.1",
   "langchain-core>=0.3.29",
-  "langgraph>=0.2.61",
-  "langchain-openai>=0.2.14",
-  "pydantic>=2.10.4",
+  "langgraph>=0.2.62",
+  "langchain-openai>=0.3.0",
+  "pydantic>=2.10.5",
   "langchain-aws>=0.2.10",
   "trustcall>=0.0.26",
   "python-dotenv>=1.0.1",
   "asyncpg>=0.30.0",
-  "langgraph-sdk>=0.1.48",
+  "langgraph-sdk>=0.1.51",
 ]
 
 [build-system]
@@ -26,14 +26,14 @@ build-backend = "setuptools.build_meta"
 [tool.uv]
 dev-dependencies = [
   "ipykernel>=6.29.5",
-  "langgraph-cli[inmem]>=0.1.65",
+  "langgraph-cli[inmem]>=0.1.66",
   "mypy>=1.14.1",
-  "ruff>=0.8.6",
+  "ruff>=0.9.1",
   "toml>=0.10.2",
 ]
 
 [tool.setuptools]
-packages = ["matcher", "setup", "utils", "security"]
+packages = ["matcher", "setup", "utils", "security", "feeder"]
 
 [tool.ruff]
 include = ["*.py", "*.pyi", "*.ipynb"]
@@ -42,7 +42,9 @@ include = ["*.py", "*.pyi", "*.ipynb"]
 matcher = "src/matcher"
 setup = "src/setup"
 utils = "src/utils"
+feeder = "src/feeder"
 security = "src/security"
+
 [tool.setuptools.package-data]
 "*" = ["py.typed"]
 

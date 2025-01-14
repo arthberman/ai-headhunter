@@ -36,7 +36,7 @@ async def node_context(
     chat_prompt = ChatPromptTemplate.from_messages(prompt.messages)
 
     formatted_messages = chat_prompt.format_messages(
-        resources=state.get_all_resources_without_feedback(as_dict=True),
+        resources=state.resources,
     )
 
     raw_model = init_model(configuration.structure_model)

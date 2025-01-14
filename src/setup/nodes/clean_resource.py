@@ -2,10 +2,17 @@ import asyncio
 from typing import cast
 
 from langchain_core.runnables import RunnableConfig
+from langgraph.types import StreamWriter
 from pydantic import BaseModel, Field
 
 from setup.configuration import Configuration
-from setup.state import BaseResource, ResourceType, ScorecardGraphState
+from setup.state import (
+    BaseResource,
+    ResourceType,
+    ScorecardGraphState,
+    StreamCustomEvents,
+    StreamCustomEventsStatus,
+)
 from utils import get_prompt, init_model
 
 
@@ -16,16 +23,31 @@ class CleanResource(BaseModel):
 
 
 async def node_clean_resource(
-    state: ScorecardGraphState, *, config: RunnableConfig
+    state: ScorecardGraphState, writer: StreamWriter, *, config: RunnableConfig
 ) -> ScorecardGraphState:
     """Clean resource content."""
+    # Send stream event
+    writer(
+        {
+            "event_name": StreamCustomEvents.CLEAN_ALL_RESOURCES,
+            "status": StreamCustomEventsStatus.STARTED,
+        }
+    )
+
     configuration = Configuration.from_runnable_config(config)
-    raw_model = init_model("openai/gpt-4o-mini")
+    raw_model = init_model(configuration.cleaning_model)
     prompt = get_prompt("clean-resource")
     chain = prompt | raw_model
 
     # Create async tasks for each resource
-    async def clean_single_resource(resource: BaseResource) -> BaseResource:
+    async def clean_single_resource(resource: BaseResource) -> None:
+        writer(
+            {
+                "event_name": StreamCustomEvents.CLEAN_RESOURCE,
+                "status": StreamCustomEventsStatus.STARTED,
+                "metadata": {"resource_id": resource.id},
+            }
+        )
         cleaned = cast(
             CleanResource,
             (
@@ -36,10 +58,15 @@ async def node_clean_resource(
                 )
             ),
         )
-        # Create a new resource with updated content, preserving all other fields
-        updated_resource = resource.model_copy()
-        updated_resource.content = cleaned.content
-        return updated_resource
+        writer(
+            {
+                "event_name": StreamCustomEvents.CLEAN_RESOURCE,
+                "status": StreamCustomEventsStatus.COMPLETED,
+                "metadata": {"resource_id": resource.id},
+            }
+        )
+        # Update the content of the original resource
+        resource.content = cleaned.content
 
     # Run all cleaning tasks in parallel
     tasks = [
@@ -50,7 +77,14 @@ async def node_clean_resource(
             or resource.content_type == ResourceType.PDF
         )
     ]
-    cleaned_resources = await asyncio.gather(*tasks)
+    await asyncio.gather(*tasks)
 
-    # Return updated state with cleaned resources
-    return {"cleaned_resources": cleaned_resources}
+    # Send stream event
+    writer(
+        {
+            "event_name": StreamCustomEvents.CLEAN_ALL_RESOURCES,
+            "status": StreamCustomEventsStatus.COMPLETED,
+        }
+    )
+    # Return updated state with the modified resources
+    return {"resources": state.resources}
