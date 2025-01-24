@@ -4,7 +4,6 @@ from typing import List
 from langgraph.types import interrupt
 from pydantic import BaseModel, Field
 
-from setup.models.question import ListQuestions
 from setup.state import ScorecardGraphState
 
 
@@ -25,7 +24,7 @@ async def node_human_answer_questions(
     state: ScorecardGraphState,
 ) -> ScorecardGraphState:
     """Human answer questions."""
-    questions = state.questions.questions.copy()
+    questions = state.questions.copy()
 
     result = Response.model_validate(
         interrupt(
@@ -45,4 +44,4 @@ async def node_human_answer_questions(
         if answer.final_answer:
             questions_by_id[answer.question_id].final_answer = answer.final_answer
 
-    return {"questions": ListQuestions(questions=questions)}
+    return {"questions": questions}

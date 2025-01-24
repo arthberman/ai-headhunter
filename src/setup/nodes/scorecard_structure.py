@@ -78,6 +78,7 @@ def node_scorecard_structure(
             if state.scorecard and feedback_content
             else ""
         ),
+        questions=state.get_formatted_questions(),
         output_language="en",
         system_time=datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
     )

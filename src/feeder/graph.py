@@ -17,8 +17,10 @@ from feeder.subgraph.not_in_job_titles.graph import (
     compile_not_in_job_titles_subgraph,
 )
 from feeder.subgraph.query_optimization.graph import compile_optimization_subgraph
+from feeder.utils.retry_policy import get_retry_policy
 
 
+# only used to link subgraphs together
 def pass_through_node(state: OverallState):
     """Fake node."""
     pass
@@ -29,25 +31,35 @@ def compile_feeder_graph() -> CompiledGraph:
     workflow = StateGraph(
         OverallState, input=OverallInputState, output=OverallOutputState
     )
+    # add nodes
     workflow.add_node("fake_node_1", pass_through_node)
     workflow.add_node("fake_node_2", pass_through_node)
     workflow.add_node("fake_node_3", pass_through_node)
-    workflow.add_node("first_gen_JSON_object", first_gen_raw_query)
-    workflow.add_node("first_gen_french_raw_query", first_gen_french_raw_query)
+    workflow.add_node(
+        "first_gen_JSON_object", first_gen_raw_query, retry=get_retry_policy()
+    )
+    workflow.add_node(
+        "first_gen_french_raw_query",
+        first_gen_french_raw_query,
+        retry=get_retry_policy(),
+    )
     workflow.add_node("location_subgraph", compile_location_subgraph())
     workflow.add_node("new_job_titles_subgraph", compile_new_job_titles_subgraph())
     workflow.add_node("new_keywords_subgraph", compile_keywords_subgraph())
     workflow.add_node(
         "new_not_in_job_titles_subgraph", compile_not_in_job_titles_subgraph()
     )
-    workflow.add_node("classify_job_titles", classify_job_titles)
-    workflow.add_node("classify_keywords", classify_keywords)
+    workflow.add_node(
+        "classify_job_titles", classify_job_titles, retry=get_retry_policy()
+    )
+    workflow.add_node("classify_keywords", classify_keywords, retry=get_retry_policy())
     workflow.add_node("create_queries", create_queries)
     workflow.add_node("get_search_count", node_get_search_count)
     workflow.add_node("optimization_subgraph", compile_optimization_subgraph())
     workflow.add_node("results_synthesizer", results_synthesizer)
     workflow.add_node("feedback_router", feedback_router)
 
+    # add edges
     workflow.add_edge(START, "first_gen_JSON_object")
     workflow.add_edge("first_gen_JSON_object", "first_gen_french_raw_query")
     workflow.add_edge("first_gen_french_raw_query", "location_subgraph")

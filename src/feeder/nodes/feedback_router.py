@@ -25,15 +25,13 @@ def feedback_router(
 
     # Check if we should try another generation based on optimization results
     if state.query_results:
-        incomplete_queries = [
-            q for q in state.query_results.results if not q.is_complete
-        ]
+        incomplete_queries = [q for q in state.query_results if not q.is_complete]
 
         if not incomplete_queries:
             # All queries are complete, check if we need another generation
             optimization_stats = {
                 q.optimization_status: q.optimization_status
-                for q in state.query_results.results
+                for q in state.query_results
             }
 
             # If we have any optimal results, end the process

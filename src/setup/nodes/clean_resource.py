@@ -73,7 +73,7 @@ async def node_clean_resource(
         clean_single_resource(resource)
         for resource in state.resources
         if (
-            resource.content_type == ResourceType.URL
+            resource.content_type == ResourceType.WEB
             or resource.content_type == ResourceType.PDF
         )
     ]

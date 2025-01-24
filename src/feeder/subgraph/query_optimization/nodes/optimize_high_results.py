@@ -1,40 +1,53 @@
+from logging import getLogger
+from typing import Optional, Sequence
+
 from langgraph.types import Command
-from typing_extensions import Literal
 
 from feeder.models.filters_query import OptimizationStrategy
 from feeder.models.people_search_filter import (
     FilterOperationType,
     FilterType,
-    PeopleSearchFilter,
     TextFilter,
 )
 from feeder.subgraph.query_optimization.nodes.apply_strategy import apply_strategy
-from feeder.subgraph.query_optimization.state import QueryOptimizationState
+from src.feeder.subgraph.query_optimization.state import QueryOptimizationState
+
+logger = getLogger(__name__)
 
 
 def optimize_high_results(state: QueryOptimizationState):
     """Optimize queries with too many results."""
-    current_query = state.query_results.results[state.current_query_index]
+    if state.current_query_index is None:
+        raise ValueError("current_query_index must be defined")
+
     current_query_index = state.current_query_index
 
-    print("\n" + "=" * 50)
-    print("Checking high results optimization conditions:")
-    print(
+    if not state.query_results:
+        raise ValueError("query_results must be defined")
+
+    current_query = state.query_results[current_query_index]
+
+    if not current_query.iterations:
+        raise ValueError(f"Query at index {current_query_index} has no iterations")
+
+    logger.info("\n" + "=" * 50)
+    logger.info("Checking high results optimization conditions:")
+    logger.info(
         f"- Current result count: {current_query.iterations[current_query.optimization_attempt].count}"
     )
 
     # Check for FAR keywords
     has_far_keywords = (
         state.keywords_classified
-        and state.keywords_classified.get("far")
-        and len(state.keywords_classified["far"]) > 0
+        and state.keywords_classified.far
+        and len(state.keywords_classified.far) > 0
     )
-    print(f"- Has FAR keywords: {has_far_keywords}")
+    logger.info(f"- Has FAR keywords: {has_far_keywords}")
 
     if current_query.iterations[current_query.optimization_attempt].count > 1000:
         if has_far_keywords:
             # Try adding FAR keywords first
-            print("Attempting to add FAR keywords to reduce results")
+            logger.info("Attempting to add FAR keywords to reduce results")
             next_strategy = OptimizationStrategy(strategy_type="add_far_keywords")
             optimized_filters = apply_strategy(
                 current_query.latest_filters, next_strategy, state
@@ -45,7 +58,7 @@ def optimize_high_results(state: QueryOptimizationState):
                 current_query.optimization_attempt += 1
                 current_query.add_iteration(
                     filters=optimized_filters,
-                    profile_count=0,
+                    profile_count=None,
                     optimization_reason="Added FAR keywords to reduce results",
                     strategy_used="add_far_keywords",
                 )
@@ -56,8 +69,8 @@ def optimize_high_results(state: QueryOptimizationState):
                 )
 
         # If no FAR keywords, check job titles
-        current_filters = current_query.latest_filters.filters.copy()
-        job_titles_filter = None
+        current_filters: Sequence[TextFilter] = current_query.latest_filters.copy()
+        job_titles_filter: Optional[TextFilter] = None
         for filter in current_filters:
             if (
                 filter.filter_type == FilterType.CURRENT_TITLE
@@ -68,7 +81,7 @@ def optimize_high_results(state: QueryOptimizationState):
 
         # If single job title, move to next query
         if not job_titles_filter or len(job_titles_filter.value) <= 1:
-            print("Query has single job title - moving to next query")
+            logger.info("Query has single job title - moving to next query")
             current_query.is_optimized = True
             current_query_index += 1
             return Command(
@@ -92,12 +105,18 @@ def optimize_high_results(state: QueryOptimizationState):
                     value=[job_title],
                 )
             )
-            new_filters_list.append(PeopleSearchFilter(filters=new_filters))
+            new_filters_list.append(new_filters)
 
-        current_query.split_query(
+        # Create new queries and add them to main results list
+        new_queries = current_query.split_query(
             new_filters_list, "Split query by individual job titles"
         )
-        print("Query split into multiple queries by job titles")
+        state.query_results.extend(new_queries)
+
+        # Mark current query as optimized
+        current_query.is_optimized = True
+
+        logger.info("Query split into multiple queries by job titles")
 
     return Command(
         graph=Command.PARENT,

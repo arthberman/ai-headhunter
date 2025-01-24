@@ -37,6 +37,7 @@ async def node_context(
 
     formatted_messages = chat_prompt.format_messages(
         resources=state.resources,
+        questions=state.get_formatted_questions(),
     )
 
     raw_model = init_model(configuration.structure_model)
@@ -49,15 +50,17 @@ async def node_context(
 
     res = cast(
         ScorecardWithContextValidation,
-        await extractor.ainvoke(
-            {
-                "messages": formatted_messages,
-                "existing": {
-                    "ScorecardWithContextValidation": state.scorecard.model_dump(
-                        mode="json"
-                    )
-                },
-            }
+        (
+            await extractor.ainvoke(
+                {
+                    "messages": formatted_messages,
+                    "existing": {
+                        "ScorecardWithContextValidation": state.scorecard.model_dump(
+                            mode="json"
+                        )
+                    },
+                }
+            )
         )["responses"][0],
     )
 
