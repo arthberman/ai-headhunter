@@ -2,25 +2,18 @@ from langgraph.graph import END, START, StateGraph
 
 from setup.configuration import Configuration
 from setup.nodes import (
-    get_enrichment_graph,
     node_context,
     node_human_answer_questions,
     node_job_posting,
-    #    node_judge_scorecard_structure,
     node_questions,
     node_scorecard_structure,
     node_scoring_distribution,
     node_synthesis,
 )
 from setup.nodes.clean_resource import node_clean_resource
-from setup.nodes.enrichment_subgraph.state import OutputGraphState
+from setup.nodes.generate_feeder_input import node_generate_feeder_input
 from setup.state import ScorecardGraphState, ScorecardInputGraphState
 from utils import get_retry_policy
-
-
-def update_state(state: OutputGraphState) -> ScorecardGraphState:
-    """Update the state."""
-    return {"resources": state.resources}
 
 
 def compile_setup_graph() -> StateGraph:
@@ -45,6 +38,7 @@ def compile_setup_graph() -> StateGraph:
     workflow.add_node("generate_synthesis", node_synthesis, retry=get_retry_policy())
     workflow.add_node("generate_structure", node_scorecard_structure)
     workflow.add_node("human_answer_questions", node_human_answer_questions)
+    workflow.add_node("generate_feeder_input", node_generate_feeder_input)
 
     workflow.add_edge(START, "clean_resource")
     workflow.add_edge("clean_resource", "generate_job_posting")
@@ -54,8 +48,9 @@ def compile_setup_graph() -> StateGraph:
     workflow.add_edge("generate_synthesis", "generate_structure")
     workflow.add_edge("generate_structure", "generate_context")
     workflow.add_edge("generate_context", "generate_scoring_distribution")
-    workflow.add_edge("generate_scoring_distribution", END)
+    workflow.add_edge("generate_scoring_distribution", "generate_feeder_input")
+    workflow.add_edge("generate_feeder_input", END)
 
     graph = workflow.compile()
-    graph.name = "SetupGraph"
+    graph.name = "setup"
     return graph

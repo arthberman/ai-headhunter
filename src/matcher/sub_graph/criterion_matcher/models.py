@@ -1,3 +1,4 @@
+import uuid
 from typing import List
 
 from pydantic import BaseModel, Field
@@ -6,7 +7,7 @@ from pydantic import BaseModel, Field
 class ScoredCriterion(BaseModel):
     """Respond to the user with this."""
 
-    id: str = Field(..., description="Unique identifier for the criterion")
+    id: uuid.UUID = Field(..., description="Unique identifier for the criterion")
     score: float = Field(
         ..., ge=0, le=1, description="Score assigned to this criterion"
     )

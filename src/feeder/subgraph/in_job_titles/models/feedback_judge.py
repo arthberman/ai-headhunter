@@ -1,11 +1,12 @@
+from typing import List, Literal
+
 from pydantic import BaseModel, Field
-from typing import List, Optional
 
 
 class JobTitleAnomaly(BaseModel):
     """Model representing an anomaly detected in a job title during validation, including the issue type, affected title, and explanation."""
 
-    issue: str = Field(
+    issue: Literal["Role Alignment Issue", "Market Usage Issue", "Other Issue"] = Field(
         ...,
         description="Type of issue detected: 'Role Alignment Issue', 'Market Usage Issue' or 'Other Issue'.",
     )

@@ -52,4 +52,4 @@ async def handle_patch_memory(
 
     extracted = result["responses"][0].model_dump(mode="json")
 
-    return PutOp(namespace, key, extracted)
+    return PutOp(namespace, key, extracted, index=False)

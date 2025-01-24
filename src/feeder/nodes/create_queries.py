@@ -1,6 +1,6 @@
-from typing import List
+from logging import getLogger
 
-from feeder.models.filters_query import FilterQuery, FilterQueryList, QueryIteration
+from feeder.models.filters_query import FilterQuery, QueryIteration
 from feeder.models.people_search_filter import (
     FilterOperationType,
     FilterType,
@@ -9,6 +9,8 @@ from feeder.models.people_search_filter import (
 )
 from feeder.state import OverallState
 from feeder.subgraph.query_optimization.state import QueryOptimizationState
+
+logger = getLogger(__name__)
 
 
 def create_queries(state: OverallState) -> QueryOptimizationState:
@@ -23,11 +25,9 @@ def create_queries(state: OverallState) -> QueryOptimizationState:
 
     queries = []
     job_titles = [job.title for job in state.job_titles_classified.rankings]
-    near_keywords = (
-        state.keywords_classified.get("near", []) if state.keywords_classified else []
-    )
-    not_in_job_titles = state.json_object.exclude
-    locations = state.locations.locations
+    near_keywords = state.keywords_classified.near if state.keywords_classified else []
+    not_in_job_titles = state.json_object.not_in_job_titles
+    locations = state.locations
     seniority = state.json_object.seniority
 
     # Split job titles - top 40% most specific for the first query
@@ -160,22 +160,16 @@ def create_queries(state: OverallState) -> QueryOptimizationState:
     filter_queries = []
     for query in queries:
         filter_query = FilterQuery(
-            original_filters=query,  # Pass PeopleSearchFilter directly
+            original_filters=query.filters,
             iterations=[
                 QueryIteration(
-                    filters=query,  # Pass PeopleSearchFilter directly
+                    filters=query.filters,
                     count=None,
                 )
             ],
         )
         filter_queries.append(filter_query)
 
-    # Store as FilterQueryList
-    # state.query_results = FilterQueryList(
-    #     results=filter_queries
-    # )  # Note: changed from queries to results
-    out = FilterQueryList(results=filter_queries)
-    # return state
-    print(out)
-    print(state.query_results)
-    return {"query_results": out}
+    logger.info(f"Created {len(filter_queries)} queries")
+
+    return {"query_results": filter_queries}

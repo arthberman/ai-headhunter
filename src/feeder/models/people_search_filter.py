@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class FilterType(str, Enum):
-    """
-    Enumeration of all available filter types for people search in Crustdata.
+    """Enumeration of all available filter types for people search in Crustdata.
+
     These filters can be used to narrow down search results based on various professional attributes.
     """
 
@@ -26,10 +26,7 @@ class FilterType(str, Enum):
 
 
 class CompanyHeadcount(str, Enum):
-    """
-    Enumeration of company size ranges based on employee count.
-    Used for filtering companies by their workforce size.
-    """
+    """Enumeration of company size ranges based on employee count. Used for filtering companies by their workforce size."""
 
     SELF_EMPLOYED = "Self-employed"
     SIZE_1_10 = "1-10"
@@ -43,10 +40,7 @@ class CompanyHeadcount(str, Enum):
 
 
 class ProfileLanguage(str, Enum):
-    """
-    Enumeration of available profile languages.
-    Used to filter profiles based on their primary language setting.
-    """
+    """Enumeration of available profile languages. Used to filter profiles based on their primary language setting."""
 
     ARABIC = "Arabic"
     ENGLISH = "English"
@@ -73,8 +67,8 @@ class ProfileLanguage(str, Enum):
 
 
 class YearsRange(str, Enum):
-    """
-    Enumeration of experience duration ranges.
+    """Enumeration of experience duration ranges.
+
     Used for filtering based on years of experience in various contexts.
     """
 
@@ -86,8 +80,8 @@ class YearsRange(str, Enum):
 
 
 class FilterOperationType(str, Enum):
-    """
-    Enumeration of filter operation types.
+    """Enumeration of filter operation types.
+
     Defines how the filter values should be applied in the search.
     """
 
@@ -96,10 +90,7 @@ class FilterOperationType(str, Enum):
 
 
 class TextFilter(BaseModel):
-    """
-    Model for text-based filters in people search.
-    Used for filters that require string values or predefined options.
-    """
+    """Model for text-based filters in people search. Used for filters that require string values or predefined options."""
 
     filter_type: FilterType = Field(
         ..., description="The type of filter to apply to the search"
@@ -114,10 +105,7 @@ class TextFilter(BaseModel):
 
     @field_validator("value")
     def validate_filter_value(cls, v: List[str], info) -> List[str]:
-        """
-        Validate filter values based on filter type.
-        Provides detailed error messages with valid options for enum-based filters.
-        """
+        """Validate filter values based on filter type. Provides detailed error messages with valid options for enum-based filters."""
         filter_type = info.data.get("filter_type")
         if not filter_type:
             return v
@@ -177,15 +165,13 @@ class TextFilter(BaseModel):
 
 
 class PeopleSearchFilter(BaseModel):
-    """
-    Main model for constructing people search filters in Crustdata.
-    """
+    """Main model for constructing people search filters in Crustdata."""
 
     filters: List[TextFilter] = Field(
         ..., description="List of filters to apply to the search."
     )
 
     class Config:
-        """Configuration for the PeopleSearchFilter model"""
+        """Configuration for the PeopleSearchFilter model."""
 
         use_enum_values = True

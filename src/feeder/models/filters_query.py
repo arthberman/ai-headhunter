@@ -1,8 +1,12 @@
+import uuid
+from logging import getLogger
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
-from feeder.models.people_search_filter import PeopleSearchFilter
+from feeder.models.people_search_filter import PeopleSearchFilter, TextFilter
+
+logger = getLogger(__name__)
 
 
 class OptimizationStrategy(BaseModel):
@@ -22,59 +26,81 @@ class OptimizationStrategy(BaseModel):
 class QueryIteration(BaseModel):
     """Represents one iteration of a query with its results."""
 
-    filters: PeopleSearchFilter
+    id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    filters: List[TextFilter] = Field(
+        ..., description="List of filters to apply to the search."
+    )
     count: Optional[int] = Field(None)
-    # unique_titles: Optional[List[str]] = None
+
     optimization_reason: Optional[str] = Field(None)
     strategy_used: Optional[str] = Field(None)
+
+    @field_validator("filters")
+    def validate_filters(cls, v: List[TextFilter]) -> List[TextFilter]:
+        """Validate the filters list."""
+        if not v:
+            raise ValueError("Filters list cannot be empty")
+        return v
 
 
 class FilterQuery(BaseModel):
     """Tracks all iterations of a specific query."""
 
-    original_filters: PeopleSearchFilter
+    original_filters: List[TextFilter] = Field(
+        ..., description="List of filters to apply to the search."
+    )
     iterations: List[QueryIteration] = Field(default_factory=list)
     is_optimized: bool = Field(default=False)
     optimization_attempt: int = Field(default=0)
     optimization_strategies: List[OptimizationStrategy] = Field(default_factory=list)
-    child_queries: List["FilterQuery"] = Field(default_factory=list)
 
-    def split_query(self, new_filters_list: List[PeopleSearchFilter], reason: str):
-        """Create child queries when splitting a query."""
+    def split_query(
+        self, new_filters_list: List[List[TextFilter]], reason: str
+    ) -> List["FilterQuery"]:
+        """Create new queries when splitting a query."""
+        new_queries = []
         for filters in new_filters_list:
-            child_query = FilterQuery(
+            new_query = FilterQuery(
                 original_filters=filters,
                 iterations=[
-                    QueryIteration(filters=filters, count=0, optimization_reason=reason)
+                    QueryIteration(
+                        filters=filters,
+                        count=None,
+                        optimization_reason=reason,
+                    )
                 ],
             )
-            self.child_queries.append(child_query)
+            new_queries.append(new_query)
+        return new_queries
 
     def __init__(self, **data):
         """Initialize the FilterQuery with default optimization strategies."""
         super().__init__(**data)
         if not self.optimization_strategies:
-            print("\n" + "=" * 50)
-            print("Initializing optimization strategies")
-            print("=" * 50)
+            logger.info("\n" + "=" * 50)
+            logger.info("Initializing optimization strategies")
+            logger.info("=" * 50)
 
             # Base strategies list
             strategies = [OptimizationStrategy(strategy_type="remove_quotes")]
-            print("✓ Added remove_quotes strategy")
+            logger.info("✓ Added remove_quotes strategy")
 
             # Add far_keywords strategy as second if we have far keywords
             if (
                 "keywords_classified" in data
                 and data["keywords_classified"]
-                and data["keywords_classified"].get("far")
+                and data["keywords_classified"].far
+                and len(data["keywords_classified"].far) > 0
             ):
                 strategies.append(
                     OptimizationStrategy(strategy_type="add_far_keywords")
                 )
-                print("✓ Added add_far_keywords strategy (FAR keywords found)")
-                print(f"FAR keywords: {data['keywords_classified'].get('far')}")
+                logger.info("✓ Added add_far_keywords strategy (FAR keywords found)")
+                logger.info(f"FAR keywords: {data['keywords_classified'].far}")
             else:
-                print("✗ Skipped add_far_keywords strategy (no FAR keywords found)")
+                logger.info(
+                    "✗ Skipped add_far_keywords strategy (no FAR keywords found)"
+                )
 
             # Add remaining strategies
             remaining = [
@@ -84,17 +110,17 @@ class FilterQuery(BaseModel):
             ]
             for strategy in remaining:
                 strategies.append(OptimizationStrategy(strategy_type=strategy))
-                print(f"✓ Added {strategy} strategy")
+                logger.info(f"✓ Added {strategy} strategy")
 
-            print("\nFinal strategy order:")
+            logger.info("\nFinal strategy order:")
             for i, strategy in enumerate(strategies, 1):
-                print(f"{i}. {strategy.strategy_type}")
-            print("=" * 50 + "\n")
+                logger.info(f"{i}. {strategy.strategy_type}")
+            logger.info("=" * 50 + "\n")
 
             self.optimization_strategies = strategies
 
     @property
-    def latest_filters(self) -> PeopleSearchFilter:
+    def latest_filters(self) -> List[TextFilter]:
         """Get the latest filters from the iterations."""
         if self.iterations:
             return self.iterations[-1].filters
@@ -109,8 +135,8 @@ class FilterQuery(BaseModel):
 
     def add_iteration(
         self,
-        filters: PeopleSearchFilter,
-        profile_count: int,
+        filters: List[TextFilter],
+        profile_count: Optional[int],
         optimization_reason: Optional[str] = None,
         strategy_used: Optional[str] = None,
     ):
@@ -127,10 +153,6 @@ class FilterQuery(BaseModel):
     @property
     def is_complete(self) -> bool:
         """Check if query is complete and shouldn't be optimized further."""
-        # Query split into children
-        if self.child_queries:
-            return True
-
         # Latest results are optimal
         if self.iterations and 30 <= self.iterations[-1].count <= 1000:
             return True
@@ -146,16 +168,18 @@ class FilterQuery(BaseModel):
         return False
 
     @property
-    def optimization_status(self) -> str:
+    def optimization_status(
+        self,
+    ) -> Literal["pending", "optimal", "too_high", "too_low", "in_progress"]:
         """Get the current status of the query optimization."""
         if not self.iterations:
             return "pending"
 
         latest_count = self.iterations[-1].count
+        if latest_count is None:
+            return "in_progress"
 
-        if self.child_queries:
-            return "split"
-        elif 30 <= latest_count <= 1000:
+        if 30 <= latest_count <= 1000:
             return "optimal"
         elif latest_count > 1000:
             return "too_high"
@@ -170,6 +194,15 @@ class FilterQueryList(BaseModel):
 
     results: List[FilterQuery] = Field(default_factory=list)
 
-    def add_result(self, query: PeopleSearchFilter, profile_count: int):
+    def add_result(self, filters: List[TextFilter], profile_count: int):
         """Add a new query result."""
-        self.results.append(FilterQuery(query=query, count=profile_count))
+        self.results.append(
+            FilterQuery(
+                original_filters=filters,
+                iterations=[
+                    QueryIteration(
+                        filters=PeopleSearchFilter(filters=filters), count=profile_count
+                    )
+                ],
+            )
+        )

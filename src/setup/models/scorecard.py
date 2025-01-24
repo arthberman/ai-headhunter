@@ -1,3 +1,4 @@
+import uuid
 from enum import Enum
 from typing import List, Optional
 
@@ -35,8 +36,9 @@ class ScoringDistribution(str, Enum):
 class BaseCriterion(BaseModel):
     """Base criterion."""
 
-    id: Optional[str] = Field(
-        None, description="Unique identifier for the criterion (UUID)"
+    id: uuid.UUID = Field(
+        default_factory=uuid.uuid4,
+        description="Unique identifier for the criterion (UUID)",
     )
     description: str = Field(..., description="Detailed description of the criterion")
     category: Category = Field(

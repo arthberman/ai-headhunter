@@ -25,7 +25,7 @@ def node_synthesis(
         chain.invoke(
             {
                 "resources": state.resources,
-                "questions": state.questions.model_dump(mode="json"),
+                "questions": state.get_formatted_questions(),
             }
         ),
     )

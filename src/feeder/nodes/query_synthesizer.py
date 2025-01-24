@@ -10,7 +10,11 @@ def results_synthesizer(state: OverallState) -> OverallState:
     else:
         memory = state.query_memory
 
-    for query in state.query_results.results:
+    for query in state.query_results:
+        # Only process completed queries
+        if not query.is_complete:
+            continue
+
         # Convert filters to query string representation
         query_str = str(query.original_filters)
 
@@ -22,15 +26,10 @@ def results_synthesizer(state: OverallState) -> OverallState:
             results_journey.append(iteration.count)
             if iteration.strategy_used:
                 optimization_journey.append(iteration.strategy_used)
-                # Update optimization statistics
-                if iteration.strategy_used not in memory.optimization_stats:
-                    memory.optimization_stats[iteration.strategy_used] = {
-                        "attempts": 0,
-                        "successes": 0,
-                    }
-                memory.optimization_stats[iteration.strategy_used]["attempts"] += 1
-                if 30 <= iteration.count <= 1000:
-                    memory.optimization_stats[iteration.strategy_used]["successes"] += 1
+                memory.update_optimization_stats(
+                    strategy=iteration.strategy_used,
+                    success=(30 <= iteration.count <= 1000),
+                )
 
         # Create QueryAttempt
         final_count = results_journey[-1]
@@ -50,9 +49,10 @@ def results_synthesizer(state: OverallState) -> OverallState:
             final_status=final_status,
         )
 
-        if final_count == 0:
+        # Store all completed attempts appropriately
+        if final_status in ["failed", "too_few", "too_many"]:
             memory.failed_attempts.append(attempt)
-        elif 30 <= final_count <= 1000:
+        else:  # success
             memory.successful_attempts.append(attempt)
 
     state.query_memory = memory

@@ -40,7 +40,7 @@ class LocationAPIResponse(BaseModel):
 
 
 class LocationList(BaseModel):
-    """Collection of locations extracted from job descriptions."""
+    """A list of locations and their ids generated from the job offer description."""
 
     locations: List[LocationItem] = Field(
         description="A list of locations and their ids generated from the job offer description."

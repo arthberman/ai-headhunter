@@ -63,4 +63,4 @@ def node_questions(
         }
     )
 
-    return {"questions": res}
+    return {"questions": res.questions}

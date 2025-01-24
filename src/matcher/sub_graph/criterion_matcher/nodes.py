@@ -26,7 +26,7 @@ async def init_agent(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
-    namespace = ("scorecard", "criterion", state.criterion.id)
+    namespace = ("scorecard", "criterion", str(state.criterion.id))
     key = "cot_questions"
     stored_questions = await store.aget(namespace, key)
 
@@ -55,7 +55,7 @@ async def init_agent(
             ),
         )
         # Store the cot questions
-        op = PutOp(namespace, key, cot_questions.model_dump(mode="json"))
+        op = PutOp(namespace, key, cot_questions.model_dump(mode="json"), index=False)
 
     hub_prompt = get_prompt("score-analysis-criterion")
     chat_prompt = ChatPromptTemplate(hub_prompt.messages)
@@ -110,7 +110,7 @@ async def call_model(
     else:
         if state.loop_step == 0:
             # First iteration, push pre tool call result directly to the model
-            namespace = ("scorecard", "criterion", state.criterion.id)
+            namespace = ("scorecard", "criterion", str(state.criterion.id))
             key = "init_tool_calls"
             stored_calls = await store.aget(namespace, key)
 
@@ -127,7 +127,12 @@ async def call_model(
                 ):
                     # Store the last message (AI Message with tool calls)
                     last_message = AIMessage(**clean_message(response).model_dump())
-                    op = PutOp(namespace, key, last_message.model_dump(mode="json"))
+                    op = PutOp(
+                        namespace,
+                        key,
+                        last_message.model_dump(mode="json"),
+                        index=False,
+                    )
             else:
                 # Put the last message into the response
                 response = AIMessage(**stored_calls.value)
