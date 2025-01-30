@@ -24,7 +24,7 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
     if state.profile.is_open_to_work:
         return {
             "synthesis_open_to_work": OpenessToWork(
-                score=Score.PASS,
+                score=Score.ACCEPTED,
                 explanation="This candidate is declared as Open To Work on his profile.",
             )
         }

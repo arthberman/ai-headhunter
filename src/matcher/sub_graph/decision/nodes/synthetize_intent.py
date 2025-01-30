@@ -30,7 +30,11 @@ async def node_synthetize_intent(state: MainGraphState, config: RunnableConfig):
         state.openess_to_work.score.value,
     ]
     heuristic_score = (
-        "FAIL" if "FAIL" in scores else "DOUBT" if "DOUBT" in scores else "SUCCESS"
+        "REJECTED"
+        if "REJECTED" in scores
+        else "REVIEW"
+        if "REVIEW" in scores
+        else "SUCCESS"
     )
 
     # Invoke the chain

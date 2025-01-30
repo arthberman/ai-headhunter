@@ -5,11 +5,11 @@ description = "AI Agents for repio.co"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-  "langchain>=0.3.15",
-  "langchain-community>=0.3.15",
+  "langchain>=0.3.16",
+  "langchain-community>=0.3.16",
   "langchain-anthropic>=0.3.4",
-  "langchain-core>=0.3.31",
-  "langgraph>=0.2.67",
+  "langchain-core>=0.3.32",
+  "langgraph>=0.2.68",
   "langchain-openai>=0.3.2",
   "pydantic>=2.10.6",
   "langchain-aws>=0.2.11",
@@ -42,6 +42,7 @@ packages = [
   "feeder",
   "company_researcher",
   "feedback",
+  "feedback_chat",
 ]
 
 [tool.ruff]
@@ -55,7 +56,7 @@ feeder = "src/feeder"
 security = "src/security"
 company_researcher = "src/company_researcher"
 feedback = "src/feedback"
-
+feedback_chat = "src/feedback_chat"
 [tool.setuptools.package-data]
 "*" = ["py.typed"]
 

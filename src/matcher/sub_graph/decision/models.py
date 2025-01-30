@@ -7,9 +7,9 @@ from pydantic import BaseModel, Field
 class Score(Enum):
     """Score of the synthesis."""
 
-    PASS = "pass"
-    FAIL = "fail"
-    DOUBT = "doubt"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+    REVIEW = "review"
 
 
 class RedflagStability(BaseModel):

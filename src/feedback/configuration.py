@@ -5,9 +5,15 @@ from pydantic import BaseModel, Field
 class Configuration(BaseModel):
     """The configuration for the feedback."""
 
-    default_model: str = Field(
+    large_model: str = Field(
         default="bedrock_converse/us.anthropic.claude-3-5-sonnet-20241022-v2:0",
         description="The name of the language model to use for the matcher. "
+        "Should be in the form: provider/model-name.",
+    )
+
+    small_model: str = Field(
+        default="openai/gpt-4o-mini",
+        description="The name of the language model to use for the light. "
         "Should be in the form: provider/model-name.",
     )
 
