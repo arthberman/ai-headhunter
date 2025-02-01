@@ -7,7 +7,10 @@ from langchain_core.rate_limiters import BaseRateLimiter
 
 
 def init_model(
-    fully_specified_name: str, rate_limiter: Optional[BaseRateLimiter] = None
+    fully_specified_name: str,
+    *,
+    temperature: float | None = 0,
+    rate_limiter: Optional[BaseRateLimiter] = None,
 ) -> BaseChatModel:
     """Initialize the configured chat model."""
     if "/" in fully_specified_name:
@@ -16,16 +19,17 @@ def init_model(
         provider = None
         model = fully_specified_name
 
+    kwargs = {
+        "model": model,
+        "model_provider": provider,
+        "rate_limiter": rate_limiter,
+    }
+
+    if temperature is not None:
+        kwargs["temperature"] = temperature
+
     if provider == "bedrock" or provider == "bedrock_converse":
         config = Config(read_timeout=120)
-        return init_chat_model(
-            model,
-            model_provider=provider,
-            temperature=0,
-            config=config,
-            rate_limiter=rate_limiter,
-        )
+        kwargs["config"] = config
 
-    return init_chat_model(
-        model, model_provider=provider, temperature=0, rate_limiter=rate_limiter
-    )
+    return init_chat_model(**kwargs)
