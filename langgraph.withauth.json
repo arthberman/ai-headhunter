@@ -10,15 +10,6 @@
   "dependencies": [
     "."
   ],
-  "store": {
-    "index": {
-      "embed": "openai:text-embedding-3-small",
-      "dims": 1536,
-      "fields": [
-        "$"
-      ]
-    }
-  },
   "auth": {
     "path": "./src/security/auth.py:auth",
     "disable_studio_auth": true
