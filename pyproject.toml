@@ -5,19 +5,20 @@ description = "AI Agents for repio.co"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-  "langchain>=0.3.15",
-  "langchain-community>=0.3.15",
-  "langchain-anthropic>=0.3.4",
-  "langchain-core>=0.3.31",
-  "langgraph>=0.2.67",
-  "langchain-openai>=0.3.2",
+  "langchain>=0.3.17",
+  "langchain-community>=0.3.16",
+  "langchain-anthropic>=0.3.5",
+  "langchain-core>=0.3.33",
+  "langgraph>=0.2.69",
+  "langchain-openai>=0.3.3",
   "pydantic>=2.10.6",
-  "langchain-aws>=0.2.11",
-  "trustcall>=0.0.28",
+  "langchain-aws>=0.2.12",
+  "trustcall>=0.0.34",
   "python-dotenv>=1.0.1",
   "asyncpg>=0.30.0",
   "langgraph-sdk>=0.1.51",
   "tavily-python>=0.5.0",
+  "upstash-redis>=1.2.0",
 ]
 
 [build-system]
@@ -27,9 +28,9 @@ build-backend = "setuptools.build_meta"
 [tool.uv]
 dev-dependencies = [
   "ipykernel>=6.29.5",
-  "langgraph-cli[inmem]>=0.1.69",
+  "langgraph-cli[inmem]>=0.1.70",
   "mypy>=1.14.1",
-  "ruff>=0.9.3",
+  "ruff>=0.9.4",
   "toml>=0.10.2",
 ]
 
@@ -42,6 +43,7 @@ packages = [
   "feeder",
   "company_researcher",
   "feedback",
+  "feedback_chat",
 ]
 
 [tool.ruff]
@@ -55,6 +57,7 @@ feeder = "src/feeder"
 security = "src/security"
 company_researcher = "src/company_researcher"
 feedback = "src/feedback"
+feedback_chat = "src/feedback_chat"
 
 [tool.setuptools.package-data]
 "*" = ["py.typed"]

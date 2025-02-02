@@ -3,7 +3,8 @@
     "matcher": "./src/matcher/graph.py:compile_matcher_graph",
     "setup": "./src/setup/graph.py:compile_setup_graph",
     "feeder": "./src/feeder/graph.py:compile_feeder_graph",
-    "company_researcher": "./src/company_researcher/graph.py:compile_company_researcher_graph"
+    "company_researcher": "./src/company_researcher/graph.py:compile_company_researcher_graph",
+    "feedback_chat": "./src/feedback_chat/graph.py:compile_feedback_chat_graph"
   },
   "env": ".env.studio",
   "python_version": "3.12",

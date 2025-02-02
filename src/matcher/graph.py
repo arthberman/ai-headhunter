@@ -109,7 +109,7 @@ def continue_to_matcher(state: MainGraphState):
 
     if (
         compute_must_score(state.scored_criterion, state.scorecard).score
-        == SynthesisScore.FAIL
+        == SynthesisScore.REJECTED
     ):
         return "decision"
 
@@ -121,7 +121,7 @@ def continue_to_matcher(state: MainGraphState):
 
 def continue_to_enrichment(state: MainGraphState):
     """Continue to the enrichment."""
-    if state.synthesis_location.score in [SynthesisScore.FAIL]:
+    if state.synthesis_location.score in [SynthesisScore.REJECTED]:
         return END
 
     if already_enriched(state):

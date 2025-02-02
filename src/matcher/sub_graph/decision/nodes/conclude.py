@@ -20,24 +20,24 @@ def get_evaluation_guidelines(must: bool) -> str:
     if not must:
         return (
             "3. In this case, the candidate has failed required criteria, "
-            "so the final output is FAIL"
+            "so the final output is REJECTED"
         )
 
     return """
-3. Determine the match conclusion (PASS/FAIL/DOUBT) using these guidelines:
-   - PASS: 
+3. Determine the match conclusion (ACCEPTED/REJECTED/REVIEW) using these guidelines:
+   - ACCEPTED: 
      * Shows clear motivation to move
      * Career progression makes sense
      * No major blockers in availability
      * Demonstrates alignment with role expectations
      * Satisfactory performance on preferred criteria
 
-   - FAIL: 
+   - REJECTED: 
      * Only possible for career alignment issues:
        - Major blockers in availability/openness to work
        - Significant misalignment in career hierarchy/progression
 
-   - DOUBT: 
+   - REVIEW: 
      * Unclear motivation or timing issues
      * Potential concerns about career fit
      * Mixed performance on preferred criteria (some low, some acceptable)
@@ -45,13 +45,13 @@ def get_evaluation_guidelines(must: bool) -> str:
      * Minor concerns about availability or progression
 
    Evaluation Balance:
-   - Poor performance on preferred criteria can only lead to DOUBT, not FAIL
-   - Career misalignment (hierarchy/openness) are the only FAIL triggers
-   - Preferred criteria help differentiate between PASS and DOUBT cases
-   - Consider overall profile for PASS vs DOUBT decisions
+   - Poor performance on preferred criteria can only lead to REVIEW, not REJECTED
+   - Career misalignment (hierarchy/openness) are the only REJECTED triggers
+   - Preferred criteria help differentiate between ACCEPTED and REVIEW cases
+   - Consider overall profile for ACCEPTED vs REVIEW decisions
 
     Note: Since required criteria are satisfied, only major career misalignment 
-         (hierarchy or openness to work) can result in FAIL status."""
+         (hierarchy or openness to work) can result in REJECTED status."""
 
 
 async def node_conclude(
@@ -90,7 +90,7 @@ async def node_conclude(
                     state.scorecard,
                 ).model_dump(mode="json"),
                 "evaluation_guidelines": get_evaluation_guidelines(
-                    False if must_score.score.value == "FAIL" else True
+                    False if must_score.score.value == "REJECTED" else True
                 ),
                 "job_synthesis": state.job_synthesis,
                 "synthesis_hierarchy": state.hierarchy_move.model_dump(mode="json"),

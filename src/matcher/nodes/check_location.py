@@ -69,19 +69,19 @@ async def node_check_location(
         ),
     )
 
-    # confidence is 1 if the score is PASS, 0.5 if DOUBT, 0 otherwise
+    # confidence is 1 if the score is ACCEPTED, 0.5 if REVIEW, 0 otherwise
     scored_criterion = ScoredCriterion(
         id=criterion.id,
         score=1
-        if res.score == SynthesisScore.PASS
+        if res.score == SynthesisScore.ACCEPTED
         else 0.5
-        if res.score == SynthesisScore.DOUBT
+        if res.score == SynthesisScore.REVIEW
         else 0,
         explanation=res.explanation,
         confidence=1
-        if res.score == SynthesisScore.PASS
+        if res.score == SynthesisScore.ACCEPTED
         else 0.5
-        if res.score == SynthesisScore.DOUBT
+        if res.score == SynthesisScore.REVIEW
         else 0,
     )
 
@@ -92,9 +92,9 @@ async def node_check_location(
     }
 
     # Only update synthesis_overall if location check fails
-    if res.score == SynthesisScore.FAIL:
+    if res.score == SynthesisScore.REJECTED:
         state_update["conclusion_overall"] = ConclusionOverall(
-            score=SynthesisScore.FAIL,
+            score=SynthesisScore.REJECTED,
             explanation=f"Required location criteria not met: {res.explanation}",
             summary=[
                 "🚫 Location requirements not satisfied",

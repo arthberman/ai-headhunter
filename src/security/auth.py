@@ -64,6 +64,9 @@ async def authenticate(headers: dict[str, bytes]) -> UserContext:
         if isinstance(authorization, bytes):
             authorization = authorization.decode()
 
+        if not authorization:
+            raise Exception("No authorization header")
+
         token = authorization.split(" ")[1]
 
         return await authenticate_session(token)
@@ -117,9 +120,17 @@ async def on_thread_read(ctx: AuthContext, value: Auth.types.ThreadsRead.values)
     return {"organization_id": ctx.user.organization_id}
 
 
+@auth.on.threads.search
+async def on_thread_search(ctx: AuthContext, value: Auth.types.ThreadsSearch.values):
+    """Allow thread search for all authenticated users, scoped to organization."""
+    if ctx.user.identity in ["langgraph-studio-user", "backend"]:
+        return {}
+    return {"organization_id": ctx.user.organization_id}
+
+
 # Assistant handler
 @auth.on.assistants
-async def on_assistants_read(ctx: AuthContext, value: Auth.types.on.assistants.value):
+async def on_assistants(ctx: AuthContext, value: Auth.types.on.assistants.value):
     """Block assistant reading for non-admin users."""
     if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
         raise Auth.exceptions.HTTPException(
@@ -130,8 +141,8 @@ async def on_assistants_read(ctx: AuthContext, value: Auth.types.on.assistants.v
 
 # Cron handler
 @auth.on.crons
-async def on_crons_read(ctx: AuthContext, value: Auth.types.on.crons.value):
-    """Block cron reading for non-admin users."""
+async def on_crons(ctx: AuthContext, value: Auth.types.on.crons.value):
+    """Block cron for non-admin users."""
     if ctx.user.identity not in ["langgraph-studio-user", "backend"]:
         raise Auth.exceptions.HTTPException(
             status_code=403, detail="Insufficient permissions to read crons"
