@@ -23,6 +23,24 @@ from setup.models.scorecard import Scorecard
 from utils import reducer_list
 
 
+def reducer_scored_criterion(
+    existing: List[ScoredCriterion], new: List[ScoredCriterion]
+) -> List[ScoredCriterion]:
+    """Reducer that replaces existing criteria with new ones if IDs match."""
+    # Create a dictionary of existing criteria, excluding ones that will be updated
+    existing_dict = {
+        criterion.id: criterion
+        for criterion in existing
+        if criterion.id not in {new_criterion.id for new_criterion in new}
+    }
+
+    # Add all new criteria
+    for criterion in new:
+        existing_dict[criterion.id] = criterion
+
+    return list(existing_dict.values())
+
+
 class InputGraphState(BaseModel):
     """State of the input graph."""
 
@@ -44,7 +62,9 @@ class MainGraphState(InputGraphState):
     inferred_culture: Optional[str] = Field(default=None)
     inferred_role_trajectory: Optional[str] = Field(default=None)
 
-    scored_criterion: Annotated[List[ScoredCriterion], operator.add]
+    scored_criterion: Annotated[List[ScoredCriterion], reducer_scored_criterion] = (
+        Field(default_factory=list)
+    )
 
     synthesis_location: Optional[LocationSynthesis] = Field(default=None)
 
