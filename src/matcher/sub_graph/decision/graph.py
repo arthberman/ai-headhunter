@@ -10,6 +10,7 @@ from matcher.sub_graph.decision.nodes import (
     node_infer_role_trajectory,
     node_synthetize_intent,
 )
+from matcher.sub_graph.decision.state import OutputDecisionSchema
 from utils import get_retry_policy
 
 
@@ -17,6 +18,7 @@ def get_decision_subgraph():
     """Get the decision subgraph."""
     workflow = StateGraph(
         MainGraphState,
+        output=OutputDecisionSchema,
         config_schema=Configuration,
     )
 
