@@ -66,10 +66,10 @@ class MainGraphState(InputGraphState):
         Field(default_factory=list)
     )
 
-    synthesis_location: Optional[LocationSynthesis] = Field(default=None)
+    decision_location: Optional[LocationSynthesis] = Field(default=None)
 
-    conclusion_overall: Optional[ConclusionOverall] = Field(default=None)
-    hierarchy_move: Optional[HierarchyMove] = Field(default=None)
-    openess_to_work: Optional[OpenessToWork] = Field(default=None)
-    intent_to_move: Optional[IntentToMove] = Field(default=None)
-    redflag_stability: Optional[RedflagStability] = Field(default=None)
+    conclusion: Optional[ConclusionOverall] = Field(default=None)
+    decision_hierarchy_move: Optional[HierarchyMove] = Field(default=None)
+    decision_openess_to_work: Optional[OpenessToWork] = Field(default=None)
+    decision_intent_to_move: Optional[IntentToMove] = Field(default=None)
+    decision_redflag_stability: Optional[RedflagStability] = Field(default=None)

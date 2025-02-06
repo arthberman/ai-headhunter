@@ -26,8 +26,8 @@ async def node_synthetize_intent(state: MainGraphState, config: RunnableConfig):
 
     # Compute score based on hierarchy and open_to_work synthesis results
     scores = [
-        state.hierarchy_move.score.value,
-        state.openess_to_work.score.value,
+        state.decision_hierarchy_move.score.value,
+        state.decision_openess_to_work.score.value,
     ]
     heuristic_score = (
         "REJECTED"
@@ -43,8 +43,12 @@ async def node_synthetize_intent(state: MainGraphState, config: RunnableConfig):
         await chain.ainvoke(
             {
                 "profile": state.profile.model_dump(mode="json"),
-                "synthesis_hierarchy": state.hierarchy_move.model_dump(mode="json"),
-                "synthesis_open_to_work": state.openess_to_work.model_dump(mode="json"),
+                "synthesis_hierarchy": state.decision_hierarchy_move.model_dump(
+                    mode="json"
+                ),
+                "synthesis_open_to_work": state.decision_openess_to_work.model_dump(
+                    mode="json"
+                ),
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
                 "output_language": configuration.output_language,
                 "score": heuristic_score,
@@ -52,4 +56,4 @@ async def node_synthetize_intent(state: MainGraphState, config: RunnableConfig):
         ),
     )
 
-    return {"intent_to_move": res}
+    return {"decision_intent_to_move": res}

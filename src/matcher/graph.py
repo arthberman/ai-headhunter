@@ -121,7 +121,7 @@ def continue_to_matcher(state: MainGraphState):
 
 def continue_to_enrichment(state: MainGraphState):
     """Continue to the enrichment."""
-    if state.synthesis_location.score in [SynthesisScore.REJECTED]:
+    if state.decision_location.score in [SynthesisScore.REJECTED]:
         return END
 
     if already_enriched(state):
