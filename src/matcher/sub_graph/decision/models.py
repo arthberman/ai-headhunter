@@ -4,61 +4,30 @@ from typing import List
 from pydantic import BaseModel, Field
 
 
-class Score(Enum):
-    """Score of the synthesis."""
+class Outcome(Enum):
+    """Outcome of the assessment."""
 
     ACCEPTED = "accepted"
     REJECTED = "rejected"
     REVIEW = "review"
 
 
-class RedflagStability(BaseModel):
-    """Candidate's redflag stability assessment."""
+class Decision(BaseModel):
+    """Decision of the assessment."""
 
-    score: Score = Field(..., description="Score of the assessment")
+    outcome: Outcome = Field(..., description="Outcome of the assessment")
     explanation: str = Field(
         ..., description="Explanation of the assessment (max 600 characters)"
     )
 
 
-class IntentToMove(BaseModel):
-    """Candidate's intent to move to new job opportunities assessment."""
-
-    score: Score = Field(..., description="Score of the assessment")
-    explanation: str = Field(
-        ..., description="Explanation of the assessment (max 600 characters)"
-    )
-
-
-class HierarchyMove(BaseModel):
-    """Assessment of whether the candidate's current hierarchical level is compatible with the target position.
-
-    Evaluates if the candidate's current role and seniority level would be a suitable match
-    for the hierarchical requirements of the new job opportunity.
-    """
-
-    score: Score = Field(..., description="Score of the assessment")
-    explanation: str = Field(
-        ..., description="Explanation of the assessment (max 600 characters)"
-    )
-
-
-class OpenessToWork(BaseModel):
-    """Assessment of the candidate's openess to work, awareness of new opportunities."""
-
-    score: Score = Field(..., description="Score of the assessment")
-    explanation: str = Field(
-        ..., description="Explanation of the assessment (max 600 characters)"
-    )
-
-
-class ConclusionOverall(BaseModel):
+class Conclusion(BaseModel):
     """Overall conclusion of the matcher."""
 
-    score: Score = Field(..., description="Score of the conclusion")
+    outcome: Outcome = Field(..., description="Outcome of the matcher")
     explanation: str = Field(
         ...,
-        description="Explanation of the score in one-line paragraph (max 600 characters)",
+        description="Explanation of the outcome in one-line paragraph (max 600 characters)",
     )
     summary: List[str] = Field(
         ...,

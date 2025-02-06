@@ -8,16 +8,10 @@ from matcher.memory.models.company import CompanyInfo
 from matcher.memory.models.school import SchoolInfo
 from matcher.models.language import LanguageProficiency
 from matcher.models.profile import Profile
-from matcher.models.synthesis import (
-    LocationSynthesis,
-)
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
 from matcher.sub_graph.decision.models import (
-    ConclusionOverall,
-    HierarchyMove,
-    IntentToMove,
-    OpenessToWork,
-    RedflagStability,
+    Conclusion,
+    Decision,
 )
 from setup.models.scorecard import Scorecard
 from utils import reducer_list
@@ -49,27 +43,28 @@ class InputGraphState(BaseModel):
     job_synthesis: str = Field(...)
 
 
-class MainGraphState(InputGraphState):
+class OutputGraphState(BaseModel):
+    """State of the output graph."""
+
+    scored_criterion: Annotated[List[ScoredCriterion], reducer_scored_criterion] = (
+        Field(default_factory=list)
+    )
+    inferred_languages: Optional[List[LanguageProficiency]] = Field(default=None)
+    inferred_industry_sector: Optional[str] = Field(default=None)
+    inferred_culture: Optional[str] = Field(default=None)
+    inferred_role_trajectory: Optional[str] = Field(default=None)
+    decision_hierarchy_move: Optional[Decision] = Field(default=None)
+    decision_openess_to_work: Optional[Decision] = Field(default=None)
+    decision_intent_to_move: Optional[Decision] = Field(default=None)
+    decision_redflag_stability: Optional[Decision] = Field(default=None)
+    decision_location: Optional[Decision] = Field(default=None)
+    conclusion: Optional[Conclusion] = Field(default=None)
+
+
+class MainGraphState(InputGraphState, OutputGraphState):
     """State of the main graph."""
 
     education_enrichment: Annotated[List[SchoolInfo], operator.add]
     experience_enrichment: Annotated[List[CompanyInfo], operator.add]
 
     batch_store_ops: Annotated[List[Op], reducer_list] = Field(default_factory=list)
-
-    inferred_languages: Optional[List[LanguageProficiency]] = Field(default=None)
-    inferred_industry_sector: Optional[str] = Field(default=None)
-    inferred_culture: Optional[str] = Field(default=None)
-    inferred_role_trajectory: Optional[str] = Field(default=None)
-
-    scored_criterion: Annotated[List[ScoredCriterion], reducer_scored_criterion] = (
-        Field(default_factory=list)
-    )
-
-    decision_location: Optional[LocationSynthesis] = Field(default=None)
-
-    conclusion: Optional[ConclusionOverall] = Field(default=None)
-    decision_hierarchy_move: Optional[HierarchyMove] = Field(default=None)
-    decision_openess_to_work: Optional[OpenessToWork] = Field(default=None)
-    decision_intent_to_move: Optional[IntentToMove] = Field(default=None)
-    decision_redflag_stability: Optional[RedflagStability] = Field(default=None)
