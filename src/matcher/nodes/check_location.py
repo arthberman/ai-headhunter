@@ -4,13 +4,9 @@ from typing import cast
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from matcher.configuration import Configuration
-from matcher.models.synthesis import (
-    LocationSynthesis,
-    SynthesisScore,
-)
 from matcher.state import MainGraphState
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
-from matcher.sub_graph.decision.models import ConclusionOverall
+from matcher.sub_graph.decision.models import Conclusion, Decision, Outcome
 from setup.models.scorecard import Category, Priority
 from utils import get_prompt, init_model
 from utils.candidate_timeline import get_candidate_timeline
@@ -40,7 +36,7 @@ async def node_check_location(
 
     # Initialize the model
     raw_model = init_model(configuration.matcher_model)
-    model = raw_model.with_structured_output(LocationSynthesis)
+    model = raw_model.with_structured_output(Decision)
 
     # Create the chain
     chain = cast(RunnableLambda, prompt | model)
@@ -54,7 +50,7 @@ async def node_check_location(
     )
 
     res = cast(
-        LocationSynthesis,
+        Decision,
         await chain.ainvoke(
             {
                 "job_location_criteria": criterion.model_dump(mode="json"),
@@ -73,15 +69,15 @@ async def node_check_location(
     scored_criterion = ScoredCriterion(
         id=criterion.id,
         score=1
-        if res.score == SynthesisScore.ACCEPTED
+        if res.outcome.value == Outcome.ACCEPTED.value
         else 0.5
-        if res.score == SynthesisScore.REVIEW
+        if res.outcome.value == Outcome.REVIEW.value
         else 0,
         explanation=res.explanation,
         confidence=1
-        if res.score == SynthesisScore.ACCEPTED
+        if res.outcome.value == Outcome.ACCEPTED.value
         else 0.5
-        if res.score == SynthesisScore.REVIEW
+        if res.outcome.value == Outcome.REVIEW.value
         else 0,
     )
 
@@ -92,9 +88,9 @@ async def node_check_location(
     }
 
     # Only update synthesis_overall if location check fails
-    if res.score == SynthesisScore.REJECTED:
-        state_update["conclusion"] = ConclusionOverall(
-            score=SynthesisScore.REJECTED,
+    if res.outcome.value == Outcome.REJECTED.value:
+        state_update["conclusion"] = Conclusion(
+            outcome=Outcome.REJECTED,
             explanation=f"Required location criteria not met: {res.explanation}",
             summary=[
                 "🚫 Location requirements not satisfied",

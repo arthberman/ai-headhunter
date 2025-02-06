@@ -5,12 +5,12 @@ from langgraph.graph.graph import CompiledGraph
 from langgraph.types import Send
 
 from matcher.configuration import Configuration
-from matcher.models.synthesis import SynthesisScore
 from matcher.nodes.check_location import node_check_location
 from matcher.nodes.write_memory import node_write_memory
 from matcher.state import InputGraphState, MainGraphState
 from matcher.sub_graph.criterion_matcher.graph import get_criterion_matcher_subgraph
 from matcher.sub_graph.decision.graph import get_decision_subgraph
+from matcher.sub_graph.decision.models import Outcome
 from matcher.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgraph
 from matcher.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
 from setup.models.scorecard import Category, Priority
@@ -108,8 +108,8 @@ def continue_to_matcher(state: MainGraphState):
         return sends_required
 
     if (
-        compute_must_score(state.scored_criterion, state.scorecard).score
-        == SynthesisScore.REJECTED
+        compute_must_score(state.scored_criterion, state.scorecard).outcome
+        == Outcome.REJECTED
     ):
         return "decision"
 
@@ -121,7 +121,7 @@ def continue_to_matcher(state: MainGraphState):
 
 def continue_to_enrichment(state: MainGraphState):
     """Continue to the enrichment."""
-    if state.decision_location.score in [SynthesisScore.REJECTED]:
+    if state.decision_location.outcome in [Outcome.REJECTED]:
         return END
 
     if already_enriched(state):

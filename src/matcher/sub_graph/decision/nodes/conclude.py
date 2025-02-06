@@ -5,7 +5,7 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
-from matcher.sub_graph.decision.models import ConclusionOverall
+from matcher.sub_graph.decision.models import Conclusion
 from utils import (
     compute_must_score,
     format_scored_criteria,
@@ -66,7 +66,7 @@ async def node_conclude(
 
     # Initialize the model
     raw_model = init_model(configuration.synthesis_model)
-    model = raw_model.with_structured_output(ConclusionOverall)
+    model = raw_model.with_structured_output(Conclusion)
 
     # Create the chain
     chain = cast(RunnableLambda, prompt | model)
@@ -81,7 +81,7 @@ async def node_conclude(
 
     # Invoke the chain
     res = cast(
-        ConclusionOverall,
+        Conclusion,
         await chain.ainvoke(
             {
                 "extended_scored_criterion": format_scored_criteria(
@@ -90,13 +90,13 @@ async def node_conclude(
                     state.scorecard,
                 ).model_dump(mode="json"),
                 "evaluation_guidelines": get_evaluation_guidelines(
-                    False if must_score.score.value == "REJECTED" else True
+                    False if must_score.score.value == "rejected" else True
                 ),
                 "job_synthesis": state.job_synthesis,
                 "synthesis_hierarchy": state.decision_hierarchy_move.model_dump(
                     mode="json"
                 ),
-                "synthesis_open_to_work": state.decision_openess_to_work.model_dump(
+                "decision_openess_to_work": state.decision_openess_to_work.model_dump(
                     mode="json"
                 ),
                 "inferred_role_trajectory": state.inferred_role_trajectory,
