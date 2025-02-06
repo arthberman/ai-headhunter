@@ -5,7 +5,7 @@ from matcher.state import MainGraphState
 from matcher.sub_graph.decision.nodes import (
     node_assess_open_to_work,
     node_check_hierarchy,
-    node_check_redflag_stability,
+    node_check_decision_redflag_stability,
     node_conclude,
     node_infer_role_trajectory,
     node_synthetize_intent,
@@ -27,8 +27,8 @@ def get_decision_subgraph():
     )
     workflow.add_node("check_hierarchy", node_check_hierarchy, retry=get_retry_policy())
     workflow.add_node(
-        "check_redflag_stability",
-        node_check_redflag_stability,
+        "check_decision_redflag_stability",
+        node_check_decision_redflag_stability,
         retry=get_retry_policy(),
     )
     workflow.add_node(
@@ -43,8 +43,8 @@ def get_decision_subgraph():
 
     workflow.add_edge("check_hierarchy", "synthetize_intent")
     workflow.add_edge("assess_open_to_work", "synthetize_intent")
-    workflow.add_edge("synthetize_intent", "check_redflag_stability")
-    workflow.add_edge("check_redflag_stability", "infer_role_trajectory")
+    workflow.add_edge("synthetize_intent", "check_decision_redflag_stability")
+    workflow.add_edge("check_decision_redflag_stability", "infer_role_trajectory")
     workflow.add_edge("infer_role_trajectory", "conclude")
     workflow.add_edge("conclude", END)
     # Compile the graph

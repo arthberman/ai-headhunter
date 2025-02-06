@@ -15,7 +15,9 @@ from utils import (
 )
 
 
-async def node_check_redflag_stability(state: MainGraphState, config: RunnableConfig):
+async def node_check_decision_redflag_stability(
+    state: MainGraphState, config: RunnableConfig
+):
     """Analyze the candidate's redflag stability."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
@@ -58,4 +60,4 @@ async def node_check_redflag_stability(state: MainGraphState, config: RunnableCo
         ),
     )
 
-    return {"redflag_stability": res}
+    return {"decision_redflag_stability": res}

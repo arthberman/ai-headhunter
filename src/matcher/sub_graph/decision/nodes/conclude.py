@@ -93,8 +93,12 @@ async def node_conclude(
                     False if must_score.score.value == "REJECTED" else True
                 ),
                 "job_synthesis": state.job_synthesis,
-                "synthesis_hierarchy": state.hierarchy_move.model_dump(mode="json"),
-                "synthesis_open_to_work": state.openess_to_work.model_dump(mode="json"),
+                "synthesis_hierarchy": state.decision_hierarchy_move.model_dump(
+                    mode="json"
+                ),
+                "synthesis_open_to_work": state.decision_openess_to_work.model_dump(
+                    mode="json"
+                ),
                 "inferred_role_trajectory": state.inferred_role_trajectory,
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
@@ -102,4 +106,4 @@ async def node_conclude(
         ),
     )
 
-    return {"conclusion_overall": res}
+    return {"conclusion": res}

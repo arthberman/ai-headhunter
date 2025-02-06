@@ -87,13 +87,13 @@ async def node_check_location(
 
     # Create a state update dictionary
     state_update = {
-        "synthesis_location": res,
+        "decision_location": res,
         "scored_criterion": [scored_criterion],
     }
 
     # Only update synthesis_overall if location check fails
     if res.score == SynthesisScore.REJECTED:
-        state_update["conclusion_overall"] = ConclusionOverall(
+        state_update["conclusion"] = ConclusionOverall(
             score=SynthesisScore.REJECTED,
             explanation=f"Required location criteria not met: {res.explanation}",
             summary=[

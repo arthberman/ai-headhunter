@@ -67,4 +67,4 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
         ),
     )
 
-    return {"openess_to_work": res}
+    return {"decision_openess_to_work": res}
