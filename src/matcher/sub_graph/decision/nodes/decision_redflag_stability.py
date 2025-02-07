@@ -5,7 +5,7 @@ from langchain_core.runnables import Runnable, RunnableConfig
 
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
-from matcher.sub_graph.decision.models import Decision
+from matcher.sub_graph.decision.models import Decision, DecisionType
 from utils import (
     FewShotConfig,
     get_candidate_timeline,
@@ -46,7 +46,7 @@ async def node_decision_redflag_stability(
     chain = cast(Runnable, prompt | model)
 
     # Invoke the chain
-    res = cast(
+    decision = cast(
         Decision,
         await chain.ainvoke(
             {
@@ -60,4 +60,7 @@ async def node_decision_redflag_stability(
         ),
     )
 
-    return {"decision_redflag_stability": res}
+    # Set the decision type
+    decision.type = DecisionType.REDFLAG_STABILITY
+
+    return {"decisions": [decision]}

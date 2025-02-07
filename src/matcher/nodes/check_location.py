@@ -6,7 +6,12 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
-from matcher.sub_graph.decision.models import Conclusion, Decision, Outcome
+from matcher.sub_graph.decision.models import (
+    Conclusion,
+    Decision,
+    DecisionType,
+    Outcome,
+)
 from setup.models.scorecard import Category, Priority
 from utils import get_prompt, init_model
 from utils.candidate_timeline import get_candidate_timeline
@@ -49,7 +54,7 @@ async def node_check_location(
         and criterion.priority == Priority.REQUIRED
     )
 
-    res = cast(
+    decision = cast(
         Decision,
         await chain.ainvoke(
             {
@@ -65,33 +70,36 @@ async def node_check_location(
         ),
     )
 
+    # Update the decision type
+    decision.type = DecisionType.LOCATION
+
     # confidence is 1 if the score is ACCEPTED, 0.5 if REVIEW, 0 otherwise
     scored_criterion = ScoredCriterion(
         id=criterion.id,
         score=1
-        if res.outcome.value == Outcome.ACCEPTED.value
+        if decision.outcome.value == Outcome.ACCEPTED.value
         else 0.5
-        if res.outcome.value == Outcome.REVIEW.value
+        if decision.outcome.value == Outcome.REVIEW.value
         else 0,
-        explanation=res.explanation,
+        explanation=decision.explanation,
         confidence=1
-        if res.outcome.value == Outcome.ACCEPTED.value
+        if decision.outcome.value == Outcome.ACCEPTED.value
         else 0.5
-        if res.outcome.value == Outcome.REVIEW.value
+        if decision.outcome.value == Outcome.REVIEW.value
         else 0,
     )
 
     # Create a state update dictionary
     state_update = {
-        "decision_location": res,
+        "decisions": [decision],
         "scored_criterion": [scored_criterion],
     }
 
     # Only update synthesis_overall if location check fails
-    if res.outcome.value == Outcome.REJECTED.value:
+    if decision.outcome.value == Outcome.REJECTED.value:
         state_update["conclusion"] = Conclusion(
             outcome=Outcome.REJECTED,
-            explanation=f"Required location criteria not met: {res.explanation}",
+            explanation=f"Required location criteria not met: {decision.explanation}",
             summary=[
                 "🚫 Location requirements not satisfied",
                 "📍 Candidate location incompatible with job requirements",

@@ -5,7 +5,7 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
-from matcher.sub_graph.decision.models import Decision
+from matcher.sub_graph.decision.models import Decision, DecisionType
 from utils import get_prompt, init_model
 
 
@@ -26,8 +26,8 @@ async def node_decision_intent_to_move(state: MainGraphState, config: RunnableCo
 
     # Compute score based on hierarchy and open_to_work synthesis results
     scores = [
-        state.decision_hierarchy_move.outcome.value,
-        state.decision_openess_to_work.outcome.value,
+        state.get_decision(DecisionType.HIERARCHY_MOVE).outcome.value,
+        state.get_decision(DecisionType.OPENESS_TO_WORK).outcome.value,
     ]
     heuristic_score = (
         "rejected"
@@ -38,17 +38,17 @@ async def node_decision_intent_to_move(state: MainGraphState, config: RunnableCo
     )
 
     # Invoke the chain
-    res = cast(
+    decision = cast(
         Decision,
         await chain.ainvoke(
             {
                 "profile": state.profile.model_dump(mode="json"),
-                "synthesis_hierarchy": state.decision_hierarchy_move.model_dump(
-                    mode="json"
-                ),
-                "decision_openess_to_work": state.decision_openess_to_work.model_dump(
-                    mode="json"
-                ),
+                "synthesis_hierarchy": state.get_decision(
+                    DecisionType.HIERARCHY_MOVE
+                ).model_dump(mode="json"),
+                "decision_openess_to_work": state.get_decision(
+                    DecisionType.OPENESS_TO_WORK
+                ).model_dump(mode="json"),
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
                 "output_language": configuration.output_language,
                 "score": heuristic_score,
@@ -56,4 +56,7 @@ async def node_decision_intent_to_move(state: MainGraphState, config: RunnableCo
         ),
     )
 
-    return {"decision_intent_to_move": res}
+    # Set the decision type
+    decision.type = DecisionType.INTENT_TO_MOVE
+
+    return {"decisions": [decision]}
