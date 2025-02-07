@@ -5,7 +5,7 @@ from langchain_core.runnables import Runnable, RunnableConfig
 
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
-from matcher.sub_graph.decision.models import Decision, Outcome
+from matcher.sub_graph.decision.models import Decision, DecisionType, Outcome
 from utils import (
     FewShotConfig,
     get_candidate_timeline,
@@ -23,10 +23,13 @@ async def node_decision_open_to_work(state: MainGraphState, config: RunnableConf
     # Already open to work on his profile
     if state.profile.is_open_to_work:
         return {
-            "decision_openess_to_work": Decision(
-                outcome=Outcome.ACCEPTED,
-                explanation="This candidate is declared as Open To Work on his profile.",
-            )
+            "decisions": [
+                Decision(
+                    type=DecisionType.OPENESS_TO_WORK,
+                    outcome=Outcome.ACCEPTED,
+                    explanation="This candidate is declared as Open To Work on his profile.",
+                )
+            ]
         }
 
     # Initialize the raw model with the provided configuration
@@ -52,7 +55,7 @@ async def node_decision_open_to_work(state: MainGraphState, config: RunnableConf
     chain = cast(Runnable, prompt | model)
 
     # Invoke the chain
-    res = cast(
+    decision = cast(
         Decision,
         await chain.ainvoke(
             {
@@ -67,4 +70,7 @@ async def node_decision_open_to_work(state: MainGraphState, config: RunnableConf
         ),
     )
 
-    return {"decision_openess_to_work": res}
+    # Set the decision type
+    decision.type = DecisionType.OPENESS_TO_WORK
+
+    return {"decisions": [decision]}

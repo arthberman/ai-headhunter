@@ -28,6 +28,10 @@ def init_model(
     if temperature is not None:
         kwargs["temperature"] = temperature
 
+    if model == "o3-mini":
+        kwargs["temperature"] = None
+        kwargs["reasoning_effort"] = "high"
+
     if provider == "bedrock" or provider == "bedrock_converse":
         config = Config(read_timeout=120)
         kwargs["config"] = config

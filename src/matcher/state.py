@@ -6,33 +6,22 @@ from pydantic import BaseModel, Field
 
 from matcher.memory.models.company import CompanyInfo
 from matcher.memory.models.school import SchoolInfo
-from matcher.models.language import LanguageProficiency
 from matcher.models.profile import Profile
+from matcher.models.scored_criterion import reducer_scored_criterion
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
 from matcher.sub_graph.decision.models import (
     Conclusion,
     Decision,
+    DecisionType,
+    reducer_decisions,
+)
+from matcher.sub_graph.infer_enrichment.models import (
+    InferredAttribute,
+    InferredAttributeType,
+    reducer_inferred_attributes,
 )
 from setup.models.scorecard import Scorecard
 from utils import reducer_list
-
-
-def reducer_scored_criterion(
-    existing: List[ScoredCriterion], new: List[ScoredCriterion]
-) -> List[ScoredCriterion]:
-    """Reducer that replaces existing criteria with new ones if IDs match."""
-    # Create a dictionary of existing criteria, excluding ones that will be updated
-    existing_dict = {
-        criterion.id: criterion
-        for criterion in existing
-        if criterion.id not in {new_criterion.id for new_criterion in new}
-    }
-
-    # Add all new criteria
-    for criterion in new:
-        existing_dict[criterion.id] = criterion
-
-    return list(existing_dict.values())
 
 
 class InputGraphState(BaseModel):
@@ -49,16 +38,29 @@ class OutputGraphState(BaseModel):
     scored_criterion: Annotated[List[ScoredCriterion], reducer_scored_criterion] = (
         Field(default_factory=list)
     )
-    inferred_languages: Optional[List[LanguageProficiency]] = Field(default=None)
-    inferred_industry_sector: Optional[str] = Field(default=None)
-    inferred_culture: Optional[str] = Field(default=None)
-    inferred_role_trajectory: Optional[str] = Field(default=None)
-    decision_hierarchy_move: Optional[Decision] = Field(default=None)
-    decision_openess_to_work: Optional[Decision] = Field(default=None)
-    decision_intent_to_move: Optional[Decision] = Field(default=None)
-    decision_redflag_stability: Optional[Decision] = Field(default=None)
-    decision_location: Optional[Decision] = Field(default=None)
+    inferred_attributes: Annotated[
+        List[InferredAttribute], reducer_inferred_attributes
+    ] = Field(default_factory=list)
+    decisions: Annotated[List[Decision], reducer_decisions] = Field(
+        default_factory=list
+    )
     conclusion: Optional[Conclusion] = Field(default=None)
+
+    def get_decision(self, decision_type: DecisionType) -> Optional[Decision]:
+        """Get a decision by its type."""
+        for decision in self.decisions:
+            if decision.type == decision_type:
+                return decision
+        return None
+
+    def get_inferred_attribute(
+        self, attribute_type: InferredAttributeType
+    ) -> Optional[InferredAttribute]:
+        """Get an inferred attribute by its type."""
+        for attribute in self.inferred_attributes:
+            if attribute.type == attribute_type:
+                return attribute
+        return None
 
 
 class MainGraphState(InputGraphState, OutputGraphState):

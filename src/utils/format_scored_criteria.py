@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
 from matcher.sub_graph.decision.models import Decision
 from setup.models.scorecard import Scorecard
-from utils.compute_must_score import compute_must_score
+from utils.compute_required_score import compute_required_score
 from utils.get_extended_scored_criterion import ExtendedScoredCriterion
 
 
@@ -43,7 +43,7 @@ def format_scored_criteria(
         Pydantic model containing structured criteria matcher
     """
     # Compute must synthesis
-    decision_must = compute_must_score(scored_criterion, scorecard)
+    decision_must = compute_required_score(scored_criterion, scorecard)
 
     # Group criteria by priority
     required = [c for c in extended_criteria if c.priority.value == "required"]

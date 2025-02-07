@@ -5,12 +5,12 @@ from langchain_core.runnables import Runnable, RunnableConfig
 
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
-from matcher.sub_graph.decision.models import Decision
+from matcher.sub_graph.decision.models import Decision, DecisionType
 from utils import get_candidate_timeline, get_prompt, init_model
 
 
 async def node_decision_hierarchy_move(state: MainGraphState, config: RunnableConfig):
-    """Analyze the language proficiency of the candidate."""
+    """Analyze the hierarchy of the candidate."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
 
@@ -27,7 +27,7 @@ async def node_decision_hierarchy_move(state: MainGraphState, config: RunnableCo
     chain = cast(Runnable, prompt | model)
 
     # Invoke the chain
-    res = cast(
+    decision = cast(
         Decision,
         await chain.ainvoke(
             {
@@ -41,4 +41,7 @@ async def node_decision_hierarchy_move(state: MainGraphState, config: RunnableCo
         ),
     )
 
-    return {"decision_hierarchy_move": res}
+    # Set the decision type
+    decision.type = DecisionType.HIERARCHY_MOVE
+
+    return {"decisions": [decision]}

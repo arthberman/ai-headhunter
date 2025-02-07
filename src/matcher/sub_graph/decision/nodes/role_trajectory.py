@@ -6,6 +6,10 @@ from pydantic import BaseModel, Field
 
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
+from matcher.sub_graph.infer_enrichment.models import (
+    InferredAttribute,
+    InferredAttributeType,
+)
 from utils import get_prompt, init_model
 from utils.few_shot import FewShotConfig, get_few_shot_messages
 
@@ -62,4 +66,11 @@ async def node_infer_role_trajectory(
         ),
     )
 
-    return {"inferred_role_trajectory": res.explanation}
+    return {
+        "inferred_attributes": [
+            InferredAttribute(
+                type=InferredAttributeType.ROLE_TRAJECTORY,
+                description=res.explanation,
+            )
+        ]
+    }

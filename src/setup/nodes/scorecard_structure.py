@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from typing import List, Optional, cast
 
@@ -16,6 +17,11 @@ from utils import get_prompt, init_model
 class LimitedBaseCriterion(BaseCriterion):
     """Base criterion without context and scoring distribution."""
 
+    id: SkipJsonSchema[uuid.UUID] = Field(
+        default_factory=uuid.uuid4,
+        description="Unique identifier for the criterion (UUID)",
+        exclude=True,
+    )
     context: SkipJsonSchema[Optional[str]] = Field(
         None,
         description="This is the context of the job posting that is relevant to the criterion (definition of the scope).",
@@ -55,7 +61,7 @@ def node_scorecard_structure(
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
     # Initialize the chat model with the provided configuration
-    raw_model = init_model(configuration.structure_model)
+    raw_model = init_model("openai/o3-mini")
 
     # Get unprocessed feedback
     unprocessed_feedback = ""  # TO COMPLETED
