@@ -5,9 +5,10 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
-from matcher.sub_graph.decision.models import ConclusionOverall
+from matcher.sub_graph.decision.models import Conclusion, DecisionType
+from matcher.sub_graph.infer_enrichment.models import InferredAttributeType
 from utils import (
-    compute_must_score,
+    compute_required_score,
     format_scored_criteria,
     get_extended_scored_criterion,
     get_prompt,
@@ -66,13 +67,13 @@ async def node_conclude(
 
     # Initialize the model
     raw_model = init_model(configuration.synthesis_model)
-    model = raw_model.with_structured_output(ConclusionOverall)
+    model = raw_model.with_structured_output(Conclusion)
 
     # Create the chain
     chain = cast(RunnableLambda, prompt | model)
 
     # Check if the candidate has satisfied the must-have criteria
-    must_score = compute_must_score(state.scored_criterion, state.scorecard)
+    required_score = compute_required_score(state.scored_criterion, state.scorecard)
 
     # Extend the scored criterion with the scorecard
     extended_scored_criterion = get_extended_scored_criterion(
@@ -81,7 +82,7 @@ async def node_conclude(
 
     # Invoke the chain
     res = cast(
-        ConclusionOverall,
+        Conclusion,
         await chain.ainvoke(
             {
                 "extended_scored_criterion": format_scored_criteria(
@@ -90,16 +91,22 @@ async def node_conclude(
                     state.scorecard,
                 ).model_dump(mode="json"),
                 "evaluation_guidelines": get_evaluation_guidelines(
-                    False if must_score.score.value == "REJECTED" else True
+                    False if required_score.outcome.value == "rejected" else True
                 ),
                 "job_synthesis": state.job_synthesis,
-                "synthesis_hierarchy": state.hierarchy_move.model_dump(mode="json"),
-                "synthesis_open_to_work": state.openess_to_work.model_dump(mode="json"),
-                "inferred_role_trajectory": state.inferred_role_trajectory,
+                "synthesis_hierarchy": state.get_decision(
+                    DecisionType.HIERARCHY_MOVE
+                ).explanation,
+                "decision_openess_to_work": state.get_decision(
+                    DecisionType.OPENESS_TO_WORK
+                ).explanation,
+                "inferred_role_trajectory": state.get_inferred_attribute(
+                    InferredAttributeType.ROLE_TRAJECTORY
+                ).description,
                 "output_language": configuration.output_language,
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
             }
         ),
     )
 
-    return {"conclusion_overall": res}
+    return {"conclusion": res}

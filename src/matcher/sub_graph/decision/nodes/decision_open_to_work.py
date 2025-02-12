@@ -5,7 +5,7 @@ from langchain_core.runnables import Runnable, RunnableConfig
 
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
-from matcher.sub_graph.decision.models import OpenessToWork, Score
+from matcher.sub_graph.decision.models import Decision, DecisionType, Outcome
 from utils import (
     FewShotConfig,
     get_candidate_timeline,
@@ -15,7 +15,7 @@ from utils import (
 )
 
 
-async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig):
+async def node_decision_open_to_work(state: MainGraphState, config: RunnableConfig):
     """Analyze the candidate's openess to work, awareness of new opportunities."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
@@ -23,10 +23,13 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
     # Already open to work on his profile
     if state.profile.is_open_to_work:
         return {
-            "synthesis_open_to_work": OpenessToWork(
-                score=Score.ACCEPTED,
-                explanation="This candidate is declared as Open To Work on his profile.",
-            )
+            "decisions": [
+                Decision(
+                    type=DecisionType.OPENESS_TO_WORK,
+                    outcome=Outcome.ACCEPTED,
+                    explanation="This candidate is declared as Open To Work on his profile.",
+                )
+            ]
         }
 
     # Initialize the raw model with the provided configuration
@@ -46,14 +49,14 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
     few_shot_messages = await get_few_shot_messages(few_shot_config)
 
     # Bind the model to the structured output
-    model = raw_model.with_structured_output(OpenessToWork)
+    model = raw_model.with_structured_output(Decision)
 
     # Create the chain
     chain = cast(Runnable, prompt | model)
 
     # Invoke the chain
-    res = cast(
-        OpenessToWork,
+    decision = cast(
+        Decision,
         await chain.ainvoke(
             {
                 "candidate_timeline": get_candidate_timeline(
@@ -67,4 +70,7 @@ async def node_assess_open_to_work(state: MainGraphState, config: RunnableConfig
         ),
     )
 
-    return {"openess_to_work": res}
+    # Set the decision type
+    decision.type = DecisionType.OPENESS_TO_WORK
+
+    return {"decisions": [decision]}

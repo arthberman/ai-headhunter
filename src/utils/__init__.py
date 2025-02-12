@@ -2,7 +2,7 @@
 
 from .candidate_timeline import get_candidate_timeline
 from .clean_message import clean_message
-from .compute_must_score import compute_must_score
+from .compute_required_score import compute_required_score
 from .few_shot import FewShotConfig, get_few_shot_messages
 from .format_scored_criteria import format_scored_criteria
 from .get_dataset import get_dataset
@@ -29,7 +29,7 @@ __all__ = [
     "get_few_shot_messages",
     "FewShotConfig",
     "clean_message",
-    "compute_must_score",
+    "compute_required_score",
     "reducer_list",
     "format_scored_criteria",
 ]

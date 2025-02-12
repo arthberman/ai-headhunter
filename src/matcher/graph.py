@@ -5,16 +5,17 @@ from langgraph.graph.graph import CompiledGraph
 from langgraph.types import Send
 
 from matcher.configuration import Configuration
-from matcher.models.synthesis import SynthesisScore
 from matcher.nodes.check_location import node_check_location
 from matcher.nodes.write_memory import node_write_memory
-from matcher.state import InputGraphState, MainGraphState
+from matcher.state import InputGraphState, MainGraphState, OutputGraphState
 from matcher.sub_graph.criterion_matcher.graph import get_criterion_matcher_subgraph
 from matcher.sub_graph.decision.graph import get_decision_subgraph
+from matcher.sub_graph.decision.models import DecisionType, Outcome
 from matcher.sub_graph.infer_enrichment.graph import get_infer_enrichment_subgraph
+from matcher.sub_graph.infer_enrichment.models import InferredAttributeType
 from matcher.sub_graph.web_enrichment.graph import get_web_enrichment_subgraph
 from setup.models.scorecard import Category, Priority
-from utils import compute_must_score, get_retry_policy
+from utils import compute_required_score, get_retry_policy
 from utils.get_profile_metadata import get_profile_metadata
 
 
@@ -23,10 +24,12 @@ def already_enriched(state: MainGraphState) -> bool:
     # Check if all inferred fields are filled
     inferred_fields_filled = all(
         [
-            state.inferred_languages is not None,
-            state.inferred_industry_sector is not None,
-            state.inferred_culture is not None,
-            state.inferred_role_trajectory is not None,
+            state.get_inferred_attribute(InferredAttributeType.LANGUAGES) is not None,
+            state.get_inferred_attribute(InferredAttributeType.INDUSTRY_SECTOR)
+            is not None,
+            state.get_inferred_attribute(InferredAttributeType.CULTURE) is not None,
+            state.get_inferred_attribute(InferredAttributeType.ROLE_TRAJECTORY)
+            is not None,
         ]
     )
 
@@ -108,8 +111,8 @@ def continue_to_matcher(state: MainGraphState):
         return sends_required
 
     if (
-        compute_must_score(state.scored_criterion, state.scorecard).score
-        == SynthesisScore.REJECTED
+        compute_required_score(state.scored_criterion, state.scorecard).outcome
+        == Outcome.REJECTED
     ):
         return "decision"
 
@@ -121,7 +124,7 @@ def continue_to_matcher(state: MainGraphState):
 
 def continue_to_enrichment(state: MainGraphState):
     """Continue to the enrichment."""
-    if state.synthesis_location.score in [SynthesisScore.REJECTED]:
+    if state.get_decision(DecisionType.LOCATION).outcome in [Outcome.REJECTED]:
         return END
 
     if already_enriched(state):
@@ -133,7 +136,10 @@ def continue_to_enrichment(state: MainGraphState):
 def compile_matcher_graph() -> CompiledGraph:
     """Compile the candidate matcher graph."""
     workflow = StateGraph(
-        MainGraphState, input=InputGraphState, config_schema=Configuration
+        MainGraphState,
+        input=InputGraphState,
+        output=OutputGraphState,
+        config_schema=Configuration,
     )
 
     workflow.add_node("compute_profile_metadata", compute_profile_metadata)
