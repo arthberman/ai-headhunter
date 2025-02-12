@@ -12,6 +12,7 @@ from typing_extensions import Annotated
 from matcher.configuration import Configuration
 from matcher.sub_graph.criterion_matcher.models import ScoredCriterion
 from matcher.sub_graph.criterion_matcher.state import AnalysisMainState
+from matcher.sub_graph.infer_enrichment.models import InferredAttributeType
 from utils import (
     FewShotConfig,
     get_few_shot_messages,
@@ -75,8 +76,9 @@ def get_candidate_info(
                 for language in state.main_state.profile.languages
             ],
             "inferred_languages": [
-                inferred_languages.model_dump(mode="json")
-                for inferred_languages in state.main_state.inferred_languages
+                state.main_state.get_inferred_attribute(
+                    InferredAttributeType.LANGUAGES
+                ).model_dump(mode="json")
             ],
         },
         CandidateInfoType.PROJECTS: [
@@ -87,8 +89,12 @@ def get_candidate_info(
             volunteering.model_dump(mode="json")
             for volunteering in state.main_state.profile.volunteerings
         ],
-        CandidateInfoType.COMPANY_CULTURE: state.main_state.inferred_culture,
-        CandidateInfoType.INDUSTRY_SECTOR: state.main_state.inferred_industry_sector,
+        CandidateInfoType.COMPANY_CULTURE: state.main_state.get_inferred_attribute(
+            InferredAttributeType.CULTURE
+        ).model_dump(mode="json"),
+        CandidateInfoType.INDUSTRY_SECTOR: state.main_state.get_inferred_attribute(
+            InferredAttributeType.INDUSTRY_SECTOR
+        ).model_dump(mode="json"),
     }
 
     if infotype not in info_map:

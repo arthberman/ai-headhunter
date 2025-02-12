@@ -4,19 +4,19 @@ version = "0.0.1"
 description = "AI Agents for repio.co"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["langchain>=0.3.17",
-  "langchain-community>=0.3.16",
-  "langchain-anthropic>=0.3.5",
-  "langchain-core>=0.3.33",
-  "langgraph>=0.2.69",
-  "langchain-openai>=0.3.3",
+dependencies = ["langchain>=0.3.18",
+  "langchain-community>=0.3.17",
+  "langchain-anthropic>=0.3.7",
+  "langchain-core>=0.3.34",
+  "langgraph>=0.2.71",
+  "langchain-openai>=0.3.5",
   "pydantic>=2.10.6",
   "langchain-aws>=0.2.12",
-  "trustcall>=0.0.34",
+  "trustcall>=0.0.35",
   "python-dotenv>=1.0.1",
   "asyncpg>=0.30.0",
   "langgraph-sdk>=0.1.51",
-  "tavily-python>=0.5.0",
+  "tavily-python>=0.5.1",
   "upstash-redis>=1.2.0"]
 
 [build-system]
@@ -26,9 +26,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.uv]
 dev-dependencies = ["ipykernel>=6.29.5",
-  "langgraph-cli[inmem]>=0.1.70",
-  "mypy>=1.14.1",
-  "ruff>=0.9.4",
+  "langgraph-cli[inmem]>=0.1.71",
+  "mypy>=1.15.0",
+  "ruff>=0.9.6",
   "toml>=0.10.2"]
 
 [tool.setuptools]
