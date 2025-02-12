@@ -5,6 +5,10 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from pydantic import BaseModel, Field
 
 from matcher.configuration import Configuration
+from matcher.sub_graph.infer_enrichment.models import (
+    InferredAttribute,
+    InferredAttributeType,
+)
 from matcher.sub_graph.infer_enrichment.state import (
     MainInferEnrichmentState,
     OutputInferEnrichmentState,
@@ -54,4 +58,11 @@ async def node_infer_industry_sector(
         ),
     )
 
-    return {"inferred_industry_sector": res.synthesis}
+    return {
+        "inferred_attributes": [
+            InferredAttribute(
+                type=InferredAttributeType.INDUSTRY_SECTOR,
+                description=res.synthesis,
+            )
+        ]
+    }

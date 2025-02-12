@@ -5,11 +5,11 @@ from langchain_core.runnables import RunnableConfig, RunnableLambda
 
 from matcher.configuration import Configuration
 from matcher.state import MainGraphState
-from matcher.sub_graph.decision.models import IntentToMove
+from matcher.sub_graph.decision.models import Decision, DecisionType
 from utils import get_prompt, init_model
 
 
-async def node_synthetize_intent(state: MainGraphState, config: RunnableConfig):
+async def node_decision_intent_to_move(state: MainGraphState, config: RunnableConfig):
     """Synthesize the intent of the profile."""
     # Load configuration from the provided RunnableConfig
     configuration = Configuration.from_runnable_config(config)
@@ -19,32 +19,36 @@ async def node_synthetize_intent(state: MainGraphState, config: RunnableConfig):
 
     # Initialize the model
     raw_model = init_model(configuration.synthesis_model)
-    model = raw_model.with_structured_output(IntentToMove)
+    model = raw_model.with_structured_output(Decision)
 
     # Create the chain
     chain = cast(RunnableLambda, prompt | model)
 
     # Compute score based on hierarchy and open_to_work synthesis results
     scores = [
-        state.hierarchy_move.score.value,
-        state.openess_to_work.score.value,
+        state.get_decision(DecisionType.HIERARCHY_MOVE).outcome.value,
+        state.get_decision(DecisionType.OPENESS_TO_WORK).outcome.value,
     ]
     heuristic_score = (
-        "REJECTED"
-        if "REJECTED" in scores
-        else "REVIEW"
-        if "REVIEW" in scores
-        else "SUCCESS"
+        "rejected"
+        if "rejected" in scores
+        else "review"
+        if "review" in scores
+        else "success"
     )
 
     # Invoke the chain
-    res = cast(
-        IntentToMove,
+    decision = cast(
+        Decision,
         await chain.ainvoke(
             {
                 "profile": state.profile.model_dump(mode="json"),
-                "synthesis_hierarchy": state.hierarchy_move.model_dump(mode="json"),
-                "synthesis_open_to_work": state.openess_to_work.model_dump(mode="json"),
+                "synthesis_hierarchy": state.get_decision(
+                    DecisionType.HIERARCHY_MOVE
+                ).model_dump(mode="json"),
+                "decision_openess_to_work": state.get_decision(
+                    DecisionType.OPENESS_TO_WORK
+                ).model_dump(mode="json"),
                 "system_time": datetime.now().strftime("%B %d, %Y (%Y-%m-%-d)"),
                 "output_language": configuration.output_language,
                 "score": heuristic_score,
@@ -52,4 +56,7 @@ async def node_synthetize_intent(state: MainGraphState, config: RunnableConfig):
         ),
     )
 
-    return {"intent_to_move": res}
+    # Set the decision type
+    decision.type = DecisionType.INTENT_TO_MOVE
+
+    return {"decisions": [decision]}

@@ -6,6 +6,10 @@ from pydantic import BaseModel, Field
 
 from matcher.configuration import Configuration
 from matcher.models.language import LanguageProficiency
+from matcher.sub_graph.infer_enrichment.models import (
+    InferredAttribute,
+    InferredAttributeType,
+)
 from matcher.sub_graph.infer_enrichment.state import (
     MainInferEnrichmentState,
     OutputInferEnrichmentState,
@@ -13,8 +17,8 @@ from matcher.sub_graph.infer_enrichment.state import (
 from utils import get_prompt, init_model
 
 
-class LanguageProficiency(BaseModel):
-    """Language proficiency."""
+class Languages(BaseModel):
+    """Languages."""
 
     languages: List[LanguageProficiency] = Field(
         description="List of language proficiencies, each containing a language and its corresponding level"
@@ -35,14 +39,14 @@ async def node_infer_languages(
     prompt = get_prompt("analysis-candidate-language")
 
     # Bind the model to the structured output
-    model = raw_model.with_structured_output(LanguageProficiency)
+    model = raw_model.with_structured_output(Languages)
 
     # Create the chain
     chain = cast(Runnable, prompt | model)
 
     # Invoke the chain
     res = cast(
-        LanguageProficiency,
+        Languages,
         await chain.ainvoke(
             {
                 "profile": state.profile.model_dump(mode="json"),
@@ -52,4 +56,12 @@ async def node_infer_languages(
         ),
     )
 
-    return {"inferred_languages": res.languages}
+    return {
+        "inferred_attributes": [
+            InferredAttribute(
+                type=InferredAttributeType.LANGUAGES,
+                description="",
+                languages=res.languages,
+            )
+        ]
+    }
