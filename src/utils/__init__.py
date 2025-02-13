@@ -12,7 +12,7 @@ from .get_prompt import get_prompt
 from .init_model import init_model
 from .reducer_list import reducer_list
 from .retry_policy import get_retry_policy
-from .time import compute_duration, compute_status, format_date, is_valid_date
+from .time import compute_duration, compute_status, format_date
 
 __all__ = [
     "init_model",
@@ -22,7 +22,6 @@ __all__ = [
     "get_profile_metadata",
     "compute_duration",
     "format_date",
-    "is_valid_date",
     "compute_status",
     "get_prompt",
     "get_dataset",
