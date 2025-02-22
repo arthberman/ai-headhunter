@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from typing import Optional
 
-from dateutil import parser
+from matcher.models.profile import DateModel
 
 
 def compute_duration(
@@ -40,16 +40,7 @@ def compute_duration(
         return "1m"  # Minimum duration shown
 
 
-def is_valid_date(date: str) -> bool:
-    """Check if a date is valid."""
-    try:
-        parsed_date = parser.parse(date)
-        return parsed_date.year > 1900
-    except ValueError:
-        return False
-
-
-def format_date(date: Optional[str | datetime]) -> Optional[datetime]:
+def format_date(date: Optional[str | datetime | DateModel]) -> Optional[datetime]:
     """Format a date string or datetime object into a datetime."""
     if not date:
         return None
@@ -58,11 +49,10 @@ def format_date(date: Optional[str | datetime]) -> Optional[datetime]:
     if isinstance(date, datetime):
         return date
 
-    # Otherwise, try to parse the string
-    if not is_valid_date(date):
-        return None
-
-    return parser.parse(date)
+    # Use month 6 (June) if month is not provided
+    month = date.month if date.month is not None else 6
+    # Use day 1 as default since we don't store day information
+    return datetime(date.year, month, 1, tzinfo=UTC)
 
 
 def compute_status(start_date: Optional[datetime], end_date: Optional[datetime]) -> str:

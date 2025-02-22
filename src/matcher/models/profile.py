@@ -1,16 +1,22 @@
-from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
 
+class DateModel(BaseModel):
+    """Date model with year and optional month."""
+
+    year: int = Field(description="Year of the date")
+    month: Optional[int] = Field(default=None, description="Month of the date")
+
+
 class ProfileEducation(BaseModel):
     """Profile education."""
 
-    start_date: Optional[datetime] = Field(
+    start_date: Optional[DateModel] = Field(
         default=None, description="Start date of education"
     )
-    end_date: Optional[datetime] = Field(
+    end_date: Optional[DateModel] = Field(
         default=None, description="End date of education"
     )
     school: str = Field(description="School name")
@@ -30,10 +36,10 @@ class ProfileEducation(BaseModel):
 class ProfileExperience(BaseModel):
     """Profile experience."""
 
-    start_date: Optional[datetime] = Field(
+    start_date: Optional[DateModel] = Field(
         default=None, description="Start date of experience"
     )
-    end_date: Optional[datetime] = Field(
+    end_date: Optional[DateModel] = Field(
         default=None, description="End date of experience"
     )
     company: str = Field(description="Company name")
@@ -53,8 +59,8 @@ class ProfileExperience(BaseModel):
 class ProfileVolunteering(BaseModel):
     """Profile volunteering."""
 
-    start_date: Optional[datetime] = Field(description="Start date of volunteering")
-    end_date: Optional[datetime] = Field(
+    start_date: Optional[DateModel] = Field(description="Start date of volunteering")
+    end_date: Optional[DateModel] = Field(
         default=None, description="End date of volunteering"
     )
     title: Optional[str] = Field(default=None, description="Volunteering title")
@@ -74,7 +80,7 @@ class ProfileHonor(BaseModel):
     title: Optional[str] = Field(description="Honor title")
     description: Optional[str] = Field(description="Honor description")
     issuer: Optional[str] = Field(description="Honor issuer")
-    issue_at: Optional[datetime] = Field(description="Date of honor issuance")
+    issue_at: Optional[DateModel] = Field(description="Date of honor issuance")
 
 
 class ProfileProject(BaseModel):
@@ -82,8 +88,8 @@ class ProfileProject(BaseModel):
 
     title: Optional[str] = Field(description="Project title")
     description: Optional[str] = Field(description="Project description")
-    end_date: Optional[datetime] = Field(description="Project end date")
-    start_date: Optional[datetime] = Field(description="Project start date")
+    end_date: Optional[DateModel] = Field(description="Project end date")
+    start_date: Optional[DateModel] = Field(description="Project start date")
     metadata_duration: Optional[str] = Field(
         default=None, description="Education duration"
     )
@@ -98,7 +104,7 @@ class ProfileCertification(BaseModel):
         default=None, description="Certification description"
     )
     issuer: Optional[str] = Field(default=None, description="Certification issuer")
-    issue_at: Optional[datetime] = Field(
+    issue_at: Optional[DateModel] = Field(
         default=None, description="Date of certification issuance"
     )
 
