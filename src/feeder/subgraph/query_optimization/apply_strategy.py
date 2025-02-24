@@ -40,7 +40,9 @@ def apply_strategy(
                 far_keywords = state.keywords_classified.far[:2]
                 logger.info(f"Adding FAR keywords: {far_keywords}")
 
-                new_filters.KEYWORDS = [new_filters.KEYWORDS] + far_keywords
+                new_filters.KEYWORDS = (
+                    new_filters.KEYWORDS + " " + " ".join(far_keywords)
+                )
 
                 return new_filters
             else:
@@ -48,7 +50,7 @@ def apply_strategy(
                 return new_filters
         elif strategy.strategy_type == "remove_keywords":
             logger.info("Performing remove_keywords strategy")
-            new_filters.KEYWORDS = []
+            new_filters.KEYWORDS = ""
 
             return new_filters
         elif strategy.strategy_type == "broaden_titles":
