@@ -4,6 +4,8 @@ from pydantic import BaseModel, Field
 
 
 class SeniorityEnum(str, Enum):
+    """Enum for seniority levels."""
+
     LESSTHANAYEAR = ("Less than 1 year", 1)
     ONE_TO_TWO_YEARS = ("1 to 2 years", 2)
     THREE_TO_FIVE_YEARS = ("3 to 5 years", 3)
@@ -11,22 +13,52 @@ class SeniorityEnum(str, Enum):
     MORETHANTENYEARS = ("More than 10 years", 5)
 
     def __new__(cls, label: str, id: int):
+        """Create a new seniority level enum."""
         obj = str.__new__(cls, label)
         obj._value_ = label
-        obj.id = id
         return obj
+    
+    def get_range(self) -> tuple:
+        """Get the years of experience range for the seniority level.
 
-
+        Returns: (min, max) years of experience range
+        """
+        if self == SeniorityEnum.LESSTHANAYEAR:
+            return (0, 1)
+        elif self == SeniorityEnum.ONE_TO_TWO_YEARS:
+            return (1, 2)
+        elif self == SeniorityEnum.THREE_TO_FIVE_YEARS:
+            return (3, 5)
+        elif self == SeniorityEnum.SIX_TO_TEN_YEARS:
+            return (6, 10)
+        elif self == SeniorityEnum.MORETHANTENYEARS:
+            return (10, 100)
+        else:
+            return None, None
 class LinkedInExperienceRange(BaseModel):
+    """Enum for LinkedIn experience ranges."""
+
     id: str
     label: str
 
 
 class YearsExperience(BaseModel):
+    """Years of experience.
+
+    Attributes:
+        min: Minimum years of experience
+        max: Maximum years of experience
+    """
+
     min: int = Field(description="Minimum years of experience")
     max: int = Field(description="Maximum years of experience")
 
     def to_linkedin_range(self) -> list[LinkedInExperienceRange]:
+        """Convert years of experience to LinkedIn experience ranges.
+
+        Returns:
+            List of LinkedIn experience ranges
+        """
         ranges = []
 
         # Add applicable ranges based on min and max years
@@ -45,6 +77,13 @@ class YearsExperience(BaseModel):
 
 
 class SeniorityLevel(BaseModel):
+    """Seniority level.
+
+    Attributes:
+        seniority_level: Seniority level
+        years_experience: Years of experience
+    """
+
     seniority_level: SeniorityEnum = Field(
         description="Required seniority level for the position"
     )

@@ -1,15 +1,16 @@
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from feeder.models.filters_query import FilterQuery
 from feeder.models.job_offer import JobOfferDescription
 from feeder.models.job_titles_ranking import JobTitlesRankings
+from feeder.models.keywords_ranking import KeywordsRankings
+from feeder.models.location import LocationData
+from feeder.models.people_search_filter import ProfileLanguage
 from feeder.models.query_memory import QueryMemory
 from feeder.models.raw_query import RawQuery
-from src.feeder.models.keywords_ranking import KeywordsRankings
-from src.feeder.models.location import LocationItem
-from src.feeder.models.seniority_level import SeniorityLevel
+from feeder.models.seniority_level import SeniorityLevel
 
 
 class OverallState(BaseModel):
@@ -36,32 +37,42 @@ class OverallState(BaseModel):
     """
 
     # Primary Input
-    job_offer_description: JobOfferDescription = Field(...)
+    job_offer_description: JobOfferDescription = Field(
+        ...,
+        description="Structured job offer description with summary, seniority and location",
+    )
+    target_language: Optional[ProfileLanguage] = Field(
+        default=ProfileLanguage.ENGLISH,
+        description="Language to generate the query keywords in",
+    )
+    data_source: Literal[
+        "crustdata", "linkedin_recruiter", "linkedin_sales_nav", "hellowork"
+    ] = Field(
+        description="Data source to use for getting profile search count",
+    )
 
     # Initial Query Generation
     json_object: Optional[RawQuery] = Field(None)
-    seniority_level: Optional[SeniorityLevel] = Field(None)
-    real_job_title: Optional[str] = Field(None)
-    keywords: Optional[List[str]] = Field(None)
 
-    # Location and Filter Parameters
-    locations: Optional[List[LocationItem]] = Field(None)
-    include: Optional[List[str]] = Field(None)
-    exclude: Optional[List[str]] = Field(None)
+    # Location
+    locations: Optional[LocationData] = Field(None)
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
         from_attributes=True,
     )
 
-    # Classification and Optimization State
+    # Classify Job Titles and Keywords
     job_titles_classified: Optional[JobTitlesRankings] = Field(None)
     keywords_classified: Optional[KeywordsRankings] = Field(
         default=None,
         description="Classification of keywords into FAR and NEAR categories",
     )
+
+    # Optimization State
     query_results: Optional[List[FilterQuery]] = Field(default_factory=list)
-    current_query_index: Optional[int] = Field(default=0)
+
+    # Query Memory
     query_memory: Optional[QueryMemory] = Field(None)
     global_iteration_count: int = Field(
         default=0, description="Counter for global feedback iterations"
@@ -76,7 +87,15 @@ class OverallInputState(BaseModel):
     various processing steps (see KeywordsState, LocationSubGraphState, etc.)
     """
 
-    job_offer_description: JobOfferDescription = Field(...)
+    # job_offer_description: JobOfferDescription = Field(...)
+    raw_job_description: str = Field(..., description="Raw job description text")
+    target_language: Optional[ProfileLanguage] = Field(
+        default=ProfileLanguage.ENGLISH,
+        description="Language to generate the query keywords in",
+    )
+    data_source: Literal["crustdata", "linkedin_recruiter", "linkedin_sales_nav"] = (
+        Field(..., description="Data source to use for getting profile search count")
+    )
 
 
 class OverallOutputState(BaseModel):
@@ -90,7 +109,7 @@ class OverallOutputState(BaseModel):
     - Skill/technology requirements (keywords_classified)
     """
 
-    locations: Optional[List[LocationItem]] = Field(None)
+    locations: Optional[LocationData] = Field(None)
     seniority_level: Optional[SeniorityLevel] = Field(None)
     job_titles_classified: Optional[JobTitlesRankings] = Field(None)
     keywords_classified: Optional[KeywordsRankings] = Field(None)
