@@ -1,12 +1,34 @@
+import os
 import uuid
 from logging import getLogger
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, cast
 
+import requests
+from dotenv import load_dotenv
+from langgraph.types import interrupt
 from pydantic import BaseModel, Field, field_validator
+from upstash_ratelimit import FixedWindow, Ratelimit
+from upstash_redis import Redis
 
-from feeder.models.people_search_filter import PeopleSearchFilter, TextFilter
+from feeder.models.people_search_filter import CrustDataPeopleSearchResponse, TextFilter
+from feeder.subgraph.linkedin_recruiter_subgraph.models.linkedin_recruiter_filters import (
+    LinkedinRecruiterFilter,
+)
+
+load_dotenv()
 
 logger = getLogger(__name__)
+
+# Initialize the ratelimit for the Crustdata People Search API
+ratelimit = Ratelimit(
+    redis=Redis.from_env(),
+    limiter=FixedWindow(
+        max_requests=5,
+        window=10,
+    ),
+)
+
+crustdata_identifier = "feeder_get_count"
 
 
 class OptimizationStrategy(BaseModel):
@@ -27,7 +49,7 @@ class QueryIteration(BaseModel):
     """Represents one iteration of a query with its results."""
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
-    filters: List[TextFilter] = Field(
+    filters: List[TextFilter] | LinkedinRecruiterFilter = Field(
         ..., description="List of filters to apply to the search."
     )
     count: Optional[int] = Field(None)
@@ -42,11 +64,84 @@ class QueryIteration(BaseModel):
             raise ValueError("Filters list cannot be empty")
         return v
 
+    def model_post_init(self, __context):
+        """Post-initialization hook to set get count for current iteration."""
+        if self.count is None:
+            if isinstance(self.filters, TextFilter):
+                self.count = self._get_count()
+            elif isinstance(self.filters, LinkedinRecruiterFilter):
+                self.count = interrupt(
+                    {"action": "get_search_recruiter_count", "filters": self.filters}
+                )
+
+    def _get_count(self) -> int:
+        """Get total display count from Crustdata People Search API."""
+        try:
+            if not os.getenv("CRUSTDATA_API_KEY"):
+                logger.error("CRUSTDATA_API_KEY not found in environment")
+                raise ValueError("CRUSTDATA_API_KEY not found in environment")
+
+            crustdata_ratelimit = ratelimit.limit(crustdata_identifier)
+            if not crustdata_ratelimit.allowed:
+                logger.warning(
+                    f"Rate limit exceeded for crustdata_identifier: {crustdata_identifier}"
+                )
+                raise Exception("Rate limit exceeded")
+            else:
+                # Implement multiple iterations logic for each query
+                crust_api_people_search_filters = []
+                for filters in cast(list[TextFilter], self.filters):
+                    crust_api_people_search_filters.append(
+                        {
+                            "filter_type": filters.filter_type,
+                            "type": filters.type,
+                            "value": filters.value,
+                        }
+                    )
+
+                response = requests.post(
+                    "https://api.crustdata.com/screener/person/search",
+                    headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "Authorization": "Token " + os.getenv("CRUSTDATA_API_KEY", ""),
+                    },
+                    json={
+                        "filters": crust_api_people_search_filters,
+                        "preview": True,
+                    },
+                )
+
+                response.raise_for_status()
+                if response.status_code == 200:
+                    crust_data_people_search_response = CrustDataPeopleSearchResponse(
+                        **response.json()
+                    )
+
+                    logger.info(
+                        f"Successfully got search count for iteration {self.id}: {crust_data_people_search_response.total_display_count}"
+                    )
+
+                    return crust_data_people_search_response.total_display_count
+                else:
+                    if response.json().get("error"):
+                        logger.warning(
+                            f"No results found for iteration {self.id}: {response.json()}"
+                        )
+                        return 0
+
+                raise Exception(
+                    f"Error getting count for iteration {self.id}: {response.json()}"
+                )
+        except Exception as e:
+            logger.exception(f"Error getting count for iteration {self.id}: {e}")
+            raise e
+
 
 class FilterQuery(BaseModel):
     """Tracks all iterations of a specific query."""
 
-    original_filters: List[TextFilter] = Field(
+    original_filters: List[TextFilter] | LinkedinRecruiterFilter = Field(
         ..., description="List of filters to apply to the search."
     )
     iterations: List[QueryIteration] = Field(default_factory=list)
@@ -55,10 +150,13 @@ class FilterQuery(BaseModel):
     optimization_strategies: List[OptimizationStrategy] = Field(default_factory=list)
 
     def split_query(
-        self, new_filters_list: List[List[TextFilter]], reason: str
+        self,
+        new_filters_list: List[List[TextFilter]] | List[LinkedinRecruiterFilter],
+        reason: str,
     ) -> List["FilterQuery"]:
         """Create new queries when splitting a query."""
         new_queries = []
+
         for filters in new_filters_list:
             new_query = FilterQuery(
                 original_filters=filters,
@@ -67,6 +165,7 @@ class FilterQuery(BaseModel):
                         filters=filters,
                         count=None,
                         optimization_reason=reason,
+                        strategy_used=None,
                     )
                 ],
             )
@@ -109,7 +208,7 @@ class FilterQuery(BaseModel):
                 "broaden_titles",
             ]
             for strategy in remaining:
-                strategies.append(OptimizationStrategy(strategy_type=strategy))
+                strategies.append(OptimizationStrategy(strategy_type=strategy))  # type: ignore
                 logger.info(f"✓ Added {strategy} strategy")
 
             logger.info("\nFinal strategy order:")
@@ -120,7 +219,7 @@ class FilterQuery(BaseModel):
             self.optimization_strategies = strategies
 
     @property
-    def latest_filters(self) -> List[TextFilter]:
+    def latest_filters(self) -> List[TextFilter] | LinkedinRecruiterFilter:
         """Get the latest filters from the iterations."""
         if self.iterations:
             return self.iterations[-1].filters
@@ -135,8 +234,8 @@ class FilterQuery(BaseModel):
 
     def add_iteration(
         self,
-        filters: List[TextFilter],
-        profile_count: Optional[int],
+        filters: List[TextFilter] | LinkedinRecruiterFilter,
+        profile_count: Optional[int] = None,
         optimization_reason: Optional[str] = None,
         strategy_used: Optional[str] = None,
     ):
@@ -154,7 +253,7 @@ class FilterQuery(BaseModel):
     def is_complete(self) -> bool:
         """Check if query is complete and shouldn't be optimized further."""
         # Latest results are optimal
-        if self.iterations and 30 <= self.iterations[-1].count <= 1000:
+        if self.iterations[-1].count and 30 <= self.iterations[-1].count <= 1000:
             return True
 
         # No more optimization strategies available
@@ -201,7 +300,10 @@ class FilterQueryList(BaseModel):
                 original_filters=filters,
                 iterations=[
                     QueryIteration(
-                        filters=PeopleSearchFilter(filters=filters), count=profile_count
+                        filters=filters,
+                        count=profile_count,
+                        optimization_reason=None,
+                        strategy_used=None,
                     )
                 ],
             )
