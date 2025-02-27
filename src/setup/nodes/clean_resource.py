@@ -29,8 +29,8 @@ async def node_clean_resource(
     # Send stream event
     writer(
         {
-            "event_name": StreamCustomEvents.CLEAN_ALL_RESOURCES,
-            "status": StreamCustomEventsStatus.STARTED,
+            "event_name": StreamCustomEvents.CLEAN_RESOURCE,
+            "status": StreamCustomEventsStatus.IN_PROGRESS,
         }
     )
 
@@ -41,13 +41,6 @@ async def node_clean_resource(
 
     # Create async tasks for each resource
     async def clean_single_resource(resource: BaseResource) -> None:
-        writer(
-            {
-                "event_name": StreamCustomEvents.CLEAN_RESOURCE,
-                "status": StreamCustomEventsStatus.STARTED,
-                "metadata": {"resource_id": resource.id},
-            }
-        )
         cleaned = cast(
             CleanResource,
             (
@@ -57,13 +50,6 @@ async def node_clean_resource(
                     }
                 )
             ),
-        )
-        writer(
-            {
-                "event_name": StreamCustomEvents.CLEAN_RESOURCE,
-                "status": StreamCustomEventsStatus.COMPLETED,
-                "metadata": {"resource_id": resource.id},
-            }
         )
         # Update the content of the original resource
         resource.content = cleaned.content
@@ -82,7 +68,7 @@ async def node_clean_resource(
     # Send stream event
     writer(
         {
-            "event_name": StreamCustomEvents.CLEAN_ALL_RESOURCES,
+            "event_name": StreamCustomEvents.CLEAN_RESOURCE,
             "status": StreamCustomEventsStatus.COMPLETED,
         }
     )

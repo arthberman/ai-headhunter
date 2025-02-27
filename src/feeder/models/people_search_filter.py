@@ -1,5 +1,6 @@
+import uuid
 from enum import Enum
-from typing import List, Literal
+from typing import List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -103,7 +104,7 @@ class TextFilter(BaseModel):
         description="List containing a single filter value. Must contain exactly one item",
     )
 
-    @field_validator("value")
+    @field_validator("value", mode="before")
     def validate_filter_value(cls, v: List[str], info) -> List[str]:
         """Validate filter values based on filter type. Provides detailed error messages with valid options for enum-based filters."""
         filter_type = info.data.get("filter_type")
@@ -167,6 +168,10 @@ class TextFilter(BaseModel):
 class PeopleSearchFilter(BaseModel):
     """Main model for constructing people search filters in Crustdata."""
 
+    id: Optional[uuid.UUID] = Field(
+        default_factory=uuid.uuid4,
+        description="Unique identifier for the search filter.",
+    )
     filters: List[TextFilter] = Field(
         ..., description="List of filters to apply to the search."
     )
@@ -175,3 +180,19 @@ class PeopleSearchFilter(BaseModel):
         """Configuration for the PeopleSearchFilter model."""
 
         use_enum_values = True
+
+
+class CrustDataPeopleSearchResponse(BaseModel):
+    """Expected response structure from Crustdata people search."""
+
+    profiles: list = Field(..., description="List of profiles")
+    total_display_count: int = Field(..., description="Total display count of profiles")
+
+    @field_validator("total_display_count", mode="before")
+    @classmethod
+    def parse_total_display_count(cls, v: str) -> int:
+        """Parse the total display count from the response."""
+        if "K" in v:
+            return int(float(v[:-2]) * 1000)
+        else:
+            return int(v)
