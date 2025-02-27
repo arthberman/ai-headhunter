@@ -20,7 +20,7 @@ class QueryOptimizationInputState(BaseModel):
         "modified and added back to this list for another attempt.",
     )
 
-    current_query_index: Optional[int] = Field(
+    current_query_index: int = Field(
         default=0,
         description="Tracks which query from query_results is currently being optimized. "
         "This allows the optimization process to iterate through multiple query variations "

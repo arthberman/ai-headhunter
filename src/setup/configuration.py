@@ -26,7 +26,7 @@ class Configuration(BaseModel):
     )
 
     cleaning_model: str = Field(
-        default="openai/gpt-4o-mini",
+        default="groq/llama-3.3-70b-versatile",
         description="The name of the language model to use for cleaning. "
         "Should be in the form: provider/model-name.",
     )
