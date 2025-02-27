@@ -14,17 +14,18 @@ from setup.models.synthesis import Synthesis
 class StreamCustomEvents(str, Enum):
     """Task for stream events."""
 
-    CLEAN_RESOURCE = "clean_resource"
-    CLEAN_ALL_RESOURCES = "clean_all_resources"
+    CLEAN_RESOURCE = "clean_resources"
     GENERATE_JOB_POSTING = "generate_job_posting"
     GENERATE_QUESTIONS = "generate_questions"
     GENERATE_SYNTHESIS = "generate_synthesis"
+    GENERATE_SCORECARD_STRUCTURE = "generate_scorecard_structure"
+    GENERATE_CONTEXT = "generate_context"
 
 
 class StreamCustomEventsStatus(str, Enum):
     """Status for stream events."""
 
-    STARTED = "started"
+    IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
 
 
