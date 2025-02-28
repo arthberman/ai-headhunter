@@ -19,6 +19,7 @@ dependencies = [
   "langgraph-sdk>=0.1.51",
   "tavily-python>=0.5.1",
   "upstash-redis>=1.2.0",
+  "openevals>=0.0.3",
 ]
 
 [build-system]
