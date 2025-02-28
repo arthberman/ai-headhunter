@@ -1,56 +1,91 @@
-import uuid
-from logging import getLogger
-from typing import List
+import os
+from typing import List, Literal
 
-from langgraph.types import interrupt
-from pydantic import BaseModel
+import requests
+from dotenv import load_dotenv
+from langchain_core.exceptions import LangChainException
+from langgraph.types import Command
 
-from feeder.models.people_search_filter import PeopleSearchFilter
+from feeder.models.people_search_filter import (
+    CrustDataPeopleSearchResponse,
+    PeopleSearchFilter,
+)
 from feeder.state import OverallState
+from src.feeder.utils.logger_setup import logger
 
-logger = getLogger(__name__)
-
-
-class SearchCountResponse(BaseModel):
-    """Expected response structure from search count interrupt."""
-
-    counts: List[tuple[uuid.UUID, int]]  # List of (query_id, count) tuples
+load_dotenv()
 
 
-def node_get_search_count(state: OverallState) -> OverallState:
-    """Get the search count for a query."""
-    if not state.query_results:
-        return state
+def get_search_count(
+    state: OverallState,
+) -> Command[Literal["optimization_subgraph"]]:
+    """Get the search count of profiles scraped for a query."""
+    try:
+        if not state.query_results:
+            raise ValueError("query_results is empty")
 
-    queries_to_check: List[PeopleSearchFilter] = []
-    query_indices: List[int] = []
+        logger.info("Getting search count for queries")
+        queries_to_check: List[PeopleSearchFilter] = []
 
-    # Find all queries that need count checking
-    for idx, query in enumerate(state.query_results):
-        for iteration in query.iterations:
-            if iteration.count is None:
-                queries_to_check.append(
-                    {"query": {"filters": iteration.filters}, "id": iteration.id}
+        # Get queries that have not been checked for total count
+        for idx, query in enumerate(state.query_results):
+            for iteration in query.iterations:
+                if iteration.count is None:
+                    queries_to_check.append(
+                        PeopleSearchFilter(id=iteration.id, filters=iteration.filters)
+                    )
+
+        # If there are queries to be checked, use crust API to get counts for each query
+        if queries_to_check:
+            if not os.getenv("CRUSTDATA_API_KEY"):
+                logger.error("CRUSTDATA_API_KEY not found in environment")
+                raise ValueError("CRUSTDATA_API_KEY not found in environment")
+
+            # Implement multiple iterations logic for each query
+            for queries in queries_to_check:
+                crust_api_people_search_filters = []
+                for filters in queries.filters:
+                    crust_api_people_search_filters.append(
+                        {
+                            "filter_type": filters.filter_type,
+                            "type": filters.type,
+                            "value": filters.value,
+                        }
+                    )
+
+                res = requests.post(
+                    "https://api.crustdata.com/screener/person/search",
+                    headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "Authorization": "Token " + os.getenv("CRUSTDATA_API_KEY", ""),
+                    },
+                    json={
+                        "filters": crust_api_people_search_filters,
+                        "preview": True,
+                    },
+                ).json()
+
+                crust_data_people_search_response = CrustDataPeopleSearchResponse(**res)
+
+                logger.info(
+                    "Search count response: ", crust_data_people_search_response
                 )
-                query_indices.append(idx)
 
-    # If we have queries to check, interrupt and get counts
-    if queries_to_check:
-        res = SearchCountResponse.model_validate(
-            interrupt(
-                {
-                    "action": "get_search_count",
-                    "queries": queries_to_check,
-                }
-            )
-        )
-
-        # Update counts in state using query IDs
-        for query_id, count in res.counts:
-            for query in state.query_results:
+                # Update counts in state using query IDs
                 for iteration in query.iterations:
-                    if iteration.id == query_id:
-                        iteration.count = count
+                    if iteration.id == queries.id:
+                        iteration.count = (
+                            crust_data_people_search_response.total_display_count
+                        )
                         break
 
-    return state
+        return Command(
+            update={"query_results": state.query_results}, goto="optimization_subgraph"
+        )
+    except LangChainException as e:
+        logger.error(f"Error getting search count: {e}")
+        raise e
+    except Exception as e:
+        logger.error(f"Error getting search count: {e}")
+        raise e

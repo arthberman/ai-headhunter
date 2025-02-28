@@ -23,7 +23,7 @@ def node_job_posting(
     writer(
         {
             "event_name": StreamCustomEvents.GENERATE_JOB_POSTING,
-            "status": StreamCustomEventsStatus.STARTED,
+            "status": StreamCustomEventsStatus.IN_PROGRESS,
         }
     )
     # Load configuration from the provided RunnableConfig

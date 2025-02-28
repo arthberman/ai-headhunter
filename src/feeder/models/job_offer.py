@@ -22,4 +22,7 @@ class JobOfferDescription(BaseModel):
 
     summary: str = Field(..., description="Detailed job description text")
     seniority: str = Field(..., description="Seniority level of the job")
-    location: str = Field(..., description="Geographical location of the job")
+    location: str = Field(
+        ...,
+        description="Geographical location of the job, in the format 'City, Country'",
+    )

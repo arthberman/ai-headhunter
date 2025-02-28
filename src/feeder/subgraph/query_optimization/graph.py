@@ -1,10 +1,9 @@
 from langgraph.graph import START, StateGraph
 from langgraph.graph.graph import CompiledGraph
 
-from feeder.subgraph.query_optimization.nodes.check_query_status import (
-    check_query_status,
+from feeder.subgraph.query_optimization.nodes.analyze_current_query import (
+    analyze_current_query,
 )
-from feeder.subgraph.query_optimization.nodes.fake_crust import fake_crust
 from feeder.subgraph.query_optimization.nodes.optimize_high_results import (
     optimize_high_results,
 )
@@ -25,17 +24,15 @@ def compile_optimization_subgraph() -> CompiledGraph:
         input=QueryOptimizationInputState,
         output=QueryOptimizationOutputState,
     )
+
     # add nodes
+    subgraph_builder.add_node("analyze_current_query", analyze_current_query)
     subgraph_builder.add_node("optimize_low_results", optimize_low_results)
     subgraph_builder.add_node("optimize_high_results", optimize_high_results)
-    subgraph_builder.add_node("fake_crust", fake_crust)
+
     # add edges
-    subgraph_builder.add_edge(START, "fake_crust")
-    subgraph_builder.add_conditional_edges(
-        "fake_crust",
-        check_query_status,
-        ["optimize_low_results", "optimize_high_results"],
-    )
+    subgraph_builder.add_edge(START, "analyze_current_query")
+
     optimization_subgraph = subgraph_builder.compile()
-    optimization_subgraph.name = "optimization_subgraph"
+    optimization_subgraph.name = "query_optimization_subgraph"
     return optimization_subgraph
