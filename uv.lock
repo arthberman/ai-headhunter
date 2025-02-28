@@ -476,6 +476,23 @@ wheels = [
 ]
 
 [[package]]
+name = "groq"
+version = "0.18.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/40/8c/e72c164474a88dfed6c7327ad53cb87ff11566b74b3a76d41dc7b94fc51c/groq-0.18.0.tar.gz", hash = "sha256:8e2ccfea406d68b3525af4b7c0e321fcb3d2a73fc60bb70b4156e6cd88c72f03", size = 117322 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b0/6c/5a53d632b44ef7655ac8d9b34432e13160917f9307c94b1467efd34e336e/groq-0.18.0-py3-none-any.whl", hash = "sha256:81d5ac00057a45d8ce559d23ab5d3b3893011d1f12c35187ab35a9182d826ea6", size = 121911 },
+]
+
+[[package]]
 name = "h11"
 version = "0.14.0"
 source = { registry = "https://pypi.org/simple" }
@@ -792,6 +809,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/4f/6b/7c3f5fa60639b885d8dbc932c37f0b0584ac5151ac6bdcd00b67b591e5e9/langchain_core-0.3.40.tar.gz", hash = "sha256:893a238b38491967c804662c1ec7c3e6ebaf223d1125331249c3cf3862ff2746", size = 528341 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b7/01/b52e43f63261b5aae016cbe170bb5d8e8899770530075d11c1e45a07b97b/langchain_core-0.3.40-py3-none-any.whl", hash = "sha256:9f31358741f10a13db8531e8288b8a5ae91904018c5c2e6f739d6645a98fca03", size = 414346 },
+]
+
+[[package]]
+name = "langchain-groq"
+version = "0.2.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "groq" },
+    { name = "langchain-core" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2f/38/6073ce095072830284a7155d64a685c45138f427282a4d0721d86e7a09eb/langchain_groq-0.2.4.tar.gz", hash = "sha256:90d76ca59679c021858112440de732de3d780675cc2dbd9572cbf011c0e2afe8", size = 15180 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bb/e7/aec777a50942059be78b0677135f866a2ead2447e308e3f075f5ff9a93a6/langchain_groq-0.2.4-py3-none-any.whl", hash = "sha256:ef02923b780486e1f9799ad156a2a6078581e43c4b80a334a88589f99f977eaf", size = 14828 },
 ]
 
 [[package]]
@@ -1557,6 +1587,7 @@ dependencies = [
     { name = "langchain-aws" },
     { name = "langchain-community" },
     { name = "langchain-core" },
+    { name = "langchain-groq" },
     { name = "langchain-openai" },
     { name = "langgraph" },
     { name = "langgraph-sdk" },
@@ -1565,6 +1596,7 @@ dependencies = [
     { name = "python-dotenv" },
     { name = "tavily-python" },
     { name = "trustcall" },
+    { name = "upstash-ratelimit" },
     { name = "upstash-redis" },
 ]
 
@@ -1585,6 +1617,7 @@ requires-dist = [
     { name = "langchain-aws", specifier = ">=0.2.12" },
     { name = "langchain-community", specifier = ">=0.3.17" },
     { name = "langchain-core", specifier = ">=0.3.34" },
+    { name = "langchain-groq", specifier = ">=0.2.4" },
     { name = "langchain-openai", specifier = ">=0.3.5" },
     { name = "langgraph", specifier = ">=0.2.71" },
     { name = "langgraph-sdk", specifier = ">=0.1.51" },
@@ -1593,6 +1626,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "tavily-python", specifier = ">=0.5.1" },
     { name = "trustcall", specifier = ">=0.0.35" },
+    { name = "upstash-ratelimit", specifier = ">=1.1.0" },
     { name = "upstash-redis", specifier = ">=1.2.0" },
 ]
 
@@ -1907,6 +1941,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/dc/74/1789779d91f1961fa9438e9a8710cdae6bd138c80d7303996933d117264a/typing_inspect-0.9.0.tar.gz", hash = "sha256:b23fc42ff6f6ef6954e4852c1fb512cdd18dbea03134f91f856a95ccc9461f78", size = 13825 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/65/f3/107a22063bf27bdccf2024833d3445f4eea42b2e598abfbd46f6a63b6cb0/typing_inspect-0.9.0-py3-none-any.whl", hash = "sha256:9ee6fc59062311ef8547596ab6b955e1b8aa46242d854bfc78f4f6b0eff35f9f", size = 8827 },
+]
+
+[[package]]
+name = "upstash-ratelimit"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "upstash-redis" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6f/95/74a3a7547a68f5e8d9f8cb99a6a73da96f13a359c6f7f4f15deceecabb35/upstash_ratelimit-1.1.0.tar.gz", hash = "sha256:b396332ef42392c255b01958e3af3b45cd86ca2e2f78f9ea34c4714d64e56f15", size = 12198 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f3/bc/893430e103b36be54e7a7b105b102273bda7e8c7567cd72fb1d44473a857/upstash_ratelimit-1.1.0-py3-none-any.whl", hash = "sha256:cb3944063df199f47e4b24fd9a3760131a71cfeacd7a0182fc6ff5b920d16a8b", size = 13245 },
 ]
 
 [[package]]

@@ -23,7 +23,7 @@ def node_questions(
     writer(
         {
             "event_name": StreamCustomEvents.GENERATE_QUESTIONS,
-            "status": StreamCustomEventsStatus.STARTED,
+            "status": StreamCustomEventsStatus.IN_PROGRESS,
         }
     )
     # Load configuration from the provided RunnableConfig
