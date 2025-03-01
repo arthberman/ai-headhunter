@@ -80,7 +80,7 @@ async def node_experience_enrichment(
             # Try to validate against current schema
             company_info = CompanyInfo.model_validate(company.value)
 
-            if len(experience.description) < 100:
+            if not experience.description or len(experience.description) < 100:
                 return {"experience_enrichment": [company_info]}
 
             # Update with rich description
