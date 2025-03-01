@@ -76,7 +76,7 @@ async def node_education_enrichment(
 
             # Add null check for description
             description = education.description or ""
-            if len(description) < 100:
+            if not description or len(description) < 100:
                 return {"education_enrichment": [school_info]}
 
             # Update with rich description
