@@ -14,7 +14,7 @@ from src.feeder.utils.logger_setup import logger
 
 async def generate_raw_query(
     state: OverallState,
-) -> Command[Literal["generate_raw_query_target_language", "get_relevant_location"]]:
+) -> Command[Literal["generate_raw_query_target_language", "reprocess_raw_query"]]:
     """Generate a raw query based on the job offer description and query memory (if the first generation query failed in the optimization process).
 
     Args:
@@ -51,7 +51,7 @@ async def generate_raw_query(
                 goto="generate_raw_query_target_language",
             )
         else:
-            return Command(update={"json_object": res}, goto="get_relevant_location")
+            return Command(update={"json_object": res}, goto="reprocess_raw_query")
     except LangChainException as e:
         logger.error("Error generating raw query: %s", e)
         raise e
