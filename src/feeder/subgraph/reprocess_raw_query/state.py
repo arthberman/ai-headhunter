@@ -2,12 +2,14 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from feeder.models.job_offer import JobOfferDescription
 from feeder.models.raw_query import RawQuery
 
 
 class ReprocessRawQueryInputState(BaseModel):
     """Input state for separate raw query subgraph."""
 
+    job_offer_description: JobOfferDescription
     json_object: RawQuery
 
 
