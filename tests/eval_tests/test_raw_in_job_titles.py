@@ -127,7 +127,7 @@ Reference in_job_titles: {reference_outputs}
         EvaluateRawQuery,
         chain.invoke(
             {
-                "inputs": inputs,
+                "inputs": inputs["input"]["job_offer_description"],
                 "reference_outputs": reference_outputs,
                 "outputs": outputs["res"],
             }
