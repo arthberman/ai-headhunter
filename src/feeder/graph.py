@@ -4,6 +4,7 @@ from langgraph.graph.graph import CompiledGraph
 from feeder.nodes.create_linkedin_recruiter_queries import (
     create_linkedin_recruiter_queries,
 )
+from feeder.subgraph.reprocess_raw_query.graph import create_reprocess_raw_query_graph
 from src.feeder.nodes.classify_job_titles import classify_job_titles
 from src.feeder.nodes.classify_keywords import classify_keywords
 from src.feeder.nodes.create_queries import create_queries
@@ -53,6 +54,7 @@ def compile_feeder_graph() -> CompiledGraph:
         generate_raw_query_target_language,
         retry=get_retry_policy(),
     )
+    workflow.add_node("reprocess_raw_query", create_reprocess_raw_query_graph())
     workflow.add_node(
         "get_relevant_location", get_relevant_location, retry=get_retry_policy()
     )
@@ -79,7 +81,8 @@ def compile_feeder_graph() -> CompiledGraph:
     # add edges
     workflow.add_edge(START, "ingest_raw_job_description")
     workflow.add_edge("ingest_raw_job_description", "generate_raw_query")
-    workflow.add_edge("generate_raw_query_target_language", "get_relevant_location")
+    workflow.add_edge("generate_raw_query_target_language", "reprocess_raw_query")
+    workflow.add_edge("reprocess_raw_query", "get_relevant_location")
     workflow.add_edge(
         "process_in_job_titles_subgraph", "process_not_in_job_titles_subgraph"
     )
