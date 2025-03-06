@@ -38,6 +38,10 @@ def create_reprocess_raw_query_graph() -> CompiledGraph:
     subgraph_builder.add_edge(START, "split_raw_keywords")
     subgraph_builder.add_edge(START, "split_raw_in_job_titles")
     subgraph_builder.add_edge(START, "split_raw_not_in_job_titles")
+    subgraph_builder.add_edge("split_raw_keywords", "combine_raw_query")
+    subgraph_builder.add_edge("split_raw_in_job_titles", "combine_raw_query")
+    subgraph_builder.add_edge("split_raw_not_in_job_titles", "combine_raw_query")
+
     subgraph_builder.add_edge("combine_raw_query", END)
 
     reprocess_raw_query_graph = subgraph_builder.compile()
