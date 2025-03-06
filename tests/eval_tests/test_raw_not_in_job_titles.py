@@ -130,7 +130,7 @@ def evaluate_raw_not_in_job_titles(
         EvaluateRawQuery,
         chain.invoke(
             {
-                "inputs": inputs,
+                "inputs": inputs["input"]["job_description"],
                 "reference_outputs": reference_outputs,
                 "outputs": outputs["res"],
             }

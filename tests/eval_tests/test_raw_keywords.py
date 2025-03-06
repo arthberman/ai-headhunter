@@ -19,7 +19,10 @@ class EvaluateRawQuery(BaseModel):
         description="How SEO friendly are the keywords for the given job description",
     )
     accuracy: int = Field(..., description="How accurate are the keywords for the job")
-    specificity: int = Field(..., description="Rates the specificity of the keywords")
+    specificity: int = Field(
+        ...,
+        description="Rates the specificity of the keywords, 1 is too narrow, 10 is too broad and 5 is ideal",
+    )
 
 
 def target(job_description: dict):
@@ -120,7 +123,7 @@ Reference Keywords: {reference_outputs}
         EvaluateRawQuery,
         chain.invoke(
             {
-                "inputs": inputs,
+                "inputs": inputs["input"]["job_offer_description"],
                 "reference_outputs": reference_outputs,
                 "outputs": outputs["res"],
             }
