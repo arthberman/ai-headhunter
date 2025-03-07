@@ -6,6 +6,7 @@ from langgraph.types import Send
 
 from matcher.configuration import Configuration
 from matcher.nodes.check_location import node_check_location
+from matcher.nodes.compatibility_flag import node_compatibility_flag
 from matcher.nodes.write_memory import node_write_memory
 from matcher.state import InputGraphState, MainGraphState, OutputGraphState
 from matcher.sub_graph.criterion_matcher.graph import get_criterion_matcher_subgraph
@@ -133,6 +134,16 @@ def continue_to_enrichment(state: MainGraphState):
         return ["enrich_from_web", "enrich_from_reasoning"]
 
 
+def continue_to_check_location(state: MainGraphState):
+    """Continue to the location."""
+    if state.get_decision(DecisionType.COMPATIBILITY_FLAG).outcome in [
+        Outcome.REJECTED
+    ]:
+        return END
+
+    return ["check_location"]
+
+
 def compile_matcher_graph() -> CompiledGraph:
     """Compile the candidate matcher graph."""
     workflow = StateGraph(
@@ -144,6 +155,11 @@ def compile_matcher_graph() -> CompiledGraph:
 
     workflow.add_node("compute_profile_metadata", compute_profile_metadata)
     workflow.add_node("check_location", node_check_location, retry=get_retry_policy())
+    workflow.add_node(
+        "check_compatibility_flag",
+        node_compatibility_flag,
+        retry=get_retry_policy(),
+    )
 
     workflow.add_node(
         "score_preferred_criteria",
@@ -171,7 +187,12 @@ def compile_matcher_graph() -> CompiledGraph:
     workflow.add_node("write_memory", node_write_memory, retry=get_retry_policy())
 
     workflow.add_edge(START, "compute_profile_metadata")
-    workflow.add_edge("compute_profile_metadata", "check_location")
+    workflow.add_edge("compute_profile_metadata", "check_compatibility_flag")
+    workflow.add_conditional_edges(
+        "check_compatibility_flag",
+        continue_to_check_location,
+        ["check_location", END],
+    )
     workflow.add_conditional_edges(
         "check_location",
         continue_to_enrichment,

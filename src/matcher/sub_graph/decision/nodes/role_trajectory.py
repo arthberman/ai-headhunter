@@ -33,7 +33,7 @@ async def node_infer_role_trajectory(
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the raw model with the provided configuration
-    raw_model = init_model(configuration.default_model)
+    raw_model = init_model(configuration.reasoning_model)
 
     # Initialize the prompt
     prompt = get_prompt("candidate-analysis-role-trajectory")

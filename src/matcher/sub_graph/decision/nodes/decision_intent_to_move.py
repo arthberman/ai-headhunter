@@ -18,7 +18,7 @@ async def node_decision_intent_to_move(state: MainGraphState, config: RunnableCo
     prompt = get_prompt("candidate-analysis-intent")
 
     # Initialize the model
-    raw_model = init_model(configuration.synthesis_model)
+    raw_model = init_model(configuration.reasoning_model)
     model = raw_model.with_structured_output(Decision)
 
     # Create the chain

@@ -23,7 +23,7 @@ async def node_decision_redflag_stability(
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the raw model with the provided configuration
-    raw_model = init_model(configuration.matcher_model)
+    raw_model = init_model(configuration.reasoning_model)
 
     # Initialize the prompt
     prompt = get_prompt("check-redflag-stability")

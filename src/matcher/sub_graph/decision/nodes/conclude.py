@@ -66,7 +66,7 @@ async def node_conclude(
     prompt = get_prompt("analysis-conclusion")
 
     # Initialize the model
-    raw_model = init_model(configuration.synthesis_model)
+    raw_model = init_model(configuration.reasoning_model)
     model = raw_model.with_structured_output(Conclusion)
 
     # Create the chain

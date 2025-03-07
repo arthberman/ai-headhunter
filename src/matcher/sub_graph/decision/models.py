@@ -21,6 +21,7 @@ class DecisionType(Enum):
     OPENESS_TO_WORK = "openess_to_work"
     INTENT_TO_MOVE = "intent_to_move"
     REDFLAG_STABILITY = "redflag_stability"
+    COMPATIBILITY_FLAG = "compatibility_flag"
 
 
 class Decision(BaseModel):
