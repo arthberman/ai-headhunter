@@ -1,74 +1,128 @@
-# LangGraph Matcher and Scorecard Generator
+# AI Headhunting
 
-## Overview
-
-This project implements a powerful matcher and scorecard generator, both hosted using the LangGraph API. It provides an efficient solution for matching and scoring data, leveraging the capabilities of LangGraph for seamless integration and deployment.
+A sophisticated multi-agent AI platform designed to automate technical recruiting workflows. Built with LangGraph, this system orchestrates specialized agents to handle candidate matching, scorecard generation, company research, and interactive feedback collection.
 
 ## Features
 
-- **Matcher**: Advanced matching algorithm for data comparison and matcher.
-- **Scorecard Generator**: Generates comprehensive scorecards based on matching results.
-- **LangGraph API Integration**: Utilizes LangGraph API for robust hosting and scalability.
+### Core Agents
 
-## Usage
+- **Matcher Agent** - Advanced candidate-to-job matching using semantic analysis and configurable scoring algorithms
+- **Scorecard Generator** - Creates comprehensive evaluation scorecards with structured candidate assessments
+- **Feeder Agent** - Generates and synthesizes recruiting queries, manages search parameters
+- **Company Researcher** - Automated company intelligence gathering using web search and API integration
+- **Feedback Chat** - Interactive conversational interface for collecting recruiter feedback on candidates
+- **Setup Graph** - Handles initial configuration, authentication, and system initialization
 
-The Matcher and Scorecard Generator are accessible via the LangGraph API. To use these services:
+### Technical Capabilities
 
-1. Obtain API credentials from the LangGraph platform.
-2. Make API calls to the following endpoints:
-   - Matcher: `https://api.langgraph.com/match`
-   - Scorecard Generator: `https://api.langgraph.com/generate-scorecard`
+- **Multi-Agent Orchestration** - LangGraph-powered state machines coordinate complex workflows
+- **Multi-LLM Integration** - Leverages OpenAI, Anthropic and Groq for optimal performance
+- **Secure Authentication** - Token-based API authentication with organization-scoped access control
+- **Session Management** - PostgreSQL-backed session persistence and state management
+- **External Data Integration** - Real-time company research via Tavily API and Crustdata
+- **Conversation History** - Persistent storage for multi-turn agent interactions
 
-For detailed API documentation and usage instructions, please refer to the [LangGraph API Documentation](https://docs.langgraph.com).
-
-## Configuration
-
-The service is configured and managed through the LangGraph platform. Refer to the LangGraph documentation for information on how to adjust settings and manage your deployment.
-
-## Development
-
-For developers looking to contribute or modify the project:
-
-1. Clone the repository:
-
-   ```
-   git clone https://github.com/yourusername/langgraph-matcher-scorecard.git
-   cd langgraph-matcher-scorecard
-   ```
-
-2. Set up a local development environment following LangGraph's developer guidelines.
-
-3. Make your changes and test locally before submitting a pull request.
-
-## Testing
-
-To run tests locally:
+## Architecture
 
 ```
-pytest tests/
+┌─────────────────────────────────────────────────────────┐
+│                    LangGraph Cloud                       │
+├─────────────────────────────────────────────────────────┤
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────┐ │
+│  │ Matcher  │  │Scorecard │  │  Feeder  │  │ Setup   │ │
+│  │  Agent   │  │Generator │  │  Agent   │  │  Graph  │ │
+│  └──────────┘  └──────────┘  └──────────┘  └─────────┘ │
+│  ┌──────────┐  ┌──────────┐                             │
+│  │ Company  │  │Feedback  │                             │
+│  │Researcher│  │   Chat   │                             │
+│  └──────────┘  └──────────┘                             │
+├─────────────────────────────────────────────────────────┤
+│              Security & Authentication                   │
+├─────────────────────────────────────────────────────────┤
+│              PostgreSQL DB  │  Session Management       │
+└─────────────────────────────────────────────────────────┘
 ```
 
-Ensure all tests pass before submitting changes.
+## Tech Stack
 
-## Contributing
+**Core Framework:**
+- Python 3.12+
+- LangGraph 0.3.5+ (Agent orchestration)
+- LangChain 0.3.20+ (LLM integration)
+- Pydantic 2.10+ (Data validation)
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+**AI/LLM Providers:**
+- Anthropic (via AWS Bedrock)
+- OpenAI
+- Groq
+
+**Infrastructure:**
+- PostgreSQL - State persistence and session management
+- LangGraph Cloud - Production deployment
+- Docker & Docker Compose - Local development
+
+**External APIs:**
+- Tavily API - Web search and research
+- Crustdata API - Company intelligence
+- RapidAPI - Additional data sources
+
+## Deployment
+
+This system is deployed via **LangGraph Cloud** and can be accessed using the **LangGraph SDK**.
+
+### Using the LangGraph SDK
+
+```python
+from langgraph_sdk import get_client
+
+# Connect to deployed graph
+client = get_client(url="YOUR_LANGGRAPH_CLOUD_URL")
+
+# Invoke the matcher agent
+response = await client.runs.create(
+    assistant_id="matcher",
+    input={
+        "candidate": {
+            "skills": ["Python", "Machine Learning", "AWS"],
+            "experience_years": 5
+        },
+        "job_requirements": {
+            "required_skills": ["Python", "AI/ML"],
+            "min_experience": 3
+        }
+    }
+)
+```
+
+## Project Structure
+
+```
+ai-headhunter/
+├── src/
+│   ├── matcher/           # Candidate matching logic
+│   ├── setup/             # Setup and initialization
+│   ├── feeder/            # Query generation
+│   ├── company_researcher/ # Company intelligence
+│   ├── feedback/          # Feedback processing
+│   ├── feedback_chat/     # Interactive feedback
+│   ├── security/          # Authentication
+│   └── utils/             # Shared utilities
+├── tests/                 # Test suite
+├── langgraph.json         # LangGraph configuration
+└── docker-compose.yml     # Docker orchestration
+```
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Contact
-
-Arth Berman - [@arthberman](https://twitter.com/arthberman) - arthberman@gmail.com
-
-Project Link: [https://github.com/arthberman/repio-ai](https://github.com/arthberman/repio-ai)
+Distributed under the MIT License.
 
 ## Acknowledgements
 
-- [LangGraph](https://langgraph.com)
-- [Other libraries or resources used]
+- [LangGraph](https://github.com/langchain-ai/langgraph) - Agent orchestration framework
+- [LangChain](https://github.com/langchain-ai/langchain) - LLM integration library
+- [Anthropic Claude](https://www.anthropic.com) - Claude models
+- [OpenAI](https://openai.com) - GPT models
+
+---
+
+**Portfolio Project** - Demonstrates advanced AI agent architecture, multi-agent orchestration, production-ready security, and modern Python development practices.
